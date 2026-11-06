@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulacro 3: Neurología, Infeccioso, Tórax y Miscelánea</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #1e272e; line-height: 1.5; padding: 20px; max-width: 950px; margin: auto; }
+        .header { text-align: center; border-bottom: 4px solid #009432; margin-bottom: 25px; padding-bottom: 10px; }
+        .header h1 { color: #2d3436; margin: 0; }
+        .case-header { background-color: #009432; color: white; padding: 15px; border-radius: 6px; margin-top: 40px; margin-bottom: 20px; }
+        .case-header h2 { margin: 0; font-size: 1.3em; }
+        .question { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .question h3 { margin-top: 0; font-size: 1.05em; color: #2d3436; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 8px; }
+        .options label { display: block; padding: 10px 15px; border: 1px solid #dfe6e9; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+        .options label:hover { background-color: #f1f2f6; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.1); }
+        .btn-container { text-align: center; margin-top: 40px; margin-bottom: 40px; }
+        .btn { background-color: #009432; color: white; border: none; padding: 15px 35px; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #006221; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background-color: #e8f8f5; border-left: 4px solid #009432; border-radius: 4px; font-size: 0.9em; }
+        .correct-anim { border-color: #00b894 !important; background-color: #e8f8f5 !important; font-weight: bold; color: #00b894; }
+        .incorrect-anim { border-color: #d63031 !important; background-color: #fceaea !important; color: #d63031; text-decoration: line-through; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Simulacro 3: Urgencias Neurológicas, Infecciosas y Torácicas</h1>
+        <p>Prueba Práctica: 4 Casos Clínicos (60 preguntas). Las opciones se barajan aleatoriamente.</p>
+    </div>
+
+    <form id="exam-form"></form>
+
+    <div class="btn-container">
+        <button type="button" class="btn" onclick="corregir()">Finalizar Simulacro y Ver Resultados</button>
+    </div>
+
+    <script>
+        const db = [
+            // ================= CASO 1: URGENCIAS NEUROLÓGICAS Y CÓDIGO ICTUS =================
+            { c: "CASO CLÍNICO 1: Neurología de Urgencias. Código Ictus, status epiléptico y patología compresiva medular.",
+              q: "Varón de 68 años que inicia de forma brusca déficit motor facio-corporal izquierdo y desviación oculocefálica. Última hora visto asintomático hace 90 minutos. Escala NIHSS de 18 puntos. TC craneal urgente sin hallazgos de hemorragia aguda. La actitud terapéutica inicial prioritaria es:",
+              o: ["Administración de tratamiento fibrinolítico intravenoso (Alteplase o Tenecteplase) y valoración inmediata para Trombectomía Mecánica (Código Ictus).", "Administración de antiagregación dual urgente (AAS + Clopidogrel) a altas dosis.", "Control estricto de la presión arterial bajándola por debajo de 120/80 mmHg de inmediato.", "Ingreso en planta de neurología a la espera de resonancia magnética de control a las 48h."],
+              e: "Ante un ictus isquémico agudo dentro de la ventana terapéutica (< 4.5h para fibrinolisis y hasta 24h en selección para trombectomía), la administración de trombolítico IV y la trombectomía mecánica urgente si hay oclusión de gran vaso son prioritarias." },
+            { c: 1, q: "En el paciente anterior, si la presión arterial previa a la fibrinolisis es de 185/110 mmHg, ¿cuál es el objetivo tensional previo recomendado antes de iniciar el trombolítico?",
+              o: ["Descender la PA por debajo de 185/105 mmHg utilizando fármacos de vida media corta (ej. Labetalol o Urapidilo IV).", "No administrar tratamiento hipotensor, ya que la HTA en fase aguda es un mecanismo fisiológico protector.", "Realizar sangría terapéutica de 400 ml de sangre periférica.", "Suspender la fibrinolisis indefinidamente si la TAS supera los 160 mmHg."],
+              e: "Las guías exigen que la presión arterial previa a la fibrinolisis intravenosa sea inferior a 185/105 mmHg para minimizar el riesgo de transformación hemorrágica intracraneal." },
+            { c: 1, q: "Acude una mujer de 55 años con estatus convulsivo generalizado refractario que dura ya 15 minutos en el box de reanimación. Tras administrar una primera dosis de Lorazepam IV sin éxito, el siguiente fármaco antiepiléptico intravenoso de segunda línea recomendado es:",
+              o: ["Levetiracetam IV (o Valproato sódico / Fenitoína).", "Diazepam vía oral en triturado.", "Haloperidol intramuscular.", "Propofol en dosis analgésicas mínimas sin soporte."],
+              e: "Fracasada la primera línea con benzodiacepinas, la segunda línea farmacológica para el estatus epiléptico convulsivo son anticonvulsivantes intravenosos como Levetiracetam, Valproato o Fenitoína." },
+            { c: 1, q: "¿Cuál es el criterio clínico que define el estatus epiléptico convulsivo refractario, indicando la necesidad de inducción a coma farmacológico en UCI?",
+              o: ["Crisis convulsiva generalizada que persiste a pesar del tratamiento secuencial correcto con una benzodiacepina y un fármaco anticomicial de segunda línea.", "Crisis de más de 2 minutos de duración con cianosis autolimitada.", "Aparición de tres crisis separadas por periodos de completa lucidez en 24 horas.", "Mioclonías bilaterales aisladas tras una parada cardiorrespiratoria ya recuperada."],
+              e: "El estatus refractario es aquel que no cede tras la administración adecuada de una benzodiacepina y un fármaco de segunda línea, requiriendo anestésicos generales (propofol, midazolam, tiopental)." },
+            { c: 1, q: "Ante la sospecha clínica de Hemorragia Subaracnoidea (HSA) aneurismática en un paciente que acude con cefalea explosiva ('en trueno') de inicio brusco y rigidez de nuca, pero con un TC craneal inicial NEGATIVO, la actitud correcta es:",
+              o: ["Realizar una punción lumbar (PL) para estudiar la presencia de xantocromía en líquido cefalorraquídeo.", "Dar el alta domiciliaria con analgesia mayor al descartar lesión por imagen.", "Programar una arteriografía cerebral en diferido a los 14 días.", "Repetir el TC craneal a las 2 horas con contraste y sedación."],
+              e: "Un TC craneal tiene alta sensibilidad en las primeras horas, pero si es negativo y la sospecha clínica de HSA es alta, se debe realizar obligatoriamente una punción lumbar para descartar xantocromía." },
+            { c: 1, q: "En el manejo agudo de la HSA aneurismática para prevenir el vasoespasmo cerebral secundario, el fármaco de elección recomendado es:",
+              o: ["Nimodipino oral o enteral.", "Nimodipino en bolos intravenosos rápidos.", "Nifedipino sublingual a dosis altas.", "Amlodipino transdérmico."],
+              e: "El Nimodipino es el bloqueante de canales de calcio de elección demostrado para mejorar el pronóstico y prevenir el vasoespasmo cerebral isquémico tras una hemorragia subaracnoidea." },
+            { c: 1, q: "Paciente varón de 40 años que acude por paraparesia de instauración rápida, anestesia en silla de montar y retención urinaria aguda con incontinencia por rebosamiento. El diagnóstico de sospecha urgente es:",
+              o: ["Síndrome de cola de caballo (compresión radicular lumbar severa / hernia discal masiva).", "Polineuropatía desmielinizante inflamatoria aguda (Guillain-Barré).", "Esclerosis lateral amiotrófica de inicio bulbar.", "Mielitis transversa infecciosa leve."],
+              e: "La clínica de alteración esfinteriana (retención/incontinencia), anestesia en silla de montar y debilidad extremidades inferiores conforma el Síndrome de cola de caballo, una urgencia neuroquirúrgica." },
+            { c: 1, q: "¿Cuál es la prueba de imagen de elección urgente para confirmar el síndrome de cola de caballo o una compresión medular aguda en Urgencias?",
+              o: ["Resonancia Magnética (RM) urgente de columna.", "Radiografía simple de columna lumbar en proyecciones AP y lateral.", "Gammagrafía ósea corporal total.", "Ecografía Doppler abdominal y pélvica."],
+              e: "La RM urgente es la prueba de elección para valorar el canal medular, el nivel y la causa exacta de la compresión neurológica." },
+            { c: 1, q: "Mujer de 30 años con antecedentes de visión doble fluctuante y debilidad muscular que empeora al atardecer o con el esfuerzo. Acude a urgencias con insuficiencia respiratoria aguda por debilidad bulbar. Diagnóstico de base y complicación:",
+              o: ["Crisis miasténica grave (Miastenia Gravis).", "Crisis colinérgica por sobredosis de anticolinesterásicos.", "Botulismo alimentario agudo.", "Síndrome de Lambert-Eaton paraneoplásico."],
+              e: "La debilidad fluctuante que empeora con el esfuerzo y la afectación bulbar/respiratoria aguda define la crisis miasténica en un paciente con miastenia gravis." },
+            { c: 1, q: "Para diferenciar en Urgencias una crisis miasténica de una crisis colinérgica (exceso de fármacos anticolinesterásicos) cuando hay dudas, históricamente se utilizaba un test farmacológico rápido basado en cloruro de edrofonio, el cual hoy en día está en desuso fundamentalmente por el riesgo de:",
+              o: ["Bradicardia grave e inestabilidad cardíaca.", "Hipertensión maligna severa irreversible.", "Broncodilatación incontrolada refractaria a aerosoles.", "Desmielinización osmótica pontina inmediata."],
+              e: "El test del edrofonio está en desuso debido al riesgo elevado de precipitar bradicardia grave y bloqueos cardíacos severos, prefiriéndose el test del hielo en ptosis o pruebas neurofisiológicas[cite: 2]." },
+            { c: 1, q: "En la evaluación neurofisiológica de la miastenia gravis, la estimulación nerviosa repetitiva a baja frecuencia (3 Hz) suele mostrar:",
+              o: ["Un decremento del potencial motor superior al 10% (disminución del 5º potencial respecto al 1º).", "Un incremento superior al 200% (fenómeno de facilitación).", "Una ausencia total de respuesta axonal desde el primer estímulo basal.", "Un aumento patológico del jitter en fibras musculares aisladas sin decremento."],
+              e: "En la miastenia gravis, la estimulación repetitiva a 3 Hz muestra característicamente una disminución decremental patológica (≥ 10% en el 5º potencial motor)[cite: 2]." },
+            { c: 1, q: "Ante la sospecha clínica de Meningitis Aguda Bacteriana en un paciente febril con rigidez de nuca y alteración del nivel de conciencia, antes de realizar la punción lumbar, ¿qué contraindicación absoluta por imagen obliga a diferir la PL y administrar antibióticos de inmediato?",
+              o: ["Signos de hipertensión intracraneal o efecto masa / herniación en el TC craneal.", "Edad superior a 65 años.", "Presencia de petequias aisladas en extremidades inferiores.", "Plaquetas séricas de 120.000 /mm3."],
+              e: "La presencia de edema cerebral difuso, efecto masa o signos de herniación en el TC craneal contraindica de forma absoluta la punción lumbar por riesgo de enclavamiento." },
+            { c: 1, q: "Tratamiento antimicrobiano empírico inicial indicado en Urgencias ante la sospecha de meningitis bacteriana aguda adquirida en la comunidad en un adulto inmunocompetente:",
+              o: ["Cefotaxima (o Ceftriaxona) a altas dosis + Ampicilina (si >50 años por listeria) + Dexametasona.", "Aciclovir intravenoso exclusivo en monoterapia.", "Vancomicina en monoterapia oral a dosis bajas.", "Ciprofloxacino en comprimidos."],
+              e: "El tratamiento empírico estándar incluye cefalosporina de 3ª generación (Ceftriaxona/Cefotaxima) + ampicilina (si >50 años o factores de riesgo para Listeria) junto con dexametasona previa o concomitante para reducir secuelas neurológicas." },
+            { c: 1, q: "¿Qué hallazgo típico en el análisis citoquímico del LCR obtenido por punción lumbar confirma el diagnóstico de una Meningitis Bacteriana Aguda?",
+              o: ["Pleocitosis a expensas de neutrófilos, hiperproteinorraquia marcada e hipoglucorraquia (glucosa en LCR < 40% de la glucemia sérica).", "Pleocitosis linfocitaria con glucosa y proteínas estrictamente normales.", "Líquido clara de aspecto de 'agua de roca' con proteínas disminuidas.", "Presencia masiva de hematíes inalterados en los tres tubos."],
+              e: "La meningitis bacteriana se caracteriza por LCR turbio, aumento de presión de apertura, pleocitosis neutrófila, proteínas elevadas y consumo de glucosa (hipoglucorraquia marcada)." },
+            { c: 1, q: "Paciente con vértigo agudo de 24 horas de duración, continuo, incapacitante, asociado a cortejo vegetativo y nistagmo horizontal-rotatorio que empeora al fijar la mirada y no se modifica con los cambios posturales. La sospecha clínica inicial es:",
+              o: ["Síndrome vertiginoso de origen central (ej. isquemia de fosa posterior/cerebelosa).", "Vértigo posicional paroxístico benigno (VPPB) clásico.", "Neuritis vestibular aguda autolimitada.", "Enfermedad de Ménière en crisis hidrópica."],
+              e: "Un vértigo continuo, sin afectación auditiva y con nistagmo central (que no se agota, cambia de dirección o no se inhibe con la fijación visual) sugiere origen central (cerebelo/tronco)." },
+
+            // ================= CASO 2: INTOXICACIONES AGUDAS Y ToxidROMES =================
+            { c: "CASO CLÍNICO 2: Toxicología clínica en urgencias. Síndromes tóxicos, antídotos específicos y depuración.",
+              q: "Mujer de 25 años hallada somnolienta, con bradipnea (6 rpm), miosis puntiforme estricta y peristaltismo disminuido. Sospechas intoxicación aguda por opioides. El antídoto específico y su pauta inicial son:",
+              o: ["Naloxona intravenosa (diluyendo 0.4 mg y administrando titulando cada 2-3 min hasta respiración adecuada).", "Flumazenilo en bolo rápido de 2 mg.", "N-acetilcisteína a dosis de carga de 150 mg/kg.", "Atropina intravenosa a dosis altas."],
+              e: "La triada de bradipnea, miosis puntiforme y obnubilación sugiere opioides. El antídoto es Naloxona, titulando la dosis para evitar un síndrome de abstinencia agudo severo." },
+            { c: 2, q: "¿Qué toxíndrome caracteriza la intoxicación aguda por antidepresivos tricíclicos (TCA), organofosforados o inhibidores de la acetilcolinesterasa?",
+              o: ["Toxíndrome colinérgico (miosis, salivación, lagrimeo, broncorrea, sudoración y bradicardia).", "Toxíndrome anticolinérgico (midriasis, piel seca, hipertermia, delirio y taquicardia).", "Toxíndrome simpaticomimético (midriasis, HTA, agitación y taquicardia).", "Toxíndrome sedativo-hipnótico."],
+              e: "Los organofosforados inhiben la acetilcolinesterasa, generando exceso de acetilcolina y el toxíndrome colinérgico completo (SLUDGE: salivación, lagrimeo, micción, diarrea, emesis)." },
+            { c: 2, q: "En la intoxicación grave por organofosforados, además de la descontaminación cutánea si procede, ¿cuál es el antídoto anticolinérgico de soporte vital inmediato?",
+              o: ["Atropina intravenosa en bolos repetidos duplicando la dosis hasta conseguir la atropinización (desaparición de secreciones bronquiales y secado de la piel).", "Fisostigmina subcutánea profiláctica.", "Glucagón intravenoso a alta concentración.", "Carbón activado en dosis repetidas cada 2 horas."],
+              e: "La atropina es el antagonista competitivo de los receptores muscarínicos en la intoxicación por organofosforados; se administra agresivamente hasta lograr la atropinización clínica." },
+            { c: 2, q: "Paciente varón de 40 años que ingirió alcohol metílico (metanol) por error. Acude con alteración visual (visión borrosa en 'ventisca de nieve') y acidosis metabólica con anión gap muy elevado. Tratamiento antidótico indicado para bloquear la alcohol deshidrogenasa:",
+              o: ["Fomepizol (o etanol absoluto por vía oral/IV).", "N-acetilcisteína.", "Flumazenilo en perfusión continua.", "Azul de metileno al 1%."],
+              e: "El metanol se metaboliza por la alcohol deshidrogenasa a formaldehído y ácido fórmico (tóxicos). El Fomepizol o el Etanol compiten e inhiben esta enzima bloqueando la toxicidad." },
+            { c: 2, q: "En la intoxicación aguda por salicilatos (sobredosis de aspirina), ¿qué alteración gasométrica mixta es típica en fases iniciales del cuadro?",
+              o: ["Alcalosis respiratoria primaria (por hiperventilación central) combinada con acidosis metabólica de anión gap elevado.", "Acidosis respiratoria pura por hipoventilación alveolar.", "Alcalosis metabólica compensada con hipopotasemia severa.", "Acidosis metabólica hiperclorémica sin alteración del anión gap."],
+              e: "Los salicilatos estimulan directamente el centro respiratorio causando alcalosis respiratoria precoz, y desacoplan la fosforilación oxidativa generando acidosis metabólica con anión gap elevado." },
+            { c: 2, q: "¿Cuál es la principal indicación para realizar hemodiálisis urgente en un paciente intoxicado por salicilatos?",
+              o: ["Niveles séricos muy elevados asociados a neurotoxicidad severa (confusión, coma, convulsiones) o fracaso renal / edema pulmonar refractario.", "Ingesta estimada de menos de 1 gramo en las últimas 24 horas.", "Presencia de ligera acúfenos transitorios sin alteración del pH sérico.", "pH arterial superior a 7.50 con bicarbonato normal."],
+              e: "La hemodiálisis depura eficazmente el tóxico y corrige los trastornos severos en intoxicaciones graves por salicilatos con clínica neurológica o fracaso orgánico." },
+            { c: 2, q: "Paciente que acude tras ingesta masiva de paracetamol hace 2 horas. Asintomático. Analítica inicial con niveles plasmáticos de paracetamol situados por encima de la línea de tratamiento del nomograma de Rumack-Matthew. Actitud:",
+              o: ["Iniciar tratamiento con N-acetilcisteína (NAC) intravenosa y administrar carbón activado si la ingesta es reciente (< 1h).", "Dar de alta domiciliaria con laxantes osmóticos y control analítico en 7 días.", "Inducir el vómito mecánicamente en urgencias con agua salada.", "Administrar bicarbonato sódico para alcalinizar la orina."],
+              e: "Si los niveles caen en zona de riesgo según el nomograma, está indicada la administración de N-acetilcisteína para prevenir la insuficiencia hepática aguda fulminante." },
+            { c: 2, q: "En relación con el uso de Carbón Activado como descontaminante digestivo en intoxicaciones agudas, ¿cuál es su contraindicación absoluta?",
+              o: ["Ingesta de ácidos o álcalis corrosivos, hidrocarburos derivados del petróleo o riesgo de aspiración por alteración del nivel de conciencia sin vía aérea asegurada.", "Ingesta de paracetamol o salicilatos en las primeras 2 horas.", "Intoxicación voluntaria por sales de litio.", "Sobredosis de psicofármacos benzodiacepínicos."],
+              e: "El carbón activado está contraindicado en cáusticos (dificulta la endoscopia y no adsorbe bien), hidrocarburos (riesgo de neumonitis química aspirativa) y pacientes con vía aérea desprotegida." },
+            { c: 2, q: "¿Qué toxíndrome produce típicamente la ingestión de setas del género *Amanita phalloides* (síndrome faloidiano), caracterizado por un período de latencia prolongado (> 6 horas)?",
+              o: ["Gastroenteritis grave inicial seguida de un falso período de mejoría e insuficiencia hepatorrenal aguda fulminante a los 2-3 días.", "Cuadro alucinatorio agudo con midriasis y sequedad de piel a los 30 minutos.", "Crisis colinérgica masiva con broncorrea y salivación inmediata.", "Parálisis flácida ascendente simétrica de tipo neurítico."],
+              e: "El síndrome faloidiano tiene una latencia larga (>6h), lo que empeora el pronóstico. Cursa con clínica digestiva violenta seguida de fallo hepático y renal grave." },
+            { c: 2, q: "Ante una intoxicación aguda por litio con niveles tóxicos muy elevados y afectación neurológica central severa, ¿cuál es el procedimiento de depuración extrarrenal de elección?",
+              o: ["Hemodiálisis urgente.", "Lavado gástrico repetido cada 24 horas.", "Diuresis forzada con furosemida y suero glucosado.", "Administración oral masiva de carbón activado en multidosis."],
+              e: "El litio no se une a proteínas de forma significativa y tiene un pequeño volumen de distribución, por lo que la hemodiálisis es altamente eficaz para eliminarlo del organismo." },
+            { c: 2, q: "Paciente joven que presenta tras consumo recreativo agudo: midriasis, hipertensión arterial, taquicardia sinusal extrema, hipertermia, agitación psicomotriz y sensación de 'bichos bajo la piel' (formicaciones). Sospechas intoxicación por:",
+              o: ["Anfetaminas o cocaína (toxíndrome simpaticomimético).", "Heroína o fentanilo (toxíndrome opioide).", "Alcohol etílico en fase de embriaguez profunda.", "Carbamazepina en sobredosis crónica."],
+              e: "La hiperactividad adrenérgica (midriasis, HTA, taquicardia, hipertermia, agitación) define el toxíndrome simpaticomimético típico de estimulantes como cocaína o anfetaminas." },
+            { c: 2, q: "En la intoxicación aguda por monóxido de carbono (CO) inhalado en un incendio, la pulsioximetría convencional digital suele mostrar un valor falsamente:",
+              o: ["Normal o elevado (por la incapacidad del pulsioxímetro estándar para diferenciar la oxihemoglobina de la carboxihemoglobina).", "Muy disminuido por debajo del 50% de saturación real.", "Oscilante con picos rítmicos coincidentes con la frecuencia cardíaca.", "Incapaz de registrar señal debido a la vasoconstricción periférica."],
+              e: "El pulsioxímetro convencional lee la carboxihemoglobina como si fuera oxihemoglobina, dando un valor de SpO2 falsamente normal en pacientes gravemente intoxicados por CO." },
+            { c: 2, q: "El tratamiento de elección fundamental para revertir con rapidez la hipoxia tisular y desplazar el monóxido de carbono de la hemoglobina en una intoxicación grave por CO es:",
+              o: ["Oxígeno normobárico al 100% con mascarilla de alto flujo con reservorio (o cámara hiperbárica según criterios).", "Administración de Heliox al 50% en ventilación espontánea.", "Soporte exclusivo con aire ambiental en sala ventilada.", "Perfusión de Azul de Metileno intravenoso."],
+              e: "El tratamiento estándar es oxígeno al 100% a alto flujo para reducir la vida media de eliminación de la carboxihemoglobina, valorando cámara hiperbárica si hay criterios de gravedad." },
+            { c: 2, q: "Ante una intoxicación por monóxido de carbono, ¿cuál de los siguientes criterios clínicos se considera indicación absoluta para valorar tratamiento con Cámara Hiperbárica?",
+              o: ["Pérdida de conocimiento transitoria o mantenida, déficit neurológico focal, acidosis metabólica severa o embarazo.", "Cefalea leve aislada con nivel de COHb del 5%.", "Mareo ortostático autolimitado sin alteraciones neurológicas.", "Náuseas aisladas sin vómitos."],
+              e: "La pérdida de conciencia, el embarazo, la afectación neurológica o la acidosis severa son criterios clásicos para indicar oxigenoterapia hiperbárica en la intoxicación por CO." },
+            { c: 2, q: "¿Qué antídoto específico se emplea en la intoxicación aguda por cianuro (derivado de humos de incendios industriales o combustión de plásticos)?",
+              o: ["Hidroxicobalamina (o el kit de nitritos/tiosulfato sódico).", "N-acetilcisteína intravenosa.", "Glucagón a altas dosis.", "Flumazenilo en perfusión rápida."],
+              e: "La Hidroxicobalamina se une al cianuro formando cianocobalamina (vitamina B12), que es excretada por vía renal de forma segura, siendo el antídoto de elección en intoxicación por cianuro." },
+
+            // ================= CASO 3: INFECCIOSO, SEPSIS Y TÓRAX NO CORONARIO =================
+            { c: "CASO CLÍNICO 3: Sepsis, shock séptico, neumonía grave y patología aórtica aguda (Disección).",
+              q: "Varón de 70 años con neumonía adquirida en la comunidad que ingresa con hipotensión refractaria a la administración de 30 ml/kg de cristaloides y niveles de lactato sérico de 4.2 mmol/L. Se clasifica como:",
+              o: ["Shock séptico (según criterios Sepsis-3).", "Sepsis leve compensada sin disfunción orgánica.", "Insuciencia respiratoria aguda hipoxémica aislada sin repercusión sistémica.", "Síndrome de respuesta inflamatoria sistémica (SIRS) no infeccioso."],
+              e: "Sepsis-3 define shock séptico por la necesidad de vasopresores para mantener PAM ≥65 mmHg Y persistencia de hiperlactatemia (>2 mmol/L) a pesar de una correcta resucitación con volumen." },
+            { c: 3, q: "Según las directrices de la Campaña Sobrevivir a la Sepsis, ¿dentro de qué intervalo temporal máximo deben administrarse los antibióticos intravenosos de amplio espectro desde el reconocimiento de la sepsis?",
+              o: ["En la primera hora (idealmente tras la extracción de hemocultivos).", "En las primeras 6 horas tras la llegada a planta de hospitalización.", "En menos de 15 minutos de forma obligatoria sin esperar cultivos.", "Tras 24 horas una vez confirmada la microbiología definitiva."],
+              e: "La administración precoz de antimicrobianos en la primera hora es el factor temporal más crítico para reducir la mortalidad en pacientes con sepsis y shock séptico." },
+            { c: 3, q: "En un paciente con sospecha de Disección Aórtica Aguda tipo A de Stanford, que acude con dolor torácico desgarrador irradiado a espalda y asimetría de pulsos o soplos de insuficiencia aórtica, la prueba de imagen diagnóstica de elección rápida en urgencias es:",
+              o: ["Angio-TC toraco-abdominal con contraste intravenoso.", "Radiografía simple de tórax portátil en decúbito.", "Echocardiografía transtorácica exclusivamente sin contraste.", "Resonancia magnética nuclear de cuerpo entero."],
+              e: "El Angio-TC toraco-abdominal con contraste es la prueba de imagen de elección en urgencias por su alta sensibilidad y rapidez para diagnosticar la disección aórtica." },
+            { c: 3, q: "Objetivo hemodinámico médico inicial urgente en el manejo farmacológico de la Disección Aórtica Aguda antes de la intervención quirúrgica:",
+              o: ["Control estricto de la frecuencia cardíaca (FC < 60 lpm) y de la presión arterial sistólica (TAS entre 100-120 mmHg) usando betabloqueantes IV y vasodilatadores.", "Elevar la presión arterial sistólica por encima de 180 mmHg para asegurar la perfusión renal.", "Administrar altas dosis de dopamina y suero salino para prevenir hipotensión.", "Realizar trombolisis sistémica precoz por similitud con el infarto."],
+              e: "El tratamiento médico inicial persigue disminuir la fuerza de cizallamiento sobre la pared aórtica reduciendo drásticamente la contractilidad y la presión arterial con betabloqueantes y vasodilatadores." },
+            { c: 3, q: "¿Qué hallazgo radiológico clásico puede observarse en una radiografía simple de tórax en un paciente con Disección Aórtica Torácica?",
+              o: ["Ensanchamiento mediastínico superior (> 8 cm), aumento del botón aórtico o desviación traqueal.", "Infiltrado alveolar bilateral en 'alas de mariposa' patognomónico.", "Neumotórax total bilateral con colapso pulmonar completo.", "Derrame pleural masivo izquierdo con burbujas aéreas mediastínicas."],
+              e: "El ensanchamiento mediastínico en la radiografía simple es un signo clásico orientativo (aunque no definitivo), presente en un porcentaje elevado de disecciones aórticas." },
+            { c: 3, q: "Paciente con sospecha clínica baja-intermedia de Disección Aórtica en el que se solicita un Dímero D en Urgencias. Si el resultado del Dímero D es NEGATIVO (< 500 ng/mL), su utilidad clínica principal es:",
+              o: ["Permitir excluir de forma fiable el diagnóstico de disección aórtica debido a su altísimo valor predictivo negativo.", "Confirmar de manera incuestionable la presencia de un aneurisma disecante tipo B.", "Indicar la necesidad de realizar una intervención quirúrgica vascular inmediata.", "Obligar a repetir la analítica cada 4 horas hasta que se positivice."],
+              e: "Un Dímero D negativo en pacientes con baja o intermedia probabilidad clínica permite excluir con gran seguridad la disección aórtica por su elevado valor predictivo negativo." },
+            { c: 3, q: "Ante la sospecha de Neumonía Adquirida en la Comunidad (NAC) grave que precisa ingreso hospitalario, ¿qué escala clínica se utiliza habitualmente para estratificar el riesgo de mortalidad y decidir el destino (planta vs UCI)?",
+              o: ["Escala CURB-65 (o PSI / PORT).", "Escala de Glasgow coma.", "Escala TIMI para riesgo coronario.", "Escala de Wells para TEP."],
+              e: "La escala CURB-65 (Confusión, Urea, Frecuencia Respiratoria, Presión arterial, Edad ≥ 65) es la herramienta estándar recomendada para evaluar la gravedad de la NAC." },
+            { c: 3, q: "En relación con los criterios de ingreso en UCI de un paciente con neumonía grave, la presencia de criterios mayores según las guías incluye:",
+              o: ["Shock séptico que requiere vasopresores o insuficiencia respiratoria aguda que precisa ventilación mecánica invasiva.", "Fiebre persistente superior a 39ºC durante más de 48 horas tras iniciar antibióticos.", "Infiltrado multilobular en la radiografía de tórax con estabilidad hemodinámica.", "Edad superior a 80 años con comorbilidades estables."],
+              e: "Los criterios mayores de ingreso en UCI para neumonía son la necesidad de ventilación mecánica invasiva y el shock séptico con vasopresores." },
+            { c: 3, q: "Paciente con cuadro de dolor pleurítico agudo y disnea súbita. Se sospecha Tromboembolismo Pulmonar (TEP). Tras aplicar la regla de decisión clínica (Wells o Geneva) y resultar con probabilidad alta, la prueba diagnóstica de elección es:",
+              o: ["Angio-TC pulmonar (AngioTC de arterias pulmonares).", "Gammagrafía ósea plana.", "Radiografía de tórax portátil en bipedestación.", "Ecografía abdominal FAST."],
+              e: "El Angio-TC pulmonar es el patrón oro por imagen no invasiva en urgencias para la confirmación diagnóstica del TEP cuando la probabilidad clínica es intermedia o alta." },
+            { c: 3, q: "En un paciente con TEP masivo que cursa con inestabilidad hemodinámica grave (shock o parada cardiorrespiratoria inminente), y ante la ausencia de contraindicaciones absolutas, el tratamiento de reperfusión de elección es:",
+              o: ["Fibrinólisis sistémica con agentes trombolíticos (ej. Alteplase).", "Anticoagulación exclusiva con Heparina de Bajo Peso Molecular a dosis bajas.", "Administración de diuréticos de asa y restricción hídrica estricta.", "Colocación profiláctica de un marcapasos endocavitario temporal."],
+              e: "En el TEP masivo con inestabilidad hemodinámica, la trombolisis sistémica urgente es el tratamiento de elección para restaurar la perfusión pulmonar y salvar la vida." },
+            { c: 3, q: "Al realizar una ecografía clínica (POCUS) en un paciente con TEP masivo y cor pulmonale agudo, ¿qué hallazgo ecocardiográfico es característico?",
+              o: ["Dilatación grave del ventrículo derecho con movimiento paradójico del septo interventricular (Signo de la D).", "Hipertrofia concéntrica severa del ventrículo izquierdo con disfunción sistólica pura.", "Derrame pericárdico masivo con colapso completo de aurícula izquierda.", "Ausencia de movimiento en la aorta descendente abdominal."],
+              e: "El ecocardiograma enfocado en el shock muestra dilatación del VD, hipoquinesia de la pared libre del VD con respeto del ápex (signo de McConnell) y aplanamiento del septo." },
+            { c: 3, q: "Paciente con sospecha de Trombosis Venosa Profunda (TVP) en miembro inferior. La exploración ecográfica de compresión en POCUS demuestra que la vena femoral común o poplítea es NO COMPRESIBLE con la sonda. Esto indica:",
+              o: ["Presencia de Trombosis Venosa Profunda (TVP) en dicho segmento.", "Insuficiencia valvular venosa crónica sin trombo agudo.", "Variante anatómica normal sin significado patológico.", "Fístula arteriovenosa congénita de alto flujo."],
+              e: "El signo ecográfico fundamental y de mayor sensibilidad para el diagnóstico de TVP es la pérdida de compresibilidad de la vena explorada con el transductor." },
+            { c: 3, q: "En el tratamiento inicial de la TVP aguda proximal o el TEP estable en Urgencias, antes de pasar a anticoagulantes orales de acción directa (ACOD), se inicia habitualmente con:",
+              o: ["Anticoagulación parenteral rápida con Heparina de Bajo Peso Molecular (HBPM) o fondaparinux (o anticoagulantes directos en pauta rápida).", "Antiagregación simple con Triflusal.", "Inyección intramuscular de vitamina K a altas dosis.", "Colocación quirúrgica de un filtro de vena cava inferior de rutina."],
+              e: "El tratamiento inicial estándar del TEP/TVP estable requiere anticoagulación parenteral inmediata con HBPM o fondaparinux, o bien inicio directo con ACODs según protocolos." },
+            { c: 3, q: "Varón de 65 años con EPOC grave que acude por disnea extrema, uso de músculos accesorios y cianosis. Gasometría arterial: pH 7.25, pCO2 65 mmHg, pO2 50 mmHg, HCO3 32 mEq/L. Se interpreta como:",
+              o: ["Acidosis respiratoria aguda sobre crónica (fallo ventilatorio hipercápnico).", "Alcalosis metabólica compensada por hipovolemia.", "Acidosis metabólica pura con anión gap normal.", "Hipoxemia pura sin alteración del intercambio carbónico."],
+              e: "El pH bajo con pCO2 muy elevada y bicarbonato elevado refleja una acidosis respiratoria aguda sobre un fondo crónico (paciente EPOC reténor crónico con agudización)." },
+            { c: 3, q: "El soporte ventilatorio de primera línea indicado en el paciente EPOC anterior con acidosis respiratoria moderada-severa (pH 7.25) y sin contraindicaciones absolutas es:",
+              o: ["Ventilación Mecánica No Invasiva (VMNI) en modalidad BiPAP.", "Intubación orotraqueal inmediata obligatoria sin prueba previa de VMNI.", "Oxigenoterapia exclusiva con mascarilla Venturi al 50%.", "Administración de heliox mediante campana cefálica."],
+              e: "La VMNI (BiPAP) es el tratamiento de primera línea en la agudización grave de EPOC con acidosis respiratoria (pH entre 7.25 y 7.35), reduciendo la necesidad de intubación y mortalidad." },
+
+            // ================= CASO 4 (RESERVA): MISCELÁNEA, TRAUMA Y URGENCIAS QUIRÚRGICAS =================
+            { c: "CASO CLÍNICO 4 (RESERVA): Miscelánea de urgencias médico-quirúrgicas, politrauma y patología abdominal aguda.",
+              q: "Paciente que acude por dolor abdominal agudo localizado en fosa ilíaca derecha, anorexia, febrícula y signo de Blumberg positivo. Diagnóstico de sospecha:",
+              o: ["Apendicitis aguda.", "Diverticulitis aguda de colon sigmoides.", "Colecistitis aguda litiásica.", "Pancreatitis aguda biliar necrotizante."],
+              e: "El cuadro clínico clásico de dolor en FID, defensa, Blumberg positivo y febrícula sugiere fuertemente apendicitis aguda." },
+            { c: 4, q: "En la apendicitis aguda complicada con peritonitis localizada o absceso, o en cuadros dudosos complejos, ¿qué prueba de imagen diagnóstica ofrece mayor rendimiento en el adulto en Urgencias?",
+              o: ["TC abdominal con contraste intravenoso (o ecografía si perfil delgado/niños/gestantes).", "Radiografía simple de abdomen en decúbito supino.", "Tránsito intestinal baritado urgente.", "Gammagrafía con leucocitos marcados."],
+              e: "El TC abdominal con contraste es la prueba de elección para confirmar la apendicitis aguda y descartar complicaciones (perforación, absceso) en adultos." },
+            { c: 4, q: "Ante un paciente con dolor abdominal agudo intenso, desproporcionado respecto a los hallazgos anodinos de la exploración física (abdomen blando, no doloroso a la palpación profunda inicial), con antecedentes de fibrilación auricular no anticoagulada, debes sospechar:",
+              o: ["Isquemia mesentérica aguda.", "Obstrucción intestinal por vólvulo de ciego.", "Cólico biliar simple.", "Apendicitis retrocecal."],
+              e: "El dolor abdominal intenso desproporcionado con una exploración física inicialmente anodina en un paciente cardiópata (FA) es el sello clínico de la isquemia mesentérica aguda." },
+            { c: 4, q: "Varón de 50 años con dolor epigástrico intenso en 'cinturón' que se irradia a la espalda, acompañado de vómitos incoercibles. Lipasa sérica elevada más de 3 veces el límite superior normal. Diagnóstico:",
+              o: ["Pancreatitis aguda.", "Infarto agudo de miocardio de cara inferior.", "Ulcera péptica perforada.", "Disección aórtica abdominal."],
+              e: "El dolor en cinturón irradiado a espalda junto a elevación significativa de amilasa y/o lipasa sérica define la pancreatitis aguda." },
+            { c: 4, q: "Para evaluar la gravedad precozmente en la pancreatitis aguda al ingreso en urgencias, ¿cuál de las siguientes escalas o criterios clínicos sencillos se emplea habitualmente?",
+              o: ["Escala de Ranson (al ingreso y a las 48h) o puntuación APACHE II / BISAP.", "Escala de Glasgow Coma.", "Escala de Wells para TEP.", "Escala CURB-65 para neumonía."],
+              e: "Los criterios de Ranson, el score BISAP o APACHE II son herramientas clásicas para estratificar la gravedad y predecir la morbimortalidad en la pancreatitis aguda." },
+            { c: 4, q: "En un paciente con hemorragia digestiva alta (HDA) masiva por úlcera péptica sangrante, con inestabilidad hemodinámica grave a pesar de reanimación inicial, la actitud endoscópica y terapéutica prioritaria es:",
+              o: ["Endoscopia digestiva alta urgente (idealmente en las primeras 12-24 horas, o antes si inestabilidad) para tratamiento hemostático endoscópico.", "Suspender toda fluidoterapia y esperar 48 horas sin intervenir.", "Realizar una colonoscopia urgente para descartar origen bajo.", "Administración de enemas de limpieza urgente."],
+              e: "La endoscopia urgente es diagnóstica y terapéutica (inyección, clips, coagulación) en la HDA, debiendo realizarse de forma precoz tras la estabilización hemodinámica." },
+            { c: 4, q: "En el manejo farmacológico pre-endoscópico de una hemorragia digestiva alta por ulcus gastroduodenal, se recomienda iniciar perfusión intravenosa continua de:",
+              o: ["Inhibidores de la Bomba de Protones (IBP, ej. Omeprazol en bolo de 80 mg seguido de 8 mg/h).", "Octreótide en infusión continua exclusiva.", "Somatostatina en bolos cada 12 horas.", "Antiácidos orales en suspensión no absorbible."],
+              e: "El tratamiento con IBP en bolos y perfusión continua reduce la acidez gástrica, favoreciendo la estabilidad del coágulo hemostático previo a la endoscopia." },
+            { c: 4, q: "Mujer gestante de 34 semanas sufre traumatismo abdominal leve por accidente de tráfico sin lesiones óseas evidentes. Acude monitorizada. Tras 4 horas de registro cardiotocográfico (RCT), se objetivan contracciones uterinas regulares y dolor abdominal. Sospechas:",
+              o: ["Desprendimiento prematuro de placenta normoinserta (Abruptio placentae).", "Trabajo de parto pretérmino fisiológico autolimitado.", "Rotura uterina inminente por cicatriz previa.", "Apendicitis aguda gestacional."],
+              e: "El traumatismo abdominal en la gestante puede desencadenar un desprendimiento prematuro de placenta (abruptio), que cursa con dolor uterino persistente, hipertonía y dinámica." },
+            { c: 4, q: "En la reanimación cardiopulmonar de una gestante de 32 semanas en parada cardiorrespiratoria en Urgencias, ¿qué maniobra física es fundamental realizar simultáneamente para mejorar el retorno venoso?",
+              o: ["Desplazamiento manual del útero grávido hacia el flanco izquierdo (para liberar la cava inferior).", "Colocar a la paciente en posición de Trendelenburg invertida a 45 grados.", "Realizar compresión directa sobre el fondo uterino con ambas manos.", "Colocar un cinturón pélvico de compresión rígido."],
+              e: "La compresión aórtica y de la VCI por el útero grávido impide el retorno venoso; el desplazamiento manual uterino izquierdo es obligatorio durante la RCP en gestantes del tercer trimestre." },
+            { c: 4, q: "Si la PCR en la gestante anterior no responde a maniobras avanzadas de reanimación tras 4-5 minutos, la indicación quirúrgica urgente en el box de urgencias es:",
+              o: ["Cesárea perimortem (histerotomía de emergencia) para salvar al feto y mejorar la supervivencia materna al descomprimir la cava.", "Laparotomía exploradora reglada en quirófano central tras 30 minutos más de espera.", "Inducción farmacológica del parto mediante oxitocina intravenosa.", "Toracotomía de reanimación con pinzamiento aórtico."],
+              e: "La cesárea perimortem realizada a los 4-5 minutos de la PCR materna mejora drásticamente el retorno venoso de la madre (favoreciendo el RCE) y ofrece opciones de supervivencia al feto." },
+            { c: 4, q: "Paciente que acude por quemadura química ocular por salpicadura de ácido sulfúrico en un laboratorio. El paso inicial y de máxima urgencia antes de cualquier otra exploración es:",
+              o: ["Lavado ocular inmediato y abundante con suero salino o agua corriente durante al menos 15-30 minutos.", "Aplicación inmediata de gotas anestésicas con corticoides y colirio antibiótico.", "Neutralizar el ácido con una solución básica débil (hidróxido sódico diluido).", "Oclusión ocular estricta con parche compresivo y derivación diferida."],
+              e: "El lavado ocular inmediato y prolongado con agua o suero fisiológico es la medida crítica primordial para minimizar el daño tisular químico en quemaduras oculares." },
+            { c: 4, q: "Ante un traumatismo ocular penetrante con sospecha de cuerpo extraño intraocular o rotura del globo ocular, ¿cuál de las siguientes actuaciones está estrictamente CONTRAINDICADA en la exploración de Urgencias?",
+              o: ["Realizar presión sobre el globo ocular o instilar colirios con lentes de contacto / maniobras que aumenten la presión intraocular.", "Medir la agudeza visual básica por separado en cada ojo.", "Iluminar suavemente el ojo con luz tangencial.", "Solicitar interconsulta urgente al servicio de Oftalmología."],
+              e: "Cualquier presión sobre el globo ocular ante una sospecha de rotura ocular puede provocar la salida de contenido intraocular, estando totalmente contraindicada." },
+            { c: 4, q: "En un paciente con hipotermia accidental grave (temperatura central < 30ºC) que presenta bradicardia extrema e inestabilidad hemodinámica, ¿qué ritmo de reanimación y administración de fármacos se recomienda según las guías ERC?",
+              o: ["Modificar los intervalos de administración de fármacos (duplicar tiempos o suspenderlos si T < 30ºC) y extremar la suavidad en movilizaciones para evitar fibrilación ventricular.", "Administrar dosis triples de adrenalina en bolo directo cada minuto.", "Realizar desfibrilaciones seriadas a máxima energía sin calentar al paciente.", "Suspender todo tipo de soporte vital si la temperatura baja de 28ºC."],
+              e: "Con temperatura < 30ºC el metabolismo de fármacos está alterado y el miocardio es muy irritable; se recomienda espaciar los fármacos y evitar movimientos bruscos que induzcan FV." },
+            { c: 4, q: "Paciente varón que acude por mordedura de serpiente autóctona (víbora europea - *Vipera aspis*) en extremidad superior. Presenta dolor local, edema progresivo y ligera tumefacción. ¿Cuál es la actitud terapéutica inicial correcta?",
+              o: ["Inmovilizar la extremidad afectada, mantener reposo, limpieza de herida, profilaxis antitetánica y valoración de suero antiofídico si hay criterios de gravedad.", "Realizar incisiones longitudinales en cruz sobre los colmillos y succionar el veneno con la boca.", "Colocar un torniquete arterial apretado en la raíz de la extremidad.", "Administrar antibióticos profilácticos por vía oral y dar de alta inmediata."],
+              e: "El manejo de la mordedura de víbora incluye reposo, inmovilización, asepsia, tétanos y uso de suero antiofídico solo ante signos de toxicidad sistémica o edema extenso progresivo; los torniquetes y cortes están contraindicados." },
+            { c: 4, q: "Ante una agresión sexual reciente en las últimas 72 horas atendida en Urgencias, además de la atención psicológica y la recogida de muestras médico-legales protocolizadas, es prioridad fundamental realizar profilaxis frente a:",
+              o: ["Infecciones de transmisión sexual (ITS), anticoncepción de urgencia (si procede) y profilaxis post-exposición (PPE) frente al VIH y hepatitis B.", "Intervención quirúrgica plástica reparadora inmediata de las lesiones leves.", "Administración de dosis altas de corticoides intravenosos profilácticos.", "Aislamiento estricto en habitación de presión negativa durante 14 días."],
+              e: "El protocolo de agresión sexual exige una atención integral multidisciplinar que incluye recogida de vestigios, profilaxis de ITS, anticoncepción de urgencia y profilaxis post-exposición al VIH." }
+        ];
+
+        // Algoritmo de Fisher-Yates para barajar el array de opciones de cada pregunta
+        function shuffleOptions(question) {
+            let optionsMeta = question.o.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === 0 // Siempre la posición 0 del array original es la correcta
+            }));
+            
+            for (let i = optionsMeta.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsMeta[i], optionsMeta[j]] = [optionsMeta[j], optionsMeta[i]];
+            }
+            return optionsMeta;
+        }
+
+        const form = document.getElementById('exam-form');
+        const letras = ['A', 'B', 'C', 'D'];
+
+        // Renderizado dinámico e inserción de encabezados de casos
+        let caseHeaderRendered = "";
+
+        db.forEach((p, index) => {
+            if (p.c && p.c !== caseHeaderRendered && typeof p.c === "string") {
+                const caseDiv = document.createElement('div');
+                caseDiv.className = 'case-header';
+                caseDiv.innerHTML = `<h2>${p.c}</h2>`;
+                form.appendChild(caseDiv);
+                caseHeaderRendered = p.c;
+            }
+
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            
+            let html = `<h3>Pregunta ${index + 1}. ${p.q}</h3><ul class="options">`;
+            
+            const shuffledOptions = shuffleOptions(p);
+            let indexCorrecta;
+
+            shuffledOptions.forEach((optMeta, idx) => {
+                const letra = letras[idx];
+                if (optMeta.isCorrect) indexCorrecta = letra;
+                
+                html += `
+                    <li>
+                        <label id="label-${index}-${letra}">
+                            <input type="radio" name="q${index}" value="${letra}" data-correct="${optMeta.isCorrect}">
+                            <strong>${letra})</strong> ${optMeta.text}
+                        </label>
+                    </li>
+                `;
+            });
+            
+            html += `</ul>
+                     <div id="exp-${index}" class="explanation">
+                         <strong>Respuesta correcta: ${indexCorrecta}.</strong> ${p.e}
+                     </div>`;
+            
+            qDiv.innerHTML = html;
+            form.appendChild(qDiv);
+        });
+
+        // Lógica de corrección
+        function corregir() {
+            let puntuacion = 0;
+            let fallos = 0;
+            let sinContestar = 0;
+
+            db.forEach((p, index) => {
+                const opciones = document.getElementsByName(`q${index}`);
+                let seleccion = null;
+                let seleccionCorrecta = false;
+                
+                opciones.forEach(opt => {
+                    const letra = opt.value;
+                    const label = document.getElementById(`label-${index}-${letra}`);
+                    const esCorrecta = opt.getAttribute('data-correct') === "true";
+
+                    label.classList.remove('correct-anim', 'incorrect-anim'); 
+                    opt.disabled = true; 
+                    
+                    if (opt.checked) {
+                        seleccion = letra;
+                        if (esCorrecta) seleccionCorrecta = true;
+                    }
+                    if (esCorrecta) label.classList.add('correct-anim');
+                });
+
+                if (!seleccion) {
+                    sinContestar++;
+                } else if (!seleccionCorrecta) {
+                    fallos++;
+                    document.getElementById(`label-${index}-${seleccion}`).classList.add('incorrect-anim');
+                } else {
+                    puntuacion++;
+                }
+                document.getElementById(`exp-${index}`).style.display = 'block';
+            });
+
+            // Cálculo tipo BOE: Acierto +1, Fallo -0.25
+            const notaFinal = (puntuacion * 1) - (fallos * 0.25);
+            const notaNormalizada = notaFinal < 0 ? 0 : notaFinal;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alert(`--- SIMULACRO 3 FINALIZADO ---\n\nAciertos: ${puntuacion}\nErrores: ${fallos}\nSin contestar: ${sinContestar}\n\nPUNTUACIÓN TOTAL (Criterio BOE): ${notaNormalizada.toFixed(2)} sobre 60 posibles.\n\nRevisa las explicaciones debajo de cada pregunta.`);
+            }, 300);
+        }
+    </script>
+
+    <!-- Botón opcional MSF -->
+    <div style="text-align: center; margin-top: 50px; padding: 25px; background-color: #fdfbf7; border: 2px solid #e84118; border-radius: 8px;">
+        <h3 style="margin-top: 0; color: #c23616;">¿Te ha sido útil este simulacro?</h3>
+        <p style="font-size: 0.95em; color: #2f3640;">Este proyecto es 100% gratuito. Si te ha servido de ayuda en tu preparación, te invito a transformar ese valor en una donación directa y opcional a Médicos Sin Fronteras.</p>
+        <a href="https://www.msf.es/que-puedo-hacer-yo/donativo" target="_blank" style="display: inline-block; background-color: #e84118; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; transition: 0.3s;">Hacer un donativo a MSF</a>
+    </div>
+
+</body>
+</html>

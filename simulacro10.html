@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulacro 10: Interpretación del Electrocardiograma en Urgencias</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #1e272e; line-height: 1.5; padding: 20px; max-width: 950px; margin: auto; }
+        .header { text-align: center; border-bottom: 4px solid #2c3e50; margin-bottom: 25px; padding-bottom: 10px; }
+        .header h1 { color: #2d3436; margin: 0; }
+        .case-header { background-color: #2c3e50; color: white; padding: 15px; border-radius: 6px; margin-top: 40px; margin-bottom: 20px; }
+        .case-header h2 { margin: 0; font-size: 1.3em; }
+        .question { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .question h3 { margin-top: 0; font-size: 1.05em; color: #2d3436; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 8px; }
+        .options label { display: block; padding: 10px 15px; border: 1px solid #dfe6e9; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+        .options label:hover { background-color: #f1f2f6; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.1); }
+        .btn-container { text-align: center; margin-top: 40px; margin-bottom: 40px; }
+        .btn { background-color: #2c3e50; color: white; border: none; padding: 15px 35px; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #1a252f; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background-color: #ebedef; border-left: 4px solid #2c3e50; border-radius: 4px; font-size: 0.9em; }
+        .correct-anim { border-color: #00b894 !important; background-color: #e8f8f5 !important; font-weight: bold; color: #00b894; }
+        .incorrect-anim { border-color: #d63031 !important; background-color: #fceaea !important; color: #d63031; text-decoration: line-through; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Simulacro 10: Electrocardiograma en Urgencias</h1>
+        <p>Prueba Práctica: 4 Casos Clínicos (60 preguntas). Las opciones se barajan aleatoriamente.</p>
+    </div>
+
+    <form id="exam-form"></form>
+
+    <div class="btn-container">
+        <button type="button" class="btn" onclick="corregir()">Finalizar Simulacro y Ver Resultados</button>
+    </div>
+
+    <script>
+        const db = [
+            // ================= CASO 1: BASES, RITMO, FRECUENCIA Y EJE ELÉCTRICO =================
+            { c: "CASO CLÍNICO 1: Fundamentos del ECG, cálculo de frecuencia cardíaca, eje eléctrico y bloqueos de rama.",
+              q: "En un electrocardiograma estándar registrado a una velocidad de papel de 25 mm/s, ¿cuánto tiempo representa un cuadradito pequeño (1 milímetro horizontal)?",
+              o: ["0,04 segundos (40 milisegundos).", "0,10 segundos.", "0,50 segundos.", "1 segundo exacto."],
+              e: "A la velocidad estándar de 25 mm/s, cada milímetro horizontal (un cuadradito) equivale a 0,04 segundos, y cada cuadro grande (5 mm) a 0,20 segundos." },
+            { c: 1, q: "¿Cómo se calcula la frecuencia cardíaca en un ECG de ritmo regular contando el número de cuadrados grandes (de 5 mm) entre dos ondas R consecutivas?",
+              o: ["Dividiendo 1.500 entre el número de cuadraditos pequeños (o 300 entre el número de cuadros grandes).", "Multiplicando por 10 el número de complejos en 1 segundo.", "Sumando 60 a la distancia en milímetros.", "Multiplicando por 6 la frecuencia respiratoria."],
+              e: "La regla rápida para ritmos regulares es dividir 300 entre el número de cuadros grandes entre R y R (o 1.500 entre el número de cuadraditos pequeños)." },
+            { c: 1, q: Ante un ritmo cardíaco completamente irregular (como en la Fibrilación Auricular), ¿cómo se calcula la frecuencia cardíaca media en una tira de ECG estándar de 10 segundos?",
+              o: ["Contando el número total de complejos QRS en la tira de 10 segundos y multiplicándolo por 6.", "Contando los latidos en 2 segundos y multiplicándolos por 60.", "Midiendo la distancia entre el primer y el último latido exclusivamente.", "Dividiendo 300 entre el número de cuadros grandes del primer latido."],
+              e: "En ritmos irregulares se cuenta el número total de QRS en una tira de 10 segundos y se multiplica por 6 para obtener los latidos por minuto medios." },
+            { c: 1, q: "En la determinación rápida del eje eléctrico del QRS mediante el plano frontal, si el complejo QRS es predominantemente positivo en la derivación I y predominantemente positivo (isodifásico o positivo) en aVF, el eje eléctrico se encuentra en:",
+              o: ["Rango normal (entre 0º y +90º).", "Desviación extrema del eje (entre -90º y -180º).", "Desviación izquierda (entre 0º y -90º).", "Desviación derecha (entre +90º y +180º)."],
+              e: "Si I es positivo (+) y aVF es positivo (+), el eje se sitúa en el cuadrante normal inferior derecho/izquierdo (0º a +90º)." },
+            { c: 1, q: "Si el complejo QRS es predominantemente positivo en la derivación I y predominantemente NEGATIVO en la derivación aVF, nos encontramos ante:",
+              o: ["Desviación izquierda del eje (entre 0º y -90º).", "Desviación derecha del eje.", "Eje normal absoluto.", "Eje indeterminado."],
+              e: "Con derivación I positiva (+) y aVF negativa (-), el eje se desvía hacia la izquierda (0º a -90º), asociado a hipertrofia de VI, HARI o IAM inferior." },
+            { c: 1, q: "¿Qué patologías o situaciones clínicas se asocian típicamente con una Desviación Derecha del eje eléctrico (I negativo, aVF positivo)?",
+              o: ["Hipertrofia ventricular derecha, EPOC, tromboembolismo pulmonar e IAM anteroseptal.", "Obesidad mórbida y embarazo avanzado.", "Bloqueo anterior izquierdo exclusivo.", "Insuficiencia aórtica aislada."],
+              e: "La desviación derecha del eje se asocia a patologías que sobrecargan o dañan el ventrículo derecho (EPOC, TEP, HVD)." },
+            { c: 1, q: "¿Cuál es el criterio electrocardiográfico clásico de Bloqueo Completo de Rama Derecha (BCRD)?",
+              o: ["QRS ancho (≥ 120 ms) con morfología en 'orejas de conejo' o rSR' en V1-V2 y onda S ancha y profunda en I y V6.", "QRS estrecho con ondas T picudas en cara inferior.", "Desviación extrema del eje a la izquierda con ondas Q profundas en II, III y aVF.", "Ausencia completa de onda P en todo el trazado."],
+              e: "El BCRD muestra un QRS ensanchado (≥ 120 ms) con patrón rSR' (orejas de conejo) en precordiales derechas (V1-V2) y S empastada en V6." },
+            { c: 1, q: "¿Cuál es el criterio electrocardiográfico clásico de Bloqueo Completo de Rama Izquierda (BCRI)?",
+              o: ["QRS ancho (≥ 120 ms) con ondas R anchas, melladas o en meseta en V5-V6, y ausencia de onda Q en dichas derivaciones, con QS o rS en V1.", "Patrón rSR' exclusivo en V1 sin afectación de V6.", "Eje eléctrico superior a +180 grados.", "Ondas Delta precoces."],
+              e: "El BCRI presenta un QRS ancho con melladuras en V5-V6, ondas R melladas sin onda Q y predominio negativo en V1." },
+            { c: 1, q: "En presencia de un Bloqueo Completo de Rama Izquierda (BCRI) nuevo o presumiblemente nuevo en un paciente con dolor torácico agudo en urgencias, la actitud clínica debe ser:",
+              o: ["Tratarlo como un equivalente de IAMCEST (código infarto) con indicación de reperfusión urgente.", "Considerarlo un hallazgo benigno sin importancia clínica.", "Dar de alta domiciliaria con antiácidos.", "Realizar una analítica de orina seriada."],
+              e: "El BCRI de nueva o desconocida aparición en un paciente con clínica isquémica se considera equivalente a elevación del ST (IAMCEST)." },
+            { c: 1, q: "¿Cómo se define el intervalo PR normal en el electrocardiograma y qué duración estimada tiene?",
+              o: ["Desde el inicio de la onda P hasta el inicio del complejo QRS; su duración normal es de 0,12 a 0,20 segundos (3 a 5 cuadraditos).", "Desde el final del QRS hasta el final de la onda T.", "Exactamente 0,50 segundos fijos.", "Desde la onda S hasta la onda U."],
+              e: "El intervalo PR normal mide entre 0,12 y 0,20 s (3-5 cuadraditos pequeños), reflejando el tiempo de conducción auriculoventricular." },
+            { c: 1, q: "Un intervalo PR prolongado de forma constante superior a 0,20 segundos en todos los latidos, con conducción auriculoventricular conservada (cada P conduce a un QRS), define el:",
+              o: ["Bloqueo Auriculoventricular de primer grado.", "Bloqueo A-V de segundo grado tipo Mobitz I.", "Bloqueo A-V completo de tercer grado.", "Síndrome de Brugada."],
+              e: "El BAV de primer grado alarga el PR (> 0,20 s) de forma fija sin bloquear ningún latido." },
+            { c: 1, q: "El Bloqueo Auriculoventricular de segundo grado tipo I (Mobitz I o Luciani-Wenckebach) se caracteriza electrocardiográficamente por:",
+              o: ["Alargamiento progresivo del intervalo PR hasta que una onda P se bloquea (no es seguida de QRS), repitiéndose el ciclo.", "Bloqueo intermitente de ondas P sin ningún cambio previo en el intervalo PR.", "Ausencia total de relación entre ondas P y QRS.", "PR corto constante con onda delta."],
+              e: "El Mobitz I muestra alargamiento progresivo del PR hasta que una P no conduce (fenómeno de Wenckebach)." },
+            { c: 1, q: "¿Cómo se diferencia el Bloqueo Auriculoventricular de segundo grado tipo II (Mobitz II)?",
+              o: ["Las ondas P se bloquean de forma súbita sin que exista un alargamiento previo del intervalo PR (PR constante antes de la pausa).", "Los intervalos PR se acortan progresivamente hasta el infinito.", "No existen ondas P identificables.", "El ritmo ventricular es siempre superior a 150 lpm."],
+              e: "El Mobitz II se caracteriza por el bloqueo súbito de una onda P sin alargamiento progresivo previo del PR; suele ser inestable y requerir marcapasos." },
+            { c: 1, q: "El Bloqueo Auriculoventricular de tercer grado (Completo) se define en el ECG por:",
+              o: ["Disociación auriculoventricular completa: las ondas P y los complejos QRS marchan a su propio ritmo de forma independiente, siendo la frecuencia auricular mayor que la ventricular.", "Conducción 1:1 con PR de 0,10 segundos.", "Bloqueo alternante de una de cada diez ondas P.", "Ausencia absoluta de actividad auricular con fibrilación."],
+              e: "En el BAV completo hay total disociación entre aurículas y ventrículos (disociación AV), con ritmo de escape lento." },
+            { c: 1, q: "En la evaluación sistemática de un ECG, ¿qué mide el intervalo QT corregido (QTc) y qué riesgo clínico implica su prolongación extrema?",
+              o: ["Mide la duración total de la despolarización y repolarización ventricular; su prolongación excesiva predispone a la taquicardia ventricular maligna 'Torsades de Pointes'.", "Mide exclusivamente la velocidad de conducción del nodo sinusal.", "Valora el tamaño de la aurícula derecha.", "Indica la presencia de hiperpotasemia leve."],
+              e: "El QTc prolongado evalúa alteraciones en la repolarización ventricular, asociándose al riesgo de Torsades de Pointes." },
+
+            // ================= CASO 2: CARDIOPATÍA ISQUÉMICA Y SÍNDROMES CORONARIOS =================
+            { c: "CASO CLÍNICO 2: Alteraciones electrocardiográficas en el infarto agudo de miocardio, localizaciones y patrones isquémicos.",
+              q: "Paciente que acude por dolor torácico con elevación persistente del segmento ST cóncava superior o convexa ('en lomo de delfín') en derivaciones II, III y aVF. Se sospecha IAM de localización:",
+              o: ["Inferior (cara diafragmática).", "Anteroseptal extenso.", "Lateral alto.", "Posterior basal."],
+              e: "Las derivaciones II, III y aVF exploran la cara inferior del ventrículo izquierdo." },
+            { c: 2, q: "Si la elevación del segmento ST se objetiva en las derivaciones V1 a V4, la localización anatómica del infarto agudo de miocardio es:",
+              o: ["Anterior (o anteroseptal).", "Inferior puro.", "Lateral estricto.", "Posterior aislado."],
+              e: "Las derivaciones precordiales V1-V4 exploran la región anterior y septal del ventrículo izquierdo (arteria descendente anterior)." },
+            { c: 2, q: "Las derivaciones I, aVL, V5 y V6 exploran fundamentalmente la cara del ventrículo izquierdo denominada:",
+              o: ["Lateral (alto y bajo).", "Inferior.", "Septal profunda.", "Posterior."],
+              e: "I, aVL, V5 y V6 reflejan la actividad eléctrica de la pared lateral del ventrículo izquierdo." },
+            { c: 2, q: "Ante un infarto agudo de miocardio de cara inferior (II, III, aVF), ¿qué derivaciones especulares o recíprocas suelen mostrar descenso del segmento ST?",
+              o: ["Derivaciones altas y derechas / cara lateral alta (I y aVL).", "Derivaciones V1 a V3 exclusivamente.", "Derivaciones V7 a V9.", "Derivaciones aVR únicamente."],
+              e: "El IAM inferior produce elevación en II, III y aVL, y cambios recíprocos (descenso del ST) en I y aVL." },
+            { c: 2, q: "En el IAM posterior (dorsal) aislado, ¿cuál es el hallazgo electrocardiográfico característico que se observa en las derivaciones convencionales V1 a V3?",
+              o: ["Descenso del segmento ST, ondas R altas y prominentes (imagen en espejo de la onda Q) y ondas T picudas positivas.", "Elevación masiva del segmento ST con ondas Q profundas.", "Bloqueo completo de rama derecha definitivo.", "Aplanamiento total de la línea de base."],
+              e: "El infarto posterior se manifiesta en V1-V3 como un descenso del ST y ondas R altas (espejo de la onda Q posterior)." },
+            { c: 2, q: "Para confirmar con certeza un infarto posterior agudo, ¿qué derivaciones posteriores adicionales deben colocarse en la espalda del paciente?",
+              o: ["V7, V8 y V9 (en el 5º espacio intercostal línea axilar posterior, media y paravertebral).", "V3R, V4R y V5R.", "V1L y V2L.", "Derivaciones torácicas derechas altas."],
+              e: "Las derivaciones V7, V8 y V9 registran directamente la cara posterior, mostrando la elevación del ST." },
+            { c: 2, q: "Ante un IAM inferior en el que se objetiva elevación del segmento ST en la derivación V4R, debemos sospechar inmediatamente la afectación concomitante de:",
+              o: ["Ventrículo derecho.", "Aurícula izquierda.", "Septum interventricular basal.", "Tronco común de la coronaria izquierda."],
+              e: "La elevación del ST en V4R es el signo electrocardiográfico más sensible y específico de infarto de ventrículo derecho asociado al IAM inferior." },
+            { c: 2, q: "¿Cómo evoluciona cronológicamente el electrocardiograma clásico en un infarto agudo de miocardio con elevación del ST no reperfundido en las primeras horas/días?",
+              o: ["1º Ondas T picudas hiperagudas -> 2º Elevación del ST -> 3º Aparición de ondas Q de necrosis y negativización de ondas T -> 4º Normalización o persistencia de la onda Q.", "1º Aparición de ondas U gigantes -> 2º Descenso del ST -> 3º Bradicardia sinusal.", "1º Bloqueo completo de rama -> 2º Normalización instantánea a los 5 minutos.", "1º Fibrilación ventricular espontánea."],
+              e: "La evolución clásica muestra T hiperagudas, elevación del ST, aparición de ondas Q patológicas de necrosis e inversión de la onda T." },
+            { c: 2, q: "¿Qué define electrocardiográficamente a una 'onda Q patológica' de necrosis miocárdica?",
+              o: ["Una duración superior a 0,04 segundos (1 mm) o una profundidad mayor de 1/4 o 1/3 de la altura total del complejo QRS en esa derivación.", "Cualquier onda Q pequeña presente en derivación III o aVR.", "Una onda Q exclusivamente en derivación V1.", "Un retraso en la inscripción de la onda R."],
+              e: "Las ondas Q patológicas indican tejido necrótico irreversible y se definen por su anchura (≥ 40 ms) y profundidad relativa." },
+            { c: 2, q: "En un paciente con dolor torácico, la presencia de ondas T negativas simétricas, profundas y picudas en múltiples derivaciones precordiales (Patrón de Wellens) sugiere una lesión crítica de:",
+              o: ["La arteria descendente anterior proximal (estenosis severa proximal de la ADA), con alto riesgo de IAM anterior inminente.", "La arteria coronaria derecha distal.", "La arteria circunfleja distal.", "El tronco de la pulmonar."],
+              e: "El síndrome de Wellens (ondas T invertidas profundas en V2-V3) es un signo de alto riesgo de oclusión inminente de la descendente anterior proximal." },
+            { c: 2, q: "¿Cómo se diferencian electrocardiográficamente los cambios de la repolarización en la pericarditis aguda respecto a un IAMCEST?",
+              o: ["En la pericarditis la elevación del ST es difusa, cóncava hacia arriba, afecta a múltiples caras sin ondas Q ni recíprocas, y presenta descenso del segmento PR.", "En la pericarditis hay ondas Q profundas necróticas en V1-V6.", "El IAMCEST nunca muestra elevación del ST.", "La pericarditis produce un acortamiento extremo del intervalo QT."],
+              e: "La pericarditis cursa con elevación cóncava difusa del ST, descenso del PR y ausencia de recíprocos o ondas Q, a diferencia del infarto." },
+            { c: 2, q: "El hallazgo electrocardiográfico de un intervalo QT muy prolongado asociado a una taquicardia ventricular polimorfa en la que los complejos QRS parecen 'girar' sobre la línea isoeléctrica se denomina:",
+              o: ["Torsades de Pointes (Taquicardia helicoidal).", "Fibrilación auricular lenta.", "Aleteo ventricular puro.", "Ritmo idioventricular acelerado."],
+              e: "La taquicardia ventricular polimorfa con torsión de puntas (Torsades de Pointes) se desencadena típicamente sobre un QT prolongado." },
+            { c: 2, q: "¿Cuál es el tratamiento farmacológico intravenoso inmediato de urgencia para un paciente en parada cardiorrespiratoria por Torsades de Pointes refractario?",
+              o: ["Sulfato de magnesio intravenoso (1-2 gramos en bolo rápido).", "Cloruro cálcico al 10%.", "Atropina a altas dosis.", "Digoxina en impregnación."],
+              e: "El sulfato de magnesio intravenoso es el tratamiento de elección para revertir y prevenir las recaídas en el Torsades de Pointes." },
+            { c: 2, q: "En un paciente con intoxicación aguda por digoxina, ¿qué hallazgo electrocardiográfico clásico puede observarse en la repolarización (cubeta digitálica)?",
+              o: ["Descenso del segmento ST cóncavo hacia abajo con morfología 'en cubeta' o 'en bigote de Dalí' en derivaciones con R prominente.", "Elevación masiva del ST en cara anterior.", "Ondas Q gigantes en V1-V6.", "Acortamiento extremo del PR."],
+              e: "La impregnación digitálica produce el clásico descenso del ST cóncavo (cubeta digitálica) que no indica necesariamente toxicidad aguda." },
+            { c: 2, q: "¿Qué alteración electrocardiográfica grave produce la hipercalcemia moderada-severa?",
+              o: ["Acortamiento marcado del intervalo QT (por acortamiento del segmento ST).", "Prolongación extrema del intervalo QT con ondas U gigantes.", "Ensanchamiento masivo del complejo QRS con ondas T picudas.", "Aparición sistemática de ondas Delta."],
+              e: "La hipercalcemia acorta la repolarización ventricular acortando significativamente el segmento ST y el intervalo QT." },
+
+            // ================= CASO 3: ARRITMIAS Y TRASTORNOS DE LA CONDUCCIÓN =================
+            { c: "CASO CLÍNICO 3: Arritmias supraventriculares, ventriculares, bloqueos y canales iónicos electrocardiográficos.",
+              q: "Paciente que acude por palpitaciones rápidas regulares de inicio brusco. El ECG muestra una taquicardia de complejo estrecho (QRS < 120 ms) a 180 lpm, sin ondas P visibles distinguibles o con P retrógradas inscritas al final del QRS. Diagnóstico más probable:",
+              o: ["Taquicardia por reentrada nodal auriculoventricular (TRNAV).", "Fibrilación auricular rápida.", "Flutter auricular con conducción 4:1.", "Ritmo sinusal normal taquicárdico."],
+              e: "La taquicardia paroxística supraventricular por reentrada nodal es regular, de complejo estrecho y frecuencia elevada (~180 lpm), a menudo sin P visibles." },
+            { c: 3, q: "Ante la taquicardia por reentrada nodal anterior en un paciente hemodinámicamente estable, ¿qué maniobra vagal inicial puede intentarse antes de administrar fármacos?",
+              o: ["Maniobras de Valsalva modificadas o masaje del seno carotídeo (tras descartar soplos).", "Compresión ocular bilateral fuerte.", "Masaje abdominal profundo.", "Inmersión rápida en agua caliente."],
+              e: "Las maniobras vagales (Valsalva modificada, masaje del seno carotídeo) estimulan el parasimpático y pueden cortar la TRNAV." },
+            { c: 3, q: "¿Cuál es la característica electrocardiográfica fundamental de la Fibrilación Auricular (FA) en el trazado de 12 derivaciones?",
+              o: ["Ausencia absoluta de ondas P verdaderas, sustituidas por ondas de oscilación fina irregulares (ondas f), con intervalos R-R completamente irregulares ('irregularmente irregular').", "Ondas P regulares a 300 lpm con dientes de sierra.", "Ritmo sinusal estricto con extrasístoles aisladas.", "QRS ancho con ondas Delta."],
+              e: "La FA muestra un ritmo irregularmente irregular y ausencia de ondas P, con línea de base trémula u ondas f." },
+            { c: 3, q: "En el Flutter Auricular típico, ¿a qué frecuencia oscilan típicamente las ondas auriculares en 'dientes de sierra' (ondas F) en las derivaciones inferiores (II, III, aVF)?",
+              o: ["Alrededor de 300 latidos por minuto (ciclo de 250-350 lpm).", "Alrededor de 100 lpm.", "Más de 600 lpm.", "Exactamente 60 lpm."],
+              e: "El flutter auricular clásico presenta ondas F en dientes de sierra a una frecuencia auricular de aproximadamente 300 lpm." },
+            { c: 3, q: "Una Taquicardia Ventricular Monomorfa sostenida en un paciente con cardiopatía estructural se caracteriza en el ECG por:",
+              o: ["Sucesión de tres o más latidos ventriculares prematuros con QRS ancho (> 120 ms) de morfología idéntica y regular a más de 100 lpm.", "Complejos estrechos irregulares con ondas P visibles antes de cada QRS.", "Ondas Delta y PR corto.", "Fibrilación auricular con conducción aberrante."],
+              e: "La TV monomorfa presenta QRS ancho (> 120 ms) regular y morfológicamente idéntico." },
+            { c: 3, q: "¿Cómo se define analíticamente y electrocardiográficamente una Extrasístole Ventricular (EV)?",
+              o: ["Un latido prematuro con complejo QRS ancho y bizarro, sin onda P previa, seguido habitualmente de una pausa compensadora completa.", "Un latido que se adelanta con QRS estrecho precedido de onda P ectópica.", "Un retraso en la conducción con PR superior a 0,30 segundos.", "La ausencia completa de latidos durante 3 segundos."],
+              e: "La extrasístole ventricular adelanta el ciclo con un QRS ancho y morfología anormal, sin onda P sinusal precedente." },
+            { c: 3, q: "Cuando las extrasístoles ventriculares se presentan alternándose de forma fija con un latido sinusal normal (un latido normal y un extrasístole), se denomina:",
+              o: ["Bigeminismo ventricular.", "Trigeminismo ventricular.", "Cuadrigeminismo.", "Racha de salvas no sostenidas."],
+              e: "El bigeminismo ventricular se define por la alternancia rítmica de un latido sinusal y una extrasístole." },
+            { c: 3, q: "En el Síndrome de Brugada Tipo 1, el patrón electrocardiográfico en las derivaciones precordiales derechas (V1-V3) muestra:",
+              o: ["Elevación del segmento ST con morfología cóncava descendente ('en aleta de tiburón' o coved type) superior a 2 mm seguida de onda T negativa.", "Descenso lineal del ST con ondas T altas y picudas.", "QRS estrecho con intervalo PR muy prolongado.", "Ausencia completa de voltaje."],
+              e: "El patrón de Brugada tipo 1 muestra elevación del ST descendente ('coved') en V1-V3, asociado a riesgo de muerte súbita." },
+            { c: 3, q: "El Síndrome de Wolff-Parkinson-White (WPW) se caracteriza electrocardiográficamente por la tríada clásica de:",
+              o: ["Intervalo PR corto (< 120 ms), ensanchamiento inicial del QRS con pendiente lenta ('onda delta') y ensanchamiento secundario del QRS con alteración de la repolarización.", "Intervalo PR muy largo (> 0,30 s) y ondas Q profundas en V1.", "Bloqueo completo de rama derecha con T negativa en V5-V6.", "Ondas U gigantes con hipopotasemia."],
+              e: "La preexcitación en el WPW presenta PR corto, onda delta inicial y QRS ancho." },
+            { c: 3, q: "Si un paciente con WPW desarrolla una Fibrilación Auricular, la presencia de la vía accesoria con período refractario corto puede permitir conducir impulsos rapidísimos a los ventrículos, provocando:",
+              o: ["Una taquicardia ventricular polimorfa rapidísima que puede degenerar en Fibrilación Ventricular (FV).", "Un bloqueo auriculoventricular completo benigno.", "Una bradicardia sinusal asintomática.", "La curación espontánea de la arritmia."],
+              e: "La FA con preexcitación (WPW) es una emergencia extrema porque la vía accesoria conduce sin frenos, pudiendo causar FV." },
+            { c: 3, q: "¿Qué fármaco está estrictamente CONTRAINDICADO en la FA con preexcitación (WPW) por acelerar la conducción por la vía accesoria?",
+              o: ["Bloqueadores del nodo AV (Adenosina, Digoxina, Verapamilo, Diltiazem o Betabloqueantes IV).", "Amiodarona intravenosa.", "Procainamida intravenosa.", "Cardioversión eléctrica sincronizada."],
+              e: "Los bloqueantes del nodo AV están contraindicados en la FA con WPW porque bloquean el nodo y desvían todo el estímulo por la vía accesoria, acelerando la respuesta ventricular." },
+            { c: 3, q: "¿Cuál es el hallazgo electrocardiográfico clásico asociado a la Hipopotasemia moderada-severa?",
+              o: ["Aplanamiento o inversión de la onda T, descenso del segmento ST, aparición de ondas U prominentes y prolongación aparente del intervalo QT (Q-U).", "Ondas T picudas simétricas y acortamiento del QT.", "Ensanchamiento masivo del QRS con bloqueo total.", "Ondas Delta precoces."],
+              e: "La hipopotasemia produce aplanamiento de la T, depresión del ST y la clásica aparición de ondas U prominentes tras la onda T." },
+            { c: 3, q: "En la intoxicación por antidepresivos tricíclicos, ¿qué alteración electrocardiográfica del eje y del QRS ensanchado predice el riesgo de convulsiones y arritmias ventriculares malignas?",
+              o: ["Una duración del QRS superior a 100-160 ms y una desviación del eje de la onda R en aVR hacia la derecha (> 120 grados).", "Un intervalo PR inferior a 0,08 segundos.", "Aparición de ondas U aisladas en V1.", "Bradicardia sinusal extrema."],
+              e: "Un QRS ancho > 100-160 ms y un eje de R en aVR > 120º son marcadores pronósticos de gravedad y toxicidad por tricíclicos." },
+            { c: 3, q: "¿Cómo se observa en el ECG un Marcapasos Definitivo con funcionamiento correcto en modo VVI (estimulación y detección ventricular)?",
+              o: ["Presencia de una espícula vertical estrecha (spike) seguida inmediatamente por un complejo QRS ancho (si estimula), o ausencia de espícula si el ritmo propio inhibe el generador (detección).", "Ondas P gigantes sin relación con los ventrículos.", "Ausencia total de complejos QRS en todo el registro.", "Inversión constante de la polaridad en todas las derivaciones."],
+              e: "El marcapasos VVI muestra la espícula de estimulación seguida de QRS ancho, o se inhibe si el paciente late de forma espontánea." },
+            { c: 3, q: "Una rotura o desplazamiento del electrodo de un marcapasos definitivo se manifiesta electrocardiográficamente como:",
+              o: ["Falla de captura (espículas de marcapasos no seguidas de despolarización QRS/onda P) o falla de sensibilidad (marcapasos dispara a destiempo).", "Aparición de ondas Delta gigantes.", "Curación espontánea de la bradicardia.", "Desviación del eje a 0 grados exactos."],
+              e: "La pérdida de captura (espícula sin QRS) o la alteración en la sensibilidad son signos electrocardiográficos de disfunción del marcapasos." },
+
+            // ================= CASO 4 (RESERVA): MISCELÁNEA Y TRAZADOS ESPECIALES =================
+            { c: "CASO CLÍNICO 4 (RESERVA): Trazados electrocardiográficos especiales, patrones de riesgo y miscelánea de urgencias.",
+              q: "Paciente joven que acude tras síncope. El ECG muestra un intervalo PR normal, QRS estrecho pero con elevación del segmento ST en 'silla de montar' o en cúpula en derivaciones V1-V2 con onda T positiva o bifásica. Sugiere:",
+              o: ["Síndrome de Brugada Tipo 2.", "Infarto agudo de miocardio anterior hiperagudo.", "Pericarditis aguda benigna.", "Bloqueo auriculoventricular completo."],
+              e: "El síndrome de Brugada tipo 2 muestra el patrón en silla de montar ('saddleback') en V1-V2." },
+            { c: 4, q: "En un paciente con embolismo pulmonar masivo, ¿cu cuál es el patrón electrocardiográfico clásico (aunque poco sensible) conocido como S1Q3T3?",
+              o: ["Presencia de onda S profunda en derivación I, onda Q profunda en derivación III y onda T invertida en derivación III.", "Ondas R altas en V1 y T invertida en V5-V6.", "QRS estrecho con PR prolongado.", "Elevación del ST en aVR exclusivamente."],
+              e: "El patrón clásico S1Q3T3 (S en I, Q en III y T invertida en III) refleja la sobrecarga aguda del corazón derecho por TEP." },
+            { c: 4, q: "Además del patrón S1Q3T3, ¿qué otro hallazgo electrocardiográfico es frecuente y sugestivo de sobrecarga aguda del ventrículo derecho en el TEP agudo?",
+              o: ["Taquicardia sinusal (el hallazgo más frecuente), bloqueo incompleto o completo de rama derecha de nueva aparición y T invertidas en V1-V4.", "Fibrilación ventricular sostenida.", "Acortamiento extremo del intervalo QT.", "Ondas Q patológicas en I y aVL."],
+              e: "La taquicardia sinusal y las inversiones de T en precordiales derechas (V1-V4) son los signos más frecuentes de TEP en el ECG." },
+            { c: 4, q: "¿Cómo se define el ritmo idioventricular acelerado (RIVA) que aparece frecuentemente tras la reperfusión coronaria exitosa (por fibrinolisis o ICP)?",
+              o: ["Un ritmo ventricular regular con QRS ancho a una frecuencia entre 50 y 100 latidos por minuto (ritmo de escape protegido).", "Una fibrilación ventricular maligna a 250 lpm.", "Una taquicardia supraventricular paroxística.", "Un paro sinusal completo."],
+              e: "El RIVA es un ritmo de escape ventricular bien tolerado entre 50 y 100 lpm que suele indicar reperfusión miocárdica coronaria exitosa." },
+            { c: 4, q: "Paciente con sospecha de intoxicación aguda por digital que presenta en el monitor un ritmo regular con ondas P bloqueadas, disociación y extrasístoles ventriculares en bigeminismo alternante. Diagnóstico electrocardiográfico de sospecha:",
+              o: ["Intoxicación digitálica con arritmias características (taquicardia auricular con bloqueo o bigeminismo).", "Infarto de miocardio inferior masivo.", "Bloqueo de rama izquierda congénito benigno.", "Hipopotasemia leve asintomática."],
+              e: "La digital puede producir casi cualquier arritmia, siendo clásicas la taquicardia auricular con bloqueo variable y el bigeminismo ventricular." },
+            { c: 4, q: "En la evaluación de un ECG con interferencias de corriente alterna (línea de base sucia con oscilaciones rápidas regulares a 50-60 Hz), ¿cuál es la causa técnica más probable?",
+              o: ["Mala conexión eléctrica de los cables del electrocardiógrafo o interferencia con aparatos cercanos.", "Fibrilación auricular fina.", "Isquemia miocárdica difusa severa.", "Artefacto por temblor parkinsoniano extremo."],
+              e: "La interferencia de corriente alterna (red eléctrica) genera una oscilación regular fina de 50/60 Hz en el trazado." },
+            { c: 4, q: "¿Qué artefacto electrocardiográfico simula falsamente una taquicardia ventricular o un aleteo en el monitor, pero el paciente se encuentra asintomático, consciente y con pulso normal?",
+              o: ["Artefacto por temblor muscular, escalofríos, parkinson o movimiento del cable.", "Fibrilación ventricular real.", "Asistolia completa con marcapasos.", "Bloqueo A-V completo."],
+              e: "El temblor muscular o el movimiento del paciente/cable generan artefactos que imitan ritmos ventriculares malignos sin repercusión clínica." },
+            { c: 4, q: "En relación con los criterios diagnósticos de infarto con elevación del ST, ¿qué elevación mínima del punto J se exige en hombres mayores de 40 años en las derivaciones V2 y V3?",
+              o: ["Al menos 2 mm (0,2 mV) en hombres de 40 o más años (o 1.5 mm en mujeres).", "Exactamente 0.5 mm en todas las derivaciones.", "Más de 5 mm en derivación aVR exclusivamente.", "Cualquier milímetro aislado sin importar la derivación."],
+              e: "Las guías establecen umbrales específicos de elevación del punto J en V2-V3: ≥ 2 mm en varones ≥ 40 años, ≥ 2.5 mm en varones < 40 años, y ≥ 1.5 mm en mujeres." },
+            { c: 4, q: "En las derivaciones distintas de V2-V3 (cara inferior, lateral, etc.), ¿qué elevación mínima del punto J del segmento ST se requiere para considerar IAMCEST en ausencia de hipertrofia o BRI?",
+              o: ["Al menos 1 mm (0,1 mV) en todas las demás derivaciones.", "Exactamente 3 mm en aVL.", "Menos de 0.5 mm.", "No se requiere elevación si hay dolor."],
+              e: "En el resto de derivaciones (distintas de V2-V3), el umbral diagnóstico de elevación del ST es de al menos 1 mm." },
+            { c: 4, q: "Ante la presencia de una onda U prominente y aumentada de voltaje en el ECG, ¿qué alteración electrolítica sistémica debe sospecharse prioritariamente?",
+              o: ["Hipopotasemia (disminución del potasio sérico).", "Hiperpotasemia grave.", "Hipercalcemia maligna.", "Hipomagnesemia aislada sin alteraciones del K+."],
+              e: "La onda U prominente es un signo clásico y muy orientativo de hipopotasemia." },
+            { c: 4, q: "Paciente con clínica neurológica y ECG que muestra una prolongación extrema y difusa del intervalo QT con ondas T gigantes, anchas y bífidas. Se sospecha:",
+              o: ["Hipotermia profunda o alteraciones electrolíticas severas (hipocalcemia/hipomagnesemia/hipopotasemia).", "Infarto agudo de miocardio inferoposterior.", "Bloqueo auriculoventricular de primer grado benigno.", "Taquicardia sinusal fisiológica."],
+              e: "La hipotermia severa produce el alargamiento del QT, ondas T anchas y la clásica 'onda J de Osborn'." },
+            { c: 4, q: "¿Cómo se denomina la deflexión positiva adicional situada al final del complejo QRS y principio del segmento ST (en forma de muesca o joroba) que aparece en la hipotermia moderada-severa?",
+              o: ["Onda J de Osborn.", "Onda Delta de preexcitación.", "Onda épsilon de displasia arritmogénica.", "Onda U tardía."],
+              e: "La onda J de Osborn es una deflexión característica al final del QRS típica de la hipotermia y otras situaciones como el brugada o la hipercalcemia." },
+            { c: 4, q: "En un paciente con sospecha de Displasia Arritmogénica del Ventrículo Derecho (DAVD), ¿qué alteración electrocardiográfica específica puede observarse al final del complejo QRS en V1-V3?",
+              o: ["Onda épsilon (pequeña muesca o deflexión de bajo voltaje al final del QRS o inicio del ST).", "Onda Delta gigante.", "Ondas Q necróticas profundas.", "Inversión aislada de la onda P."],
+              e: "La onda épsilon es un marcador electrocardiográfico específico de la displasia arritmogénica del ventrículo derecho." },
+            { c: 4, q: "Durante la monitorización de un paciente en el box de urgencias, se observa una pausa sinusal prolongada superior a 3 segundos sin ondas P ni escape ventricular. Se denomina:",
+              o: ["Paro sinusal o pausa sinusal prolongada (disfunción sinusal grave).", "Bloqueo auriculoventricular de primer grado.", "Fibrilación auricular lenta.", "Extrasístole auricular bloqueada."],
+              e: "Una pausa sinusal superior a 3 segundos sin actividad auricular ni escape traduce una grave alteración del automatismo del nodo sinusal (enfermedad del seno)." },
+            { c: 4, q: "En relación con los umbrales mínimos de procedimientos exigidos en el programa formativo oficial de la especialidad para la competencia en electrocardiografía urgente, ¿cuántos trazados electrocardiográficos interpretados se exigen documentar habitualmente?",
+              o: ["Al menos 50 trazados electrocardiográficos interpretados.", "Únicamente 1 trazado supervisado.", "Ningún registro documental obligatorio.", "Más de 1.000 electrocardiogramas pediátricos."],
+              e: "El programa oficial de la especialidad detalla los umbrales numéricos de actividad, exigiendo al menos 50 interpretaciones de ECG documentadas." }
+        ];
+
+        // Algoritmo de Fisher-Yates para barajar el array de opciones de cada pregunta
+        function shuffleOptions(question) {
+            let optionsMeta = question.o.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === 0 // Siempre la posición 0 del array original es la correcta
+            }));
+            
+            for (let i = optionsMeta.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsMeta[i], optionsMeta[j]] = [optionsMeta[j], optionsMeta[i]];
+            }
+            return optionsMeta;
+        }
+
+        const form = document.getElementById('exam-form');
+        const letras = ['A', 'B', 'C', 'D'];
+
+        // Renderizado dinámico e inserción de encabezados de casos
+        let caseHeaderRendered = "";
+
+        db.forEach((p, index) => {
+            if (p.c && p.c !== caseHeaderRendered && typeof p.c === "string") {
+                const caseDiv = document.createElement('div');
+                caseDiv.className = 'case-header';
+                caseDiv.innerHTML = `<h2>${p.c}</h2>`;
+                form.appendChild(caseDiv);
+                caseHeaderRendered = p.c;
+            }
+
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            
+            let html = `<h3>Pregunta ${index + 1}. ${p.q}</h3><ul class="options">`;
+            
+            const shuffledOptions = shuffleOptions(p);
+            let indexCorrecta;
+
+            shuffledOptions.forEach((optMeta, idx) => {
+                const letra = letras[idx];
+                if (optMeta.isCorrect) indexCorrecta = letra;
+                
+                html += `
+                    <li>
+                        <label id="label-${index}-${letra}">
+                            <input type="radio" name="q${index}" value="${letra}" data-correct="${optMeta.isCorrect}">
+                            <strong>${letra})</strong> ${optMeta.text}
+                        </label>
+                    </li>
+                `;
+            });
+            
+            html += `</ul>
+                     <div id="exp-${index}" class="explanation">
+                         <strong>Respuesta correcta: ${indexCorrecta}.</strong> ${p.e}
+                     </div>`;
+            
+            qDiv.innerHTML = html;
+            form.appendChild(qDiv);
+        });
+
+        // Lógica de corrección
+        function corregir() {
+            let puntuacion = 0;
+            let fallos = 0;
+            let sinContestar = 0;
+
+            db.forEach((p, index) => {
+                const opciones = document.getElementsByName(`q${index}`);
+                let seleccion = null;
+                let seleccionCorrecta = false;
+                
+                opciones.forEach(opt => {
+                    const letra = opt.value;
+                    const label = document.getElementById(`label-${index}-${letra}`);
+                    const esCorrecta = opt.getAttribute('data-correct') === "true";
+
+                    label.classList.remove('correct-anim', 'incorrect-anim'); 
+                    opt.disabled = true; 
+                    
+                    if (opt.checked) {
+                        seleccion = letra;
+                        if (esCorrecta) seleccionCorrecta = true;
+                    }
+                    if (esCorrecta) label.classList.add('correct-anim');
+                });
+
+                if (!seleccion) {
+                    sinContestar++;
+                } else if (!seleccionCorrecta) {
+                    fallos++;
+                    document.getElementById(`label-${index}-${seleccion}`).classList.add('incorrect-anim');
+                } else {
+                    puntuacion++;
+                }
+                document.getElementById(`exp-${index}`).style.display = 'block';
+            });
+
+            // Cálculo tipo BOE: Acierto +1, Fallo -0.25
+            const notaFinal = (puntuacion * 1) - (fallos * 0.25);
+            const notaNormalizada = notaFinal < 0 ? 0 : notaFinal;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alert(`--- SIMULACRO 10 FINALIZADO ---\n\nAciertos: ${puntuacion}\nErrores: ${fallos}\nSin contestar: ${sinContestar}\n\nPUNTUACIÓN TOTAL (Criterio BOE): ${notaNormalizada.toFixed(2)} sobre 60 posibles.\n\nRevisa las explicaciones debajo de cada pregunta.`);
+            }, 300);
+        }
+    </script>
+
+    <!-- Botón opcional MSF -->
+    <div style="text-align: center; margin-top: 50px; padding: 25px; background-color: #fdfbf7; border: 2px solid #e84118; border-radius: 8px;">
+        <h3 style="margin-top: 0; color: #c23616;">¿Te ha sido útil este simulacro?</h3>
+        <p style="font-size: 0.95em; color: #2f3640;">Este proyecto es 100% gratuito. Si te ha servido de ayuda en tu preparación, te invito a transformar ese valor en una donación directa y opcional a Médicos Sin Fronteras.</p>
+        <a href="https://www.msf.es/que-puedo-hacer-yo/donativo" target="_blank" style="display: inline-block; background-color: #e84118; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; transition: 0.3s;">Hacer un donativo a MSF</a>
+    </div>
+
+</body>
+</html>

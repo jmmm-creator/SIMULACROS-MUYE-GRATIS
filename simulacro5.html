@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulacro 5: Traumatología, Vía Aérea y Procedimientos de Urgencia</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #1e272e; line-height: 1.5; padding: 20px; max-width: 950px; margin: auto; }
+        .header { text-align: center; border-bottom: 4px solid #d35400; margin-bottom: 25px; padding-bottom: 10px; }
+        .header h1 { color: #2d3436; margin: 0; }
+        .case-header { background-color: #d35400; color: white; padding: 15px; border-radius: 6px; margin-top: 40px; margin-bottom: 20px; }
+        .case-header h2 { margin: 0; font-size: 1.3em; }
+        .question { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .question h3 { margin-top: 0; font-size: 1.05em; color: #2d3436; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 8px; }
+        .options label { display: block; padding: 10px 15px; border: 1px solid #dfe6e9; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+        .options label:hover { background-color: #f1f2f6; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.1); }
+        .btn-container { text-align: center; margin-top: 40px; margin-bottom: 40px; }
+        .btn { background-color: #d35400; color: white; border: none; padding: 15px 35px; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #a04000; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background-color: #fef5e7; border-left: 4px solid #d35400; border-radius: 4px; font-size: 0.9em; }
+        .correct-anim { border-color: #00b894 !important; background-color: #e8f8f5 !important; font-weight: bold; color: #00b894; }
+        .incorrect-anim { border-color: #d63031 !important; background-color: #fceaea !important; color: #d63031; text-decoration: line-through; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Simulacro 5: Traumatología, Vía Aérea y Procedimientos</h1>
+        <p>Prueba Práctica: 4 Casos Clínicos (60 preguntas). Las opciones se barajan aleatoriamente.</p>
+    </div>
+
+    <form id="exam-form"></form>
+
+    <div class="btn-container">
+        <button type="button" class="btn" onclick="corregir()">Finalizar Simulacro y Ver Resultados</button>
+    </div>
+
+    <script>
+        const db = [
+            // ================= CASO 1: TRAUMATOLOGÍA MENOR Y URGENCIAS ORTOPÉDICAS =================
+            { c: "CASO CLÍNICO 1: Traumatología y Ortopedia de Urgencias. Lesiones osteoarticulares y suturas.",
+              q: "Varón de 25 años que acude a urgencias tras traumatismo en la mano derecha jugando al fútbol. Presenta dolor selectivo a la palpación sobre la tabaquera anatómica. La radiografía simple inicial de muñeca y escafoides resulta sin fracturas visibles evidentes. ¿Cuál es la actitud clínica correcta?",
+              o: ["Inmovilizar con férula antebraquial con inclusión del pulgar (férula en espica de pulgar) y repetir radiografía o solicitar RM/TAC a los 10-14 días.", "Dar de alta sin inmovilización por descartarse fractura de forma categórica en la primera placa.", "Aplicar vendaje compresivo elástico blando y recomendar movilización precoz sin restricciones.", "Intervenir quirúrgicamente de urgencia mediante osteosíntesis percutánea con tornillo."],
+              e: "Las fracturas de escafoides pueden no visualizarse en la radiografía inicial; ante clínica en tabaquera anatómica se debe inmovilizar preventivamente con espica de pulgar y reevaluar." },
+            { c: 1, q: "Paciente que acude tras caída sobre la palma de la mano extendida, presentando deformidad en 'dorso de tenedor' del antebrazo distal. Diagnóstico radiológico de fractura de Colles. ¿Cuál es el desplazamiento típico del fragmento distal?",
+              o: ["Desplazamiento dorsal, radial y supinación del fragmento distal.", "Desplazamiento volar y pronación (fractura de Smith).", "Desplazamiento exclusivamente axial sin angulación.", "Luxación radiocarpiana dorsal pura sin trazo óseo."],
+              e: "La fractura de Colles clásica cursa con desplazamiento dorsal y radial del fragmento distal, generando la típica deformidad en dorso de tenedor." },
+            { c: 1, q: "Ante una fractura abierta de extremidad inferior con herida cutánea de aspecto limpio menor de 1 cm (Tipo I de Gustilo-Anderson), además de la estabilización y lavado, ¿qué pauta antibiótica profiláctica intravenosa inicial se recomienda?",
+              o: ["Cefazolina intravenosa (cobertura frente a grampositivos).", "Vancomicina en monoterapia a altas dosis.", "Ciprofloxacino oral exclusivo.", "Penicilina benzatina intramuscular."],
+              e: "Las fracturas abiertas grado I y II de Gustilo-Anderson requieren profilaxis antibiótica con cefalosporinas de primera generación (Cefazolina IV)." },
+            { c: 1, q: "¿Qué complicación aguda y grave debe sospecharse ante un paciente con fractura diafisaria de tibia que presenta dolor desproporcionado, no cededor a analgesia mayor, con aumento de tensión local y dolor extremo a la extensión pasiva de los dedos del pie?",
+              o: ["Síndrome compartimental agudo.", "Trombosis venosa profunda proximal.", "Infección necrotizante por Clostridium.", "Artritis séptica de rodilla ipsilateral."],
+              e: "El dolor desproporcionado y el dolor a la extensión pasiva de los dedos son signos cardinales del síndrome compartimental agudo, que requiere medición de presiones o fasciotomía urgente." },
+            { c: 1, q: "En relación con los umbrales mínimos de procedimientos exigidos en el programa de formación de la especialidad para competencias traumatológicas menores, ¿cuántos procedimientos de sutura de heridas se exigen registrar?",
+              o: ["Al menos 10 procedimientos documentados.", "Al menos 50 procedimientos complejos.", "Únicamente 2 procedimientos supervisados.", "No se exige ningún registro numérico mínimo."],
+              e: "El programa oficial de la especialidad establece umbrales numéricos específicos para el registro de actividades, exigiendo al menos 10 procedimientos de sutura de heridas y 10 de vendajes/férulas." },
+            { c: 1, q: "Mujer anciana que sufre caída casual y presenta la extremidad inferior derecha acortada y en rotación externa. La radiografía de cadera muestra una fractura subcapital de fémur desplazada. El tratamiento definitivo de elección en este perfil suele ser:",
+              o: ["Artroplastia de cadera (total o parcial) o fijación según edad/estado funcional.", "Tracción cutánea blanda domiciliaria durante 6 semanas.", "Vendaje funcional con yeso pelvipédico.", "Reposo absoluto en cama sin carga quirúrgica."],
+              e: "Las fracturas intracapsulares desplazadas de cadera en pacientes ancianos se tratan habitualmente mediante sustitución protésica (artroplastia) para permitir la movilización precoz." },
+            { c: 1, q: "Ante una luxación anterior de hombro (la más frecuente tras traumatismo con abducción y rotación externa), ¿qué lesión ósea del reborde glenoideo anterior puede asociarse, favoreciendo la recidiva?",
+              o: ["Lesión de Bankart (o lesión de Hill-Sachs en la cabeza humeral).", "Fractura de Colles invertida.", "Lesión de Pouteau-Colles.", "Fractura de Monteggia proximal."],
+              e: "La luxación anterior de hombro clásica se asocia frecuentemente a la lesión labral-glenoidea (Bankart) y al defecto por impactación en la cabeza humeral (Hill-Sachs)." },
+            { c: 1, q: "Tras la reducción de una luxación glenohumeral en urgencias, ¿qué maniobra clínica es obligatorio realizar siempre antes y después de la reducción para descartar lesiones asociadas?",
+              o: ["Exploración neurovascular periférica exhaustiva (comprobando sensibilidad del nervio axilar/circunflejo y pulsos distales).", "Realizar una punción lumbar diagnóstica inmediata.", "Administrar un relajante muscular de acción prolongada durante 48h.", "Comprobar la presión venosa central."],
+              e: "La evaluación del nervio axilar (sensibilidad en cara lateral del hombro / parche del deltoides) y de los pulsos distales es obligatoria antes y después de reducir cualquier luxación." },
+            { c: 1, q: "¿Cómo se denomina la asociación lesional caracterizada por una fractura del tercio proximal del cúbito asociada a una luxación de la cabeza radial (articulación radioulnar proximal)?",
+              o: ["Fractura-luxación de Monteggia.", "Fractura-luxación de Galeazzi.", "Fractura de Colles invertida.", "Fractura de Smith distal."],
+              e: "La lesión de Monteggia combina fractura de cúbito proximal y luxación de la cabeza del radio. (La de Galeazzi es fractura de radio distal con luxación radiocubital distal)." },
+            { c: 1, q: "Paciente varón que acude por esguince de tobillo tras mal paso. A la exploración presenta dolor selectivo en la zona del ligamento lateral externo, con estabilidad articular conservada al bostezo y cajón. Se clasifica como esguince de grado:",
+              o: ["Grado I (distensión ligamentosa leve sin inestabilidad).", "Grado III (rotura completa con inestabilidad severa).", "Grado II con arrancamiento óseo masivo.", "Esguince sindesmal puramente proximal."],
+              e: "El esguince grado I es una elongación o microrrotura sin inestabilidad articular; el grado II tiene rotura parcial y el grado III rotura completa con inestabilidad." },
+            { c: 1, q: "Para valorar la necesidad de realizar radiografías en un esguince o traumatismo agudo de tobillo en Urgencias evitando exploraciones innecesarias, se emplean los criterios de:",
+              o: ["Reglas de Ottawa para tobillo y mediopié.", "Criterios de Wells para TEP.", "Escala CURB-65 para neumonía.", "Criterios de Ranson para pancreatitis."],
+              e: "Las reglas de Ottawa para el tobillo establecen los criterios clínicos de sensibilidad para decidir cuándo está indicada la radiografía tras un traumatismo." },
+            { c: 1, q: "Ante una herida lacerada limpia en la frente de un paciente adulto con antecedente de vacunación antitetánica completa correcta hace 7 años, ¿cuál es la pauta profiláctica recomendada frente al tétanos?",
+              o: ["No precisa dosis de vacuna ni inmunoglobulina (la pauta es correcta si <10 años en heridas limpias).", "Administrar una dosis de vacuna y gammaglobulina específica antitetánica obligatoria.", "Administrar gammaglobulina hiperinmune sola en dosis única.", "Reiniciar la pauta de vacunación completa con 3 dosis desde el inicio."],
+              e: "Ante heridas limpias menores, si la última dosis de recuerdo se administró hace menos de 10 años, no es necesario administrar ninguna dosis adicional de vacuna ni inmunoglobulina." },
+            { c: 1, q: "Si la herida del paciente anterior fuera de alto riesgo (profunda, contaminada con tierra, aplastamiento) y su última dosis de vacuna fue hace 8 años, la pauta correcta incluye:",
+              o: ["Administración de una dosis de vacuna antitetánica y gammaglobulina antitetánica (IGAT).", "Únicamente lavado con agua oxigenada sin fármacos.", "Administración exclusiva de gammaglobulina sin vacuna.", "Esperar a la evolución clínica a los 14 días."],
+              e: "En heridas tetanígenas (sucias, profundas), el umbral para administrar recuerdo baja a 5 años; si han pasado más de 5 años, se administra vacuna y gammaglobulina." },
+            { c: 1, q: "En la técnica de sutura de una herida cutánea simple en urgencias, ¿cuál es el objetivo principal de realizar puntos separados con material no reabsorbible (como monofilamento de poliamida o polipropileno)?",
+              o: ["Aproximar los bordes de la herida sin tensión e invertirlos o evertirlos ligeramente para asegurar una correcta cicatrización estética.", "Sellar completamente el espacio muerto subcutáneo profundo.", "Evitar la administración de anestésicos locales con vasoconstrictor.", "Impedir el drenaje linfático natural de la zona."],
+              e: "Los puntos simples con material no reabsorbible buscan la aproximación eversión de los bordes cutáneos sin tensión excesiva para minimizar la cicatriz hipertrófica." },
+            { c: 1, q: "Al infiltrar anestésico local (como Lidocaína al 2%) con vasoconstrictor (adrenalina) para suturar una herida en la mano o los dedos, ¿cuál es la contraindicación anatómica clásica?",
+              o: ["Zonas de circulación terminal (dedos, nariz, orejas, pene) por riesgo de necrosis isquémica digital.", "Heridas superficiales localizadas en el cuero cabelludo.", "Laceraciones lineales limpias en la región pretibial.", "Heridas puntiformes en la región escapular posterior."],
+              e: "El uso de anestésicos con vasoconstrictor está contraindicado en regiones de circulación terminal (dedos, nariz, orejas) por el riesgo de vasoespasmo severo e necrosis." },
+
+            // ================= CASO 2: VÍA AÉREA AVANZADA Y REANIMACIÓN =================
+            { c: "CASO CLÍNICO 2: Vía aérea difícil, Intubación de Secuencia Rápida (ISR) y soporte respiratorio avanzado.",
+              q: "Paciente varón obeso con cuello corto y limitación para la extensión cervical que acude con insuficiencia respiratoria aguda hipercápnica severa. Se valora la vía aérea difícil mediante la escala LEMON. ¿Qué evalúa la letra 'M' de dicha escala?",
+              o: ["La distancia miloidea / espacio tiromentoniano o la visibilidad de estructuras (Mallampati modificado).", "La movilidad de la columna cervical y atlanto-occipital.", "El grado de apertura bucal (distancia interincisivos).", "La presencia de mascarilla laríngea previa."],
+              e: "En la mnemotecnia LEMON para vía aérea difícil, la M corresponde a Mallampati (evaluación del espacio faríngeo visible)." },
+            { c: 2, q: "En la escala LEMON, la letra 'E' hace referencia a la distancia tiromentoniana o distancia hioides-mentón, considerándose un factor de vía aérea difícil si es inferior a:",
+              o: ["Menos de 6 cm (o menos de 3 travesces de dedo).", "Exactamente 10 cm.", "Menos de 2 cm.", "Más de 8 cm."],
+              e: "Una distancia tiromentoniana inferior a 6 cm (o menor de 3 travesces de dedo) predice una laringoscopia directa difícil por desplazamiento insuficiente de la lengua." },
+            { c: 2, q: "Para la Intubación de Secuencia Rápida (ISR) en un paciente hemodinámicamente estable con sospecha de presión intracraneal elevada (TCE), ¿qué inductor anestésico clásico suele evitarse teóricamente por su potencial efecto sobre la PIC?",
+              o: ["Ketamina (a pesar de considerarse históricamente, hoy se usa con seguridad, pero el Etomidato o Tiopental eran los clásicos; sin embargo, Ketamina mantiene PAM).", "Propofol.", "Midazolam a dosis bajas.", "Fentanilo en bolo lento."],
+              e: "Tradicionalmente se consideraba que la ketamina aumentaba la PIC, aunque estudios modernos avalan su uso seguro si se mantiene la PAM; el etomidato y propofol son inductores habituales neuroprotectores." },
+            { c: 2, q: "¿Cuál es el objetivo principal de aplicar la maniobra de Sellick (presión cricoidea) durante la Intubación de Secuencia Rápida?",
+              o: ["Ocluir el esófago contra los cuerpos vertebrales cervicales para prevenir la regurgitación pasiva de contenido gástrico hacia la faringe.", "Desplazar la laringe hacia la izquierda para visualizar mejor las cuerdas vocales.", "Estimular el nervio vago para inducir bradicardia protectora.", "Facilitar la insuflación pulmonar manual mediante bolsa autohinchable."],
+              e: "La maniobra de Sellick consiste en presionar el cartílago cricoides hacia atrás para comprimir el esófago y evitar la aspiración pulmonar de contenido gástrico durante la inducción." },
+            { c: 2, q: "Tras la inserción del tubo endotraqueal, el método clínico y de monitorización considerado patrón oro definitivo para confirmar la correcta posición traqueal (excluyendo la intubación esofágica) es:",
+              o: ["La capnografía cuantitativa continua (onda de CO2 espirado / EtCO2 sostenida).", "La auscultación simétrica de ruidos respiratorios en ambas bases pulmonares.", "La visualización del vapor de agua empañando el tubo transparente.", "La radiografía simple de tórax portátil de control diferida."],
+              e: "La capnografía cuantitativa continua (detección de CO2 exhalado durante varios ciclos respiratorios) es el método definitivo que confirma la intubación traqueal." },
+            { c: 2, q: "Si fracasa la intubación orotraqueal convencional y la ventilación con mascarilla facial en un paciente 'no se puede oxigenar, no se puede intubar' (CANNOT INTUBATE, CANNOT OXYGENATE - CICO), la guía clínica de vía aérea difícil de emergencia indica realizar de forma inmediata:",
+              o: ["Acceso cricotiroideo quirúrgico de emergencia (cricotiroidotomía urgente con bisturí).", "Traqueotomía reglada en quirófano central bajo anestesia general.", "Intubación retrógrada guiada por guía metálica.", "Inserción repetida de tubos lánguidos en secuencia ciega."],
+              e: "Ante la situación crítica CICO (no oxigena, no intuba), la medida de rescate definitiva es la cricotiroidotomía quirúrgica con bisturí." },
+            { c: 2, q: "En la ventilación mecánica invasiva de un paciente con SDRA (Síndrome de Distrés Respiratorio Agudo) grave, los parámetros protectores obligatorios del respirador incluyen:",
+              o: ["Volumen corriente bajo (4-8 ml/kg de peso ideal) y presión meseta (plateau) < 30 cmH2O.", "Volúmenes corrientes elevados (> 12 ml/kg) para abrir los alvéolos colapsados.", "Frecuencias respiratorias basales bajas (< 8 rpm) sin PEEP.", "Presiones inspiratorias pico superiores a 50 cmH2O."],
+              e: "La ventilación protectora en el SDRA exige volúmenes corrientes bajos (4-8 ml/kg de peso ideal) y limitar la presión meseta (<30 cmH2O) para evitar el barotrauma y biotrauma." },
+            { c: 2, q: "¿Qué efecto fisiológico positivo aporta la aplicación de PEEP (Presión Positiva al Final de la Espiración) en el manejo ventilatorio del edema agudo de pulmón o el SDRA?",
+              o: ["Evita el colapso alveolar al final de la espiración, recluta alvéolos y reduce el retorno venoso (precarga) disminuyendo el trabajo cardíaco.", "Aumenta la resistencia de la vía aérea superior facilitando el paso del aire.", "Eleva la presión arterial sistémica de forma pasiva al contraer las arteriolas.", "Disminuye la oxigenación tisular para disminuir el metabolismo."],
+              e: "La PEEP mantiene los alvéolos abiertos al final de la espiración (reclutamiento), mejora la relación ventilación/perfusión y reduce la precarga del ventrículo izquierdo." },
+            { c: 2, q: "En un paciente con EPOC severo sometido a ventilación mecánica, si desarrollas un aumento súbito de la presión inspiratoria pico, caída de la saturación e hipotensión profunda, debes sospechar de forma prioritaria:",
+              o: ["Neumotórax a tensión (por barotrauma) o tapón de moco con hiperinsuflación dinámica.", "Disfunción primaria de la válvula aórtica.", "Trombosis venosa mesentérica aguda.", "Hipoglucemia severa refractaria."],
+              e: "En el paciente ventilado con EPOC o SDRA, el deterioro súbito con altas presiones sugiere neumotórax a tensión secundario a barotrauma." },
+            { c: 2, q: "Para el manejo analgésico y sedativo continuo de un paciente crítico intubado en ventilación mecánica prolongada en el box de reanimación, ¿qué opiáceo intravenoso en perfusión continua se caracteriza por su vida media ultracorta y metabolismo independiente de la función renal/hepática (esterasas plasmáticas)?",
+              o: ["Remifentanilo.", "Morfina hidrocloruro.", "Fentanilo en bolos repetidos.", "Metadona oral triturada."],
+              e: "El Remifentanilo es un opioide agonista mu de acción ultracorta metabolizado por esterasas plasmáticas inespecíficas, ideal en insuficiencia renal/hepática." },
+            { c: 2, q: "Respecto al uso de relajantes neuromusculares no despolarizantes en perfusión continua durante las primeras 48 horas de un SDRA muy grave, su objetivo clínico principal es:",
+              o: ["Reducir el consumo de oxígeno muscular y la asincronía paciente-ventilador severa.", "Disminuir la presión intracraneal de forma permanente.", "Prevenir las convulsiones tónico-clónicas asociadas a la fiebre.", "Facilitar la realización de punciones lumbares seriadas."],
+              e: "El uso breve y temprano de bloqueantes neuromusculares en SDRA grave mejora la sincronía con el respirador y disminuye la mortalidad al reducir la distorsión pulmonar." },
+            { c: 2, q: "Al realizar una capnografía volumétrica o continua, si se produce una desconexión accidental del tubo endotraqueal o una parada cardiorrespiratoria, el valor de EtCO2 experimenta un cambio brusco consistente en:",
+              o: ["Caída instantánea a 0 mmHg (o valores cercanos a cero).", "Aumento exponencial por encima de 80 mmHg.", "Oscilación rítmica sincrónica con el pulso periférico.", "Estabilización plana en 40 mmHg indefinida."],
+              e: "La desconexión del tubo o la interrupción del flujo sanguíneo pulmonar (PCR) provocan la caída brusca e inmediata del EtCO2 a cero." },
+            { c: 2, q: "Durante la reanimación cardiopulmonar avanzada, un valor de EtCO2 persistentemente bajo (por debajo de 10 mmHg) tras 20 minutos de reanimación de alta calidad se asocia estadísticamente con:",
+              o: ["Extremadamente baja probabilidad de retorno a la circulación espontánea (RCE) y pronóstico infausto.", "Éxito inminente de la resucitación en el siguiente ciclo.", "Hiperventilación iatrogénica beneficiosa para el cerebro.", "Absorción tisular óptima de bicarbonato sódico."],
+              e: "Un EtCO2 < 10 mmHg durante la RCP indica un gasto cardíaco muy bajo generado por las compresiones, correlacionándose con una ínfima probabilidad de supervivencia." },
+            { c: 2, q: "¿Cómo se define la modalidad ventilatoria SIMV (Ventilación Mandatoria Intermitente Sincronizada)?",
+              o: ["El respirador administra un número determinado de respiraciones obligatorias sincronizadas con el esfuerzo inspiratorio del paciente, permitiendo respiraciones espontáneas intermedias.", "El paciente realiza el 100% de las respiraciones sin ayuda del respirador.", "El ventilador insufla aire a presión constante sin importar el esfuerzo del paciente.", "Modo exclusivo para recién nacidos sin sincronía."],
+              e: "La SIMV combina respiraciones obligatorias sincronizadas con ventilación espontánea del paciente entre ellas, usada clásicamente en protocolos de weaning." },
+            { c: 2, q: "En caso de intubación selectiva accidental del bronquio principal derecho (complicación frecuente al introducir demasiado el tubo), ¿qué hallazgo físico esperas encontrar en la auscultación pulmonar?",
+              o: ["Ausencia o disminución franca de murmullo vesicular en el hemitórax izquierdo, con buena entrada de aire a la derecha.", "Asimetría con ausencia de ruidos en ambos hemitórax.", "Estertores crepitantes bilaterales masivos.", "Sibilancias espiratorias difusas generalizadas."],
+              e: "La intubación selectiva del bronquio derecho ventila únicamente el pulmón derecho, provocando atelectasia y ausencia de murmullo vesicular en el hemitórax izquierdo." },
+
+            // ================= CASO 3: URGENCIAS ABDOMINALES Y QUIRÚRGICAS =================
+            { c: "CASO CLÍNICO 3: Abdomen agudo quirúrgico, obstrucción intestinal y patología biliar.",
+              q: "Mujer de 65 años que acude por dolor cólico abdominal difuso, vómitos fecaloideos, distensión marcada y ausencia de emisión de heces y gases de 48 horas de evolución. En la radiografía simple de abdomen se aprecian niveles hidroaéreos centrales escalonados en 'pila de monedas'. Diagnóstico:",
+              o: ["Obstrucción intestinal alta / de intestino delgado.", "Obstrucción colónica por vólvulo de sigmoides.", "Gastroenteritis aguda vírica autolimitada.", "Íleomecónico por fibrosis quística."],
+              e: "Los niveles hidroaéreos centrales con patrón en pila de monedas y vómitos precoces/fecaloideos definen la obstrucción mecánica de intestino delgado." },
+            { c: 3, q: "Ante un cuadro de obstrucción intestinal por bridas o adherencias sin signos de peritonismo ni estrangulación en las primeras horas, la actitud inicial de manejo conservador incluye:",
+              o: ["Descompresión con sonda nasogástrica (SNG), fluidoterapia intravenosa estricta, reposo digestivo y control seriado clínico-radiológico.", "Laparotomía exploradora urgente en los primeros 30 minutos.", "Administración oral de laxantes osmóticos potentes a altas dosis.", "Enemas de limpieza jabonosos seriados cada 4 horas."],
+              e: "El tratamiento inicial de la obstrucción por bridas sin peritonitis es conservador: SNG para descompresión gástrica, fluidoterapia y estrecha vigilancia clínica." },
+            { c: 3, q: "¿Qué signos clínicos de peritonitis aguda indican la necesidad de intervención quirúrgica urgente inaplazable en un paciente con abdomen agudo?",
+              o: ["Signo de Blumberg positivo (descompresión dolorosa), contractura abdominal involuntaria ('vientre en tabla') y defensa generalizada.", "Dolor difuso leve que cede con analgésicos menores tras 2 horas.", "Presencia de ruidos hidroaéreos normales dispersos sin dolor a la palpación.", "Estreñimiento crónico de varios días de evolución sin fiebre."],
+              e: "La defensa involuntaria y el signo de Blumberg (irritación peritoneal) son indicaciones quirúrgicas absolutas por sospecha de perforación u otro proceso con peritonitis." },
+            { c: 3, q: "Varón de 50 años que acude por dolor en hipocondrio derecho, fiebre de 38.5ºC y escalofríos. A la exploración se palpa masa dolorosa y signo de Murphy positivo. Analítica con leucocitosis y desviación izquierda. Diagnóstico:",
+              o: ["Colecistitis aguda litiásica.", "Apendicitis retrocecal aguda.", "Ulcera péptica duodenal perforada.", "Infarto esplénico agudo."],
+              e: "La tríada de dolor en hipocondrio derecho, fiebre y signo de Murphy positivo define la colecistitis aguda litiásica." },
+            { c: 3, q: "Si al cuadro anterior de colecistitis aguda se le añade ictericia mucocutánea y alteración del nivel de conciencia / shock séptico, se configura la llamada Tríada de Charcot y Péntada de Reynolds, que define la urgencia médica y biliar extrema denominada:",
+              o: ["Colangitis aguda supurativa.", "Pancreatitis biliar leve edematosa.", "Hepatitis fulminante autoinmune.", "Colemesis obstructiva pura."],
+              e: "La presencia de fiebre, ictericia y dolor (Charcot), más shock y confusión (Reynolds), conforma la pentada de la colangitis aguda, que requiere descompresión biliar urgente." },
+            { c: 3, q: "Prueba de imagen diagnóstica inicial de elección en urgencias ante la sospecha de patología biliar aguda (colecistitis, litiasis, dilatación de la vía biliar):",
+              o: ["Ecografía abdominal (POCUS o radiológica).", "Radiografía simple de abdomen en decúbito.", "Tránsito esofagogastroduodenal con bario.", "Gammagrafía renal diurética."],
+              e: "La ecografía abdominal es la prueba de imagen de primera línea por su alta sensibilidad para detectar litiasis, engrosamiento vesicular y dilatación de la vía biliar principal." },
+            { c: 3, q: "Paciente con antecedentes de ulcus péptico que presenta de forma súbita dolor epigástrico en 'puñalada', muy intenso, con abdomen en tabla generalizado y presencia de aire libre subdiafragma (neumoperitoneo) en la radiografía de tórax. Diagnóstico:",
+              o: ["Perforación de víscera hueca (úlcera péptica perforada).", "Pancreatitis aguda edematosa simple.", "Infarto agudo de miocardio inferior.", "Neumonía basal derecha complicada."],
+              e: "El inicio hiperagudo en puñalada con neumoperitoneo subdiafragma en la placa es patognomónico de la perforación de una víscera hueca (úlcera gastroduodenal)." },
+            { c: 3, q: "En relación con las hernias de la pared abdominal incarceradas y estranguladas, ¿cuál es la diferencia fisiopatológica fundamental que convierte a la estrangulación en una urgencia quirúrgica inmediata?",
+              o: ["La afectación del riego sanguíneo del contenido herniario, con riesgo inminente de isquemia y necrosis tisular.", "El simple aumento de volumen del saco herniario sin dolor ni inflamación local.", "La imposibilidad de reducción manual exclusiva por dolor leve.", "La presencia de contenido graso exclusivo sin asas intestinales."],
+              e: "La incarceración es la irreductibilidad, pero la estrangulación implica compromiso vascular del asa herniada, lo que exige cirugía urgente para evitar la necrosis y perforación." },
+            { c: 3, q: "Paciente varón anciano con estreñimiento crónico que acude por distensión abdominal masiva asimétrica. El estudio radiológico muestra una gran imagen en 'grano de café' o 'U invertida'. Diagnóstico de sospecha:",
+              o: ["Vólvulo de sigma (colon sigmoides).", "Invaginación intestinal ileocecal.", "Megacolon tóxico por colitis pseudomembranosa.", "Obstrucción por bezoar gástrico."],
+              e: "El signo radiológico del grano de café o U invertida es clásico del vólvulo de sigma, que puede requerir descompresión mediante sonda rectal o cirugía urgente." },
+            { c: 3, q: "Ante una hemorragia digestiva baja (HDA baja / rectorragia masiva) con inestabilidad hemodinámica en urgencias, una vez reanimado el paciente, ¿cuál es la prueba de primera elección para diagnóstico y tratamiento si es accesible?",
+              o: ["Colonoscopia urgente (previa preparación adecuada si es posible, o precoz).", "Tránsito baritado completo de colon por enema.", "Cápsula endoscópica digestiva ambulatoria.", "Laparotomía exploradora ciega sin pruebas previas."],
+              e: "La colonoscopia urgente es el procedimiento de elección para diagnosticar y tratar (inyección, clips, argón) el origen de la hemorragia digestiva baja." },
+            { c: 3, q: "En un paciente con peritonitis difusa secundaria a apendicitis perforada, ¿qué hallazgos gasométricos y analíticos son esperables como expresión de la sepsis grave e hipoperfusión tisular?",
+              o: ["Acidosis metabólica con anión gap elevado e hiperlactatemia severa.", "Alcalosis respiratoria pura compensada por insuficiencia renal.", "Alcalosis metabólica profunda con hipopotasemia severa.", "Gasometría arterial estrictamente normal."],
+              e: "La sepsis abdominal grave cursa típicamente con acidosis metabólica por hipoperfusión tisular (aumento del ácido láctico)." },
+            { c: 3, q: "Para la profilaxis antibiótica quirúrgica en la cirugía de urgencia por apendicitis aguda no perforada, el espectro de cobertura debe abarcar fundamentalmente gérmenes:",
+              o: ["Bacilos gramnegativos enteréricos y anaerobios (ej. Cefoxitina o Amoxicilina-Clavulanico IV).", "Estafilococos meticilin-resistentes exclusivamente.", "Hongos levaduriformes tipo Cándida.", "Bacterias atípicas intracelulares (Micoplasma)."],
+              e: "La flora apendicular es predominantemente mixta (gramnegativos y anaerobios), por lo que la profilaxis quirúrgica debe cubrir ambos grupos." },
+            { c: 3, q: "Paciente que acude por dolor anal agudo, continuo, punzante, que empeora al defecar y al sentarse, objetivándose una tumoración tumefacta roja y tensa en el margen anal sin salida de material purulento evidente. Diagnóstico:",
+              o: ["Absceso perianal (o perirrectal).", "Hemorroide externa trombosada no complicada.", "Fisura anal crónica hipertrófica.", "Condiloma acuminado gigante."],
+              e: "El dolor anal agudo constante que empeora con la presión y tumefacción tensa define el absceso perianal, que requiere drenaje quirúrgico." },
+            { c: 3, q: "¿Cuál es la diferencia clínica fundamental entre un absceso perianal superficial y un absceso isquiorrectal o pelvirrectal profundo?",
+              o: ["Los abscesos profundos cursan con dolor pélvico profundo, fiebre alta, escasa tumefacción externa visible y precisan drenaje bajo anestesia en quirófano.", "Los abscesos superficiales causan shock séptico precoz invariable.", "Los profundos no producen dolor al tacto rectal.", "Los superficiales siempre requieren resonancia magnética urgente."],
+              e: "Los abscesos profundos (isquiorrectales) tienen signos externos mínimos pero gran afectación sistémica y dolor intenso al tacto rectal, exigiendo quirófano." },
+            { c: 3, q: "En el manejo de una hemorroide externa trombosada de menos de 48-72 horas de evolución con dolor agudo e insoportable, la actitud terapéutica quirúrgica menor recomendada en Urgencias es:",
+              o: ["Exéresis o incisión y enucleación del trombo bajo anestesia local.", "Administración exclusiva de baños de asiento tibios sin intervención.", "Hemorroidectomía radical circular de Milligan-Morgan urgente.", "Cauterización química con nitrato de plata directo."],
+              e: "Si la hemorroide externa trombosada lleva pocas horas/días y el dolor es agudo, la incisión elíptica y enucleación del trombo bajo anestesia local alivia el dolor instantáneamente." },
+
+            // ================= CASO 4 (RESERVA): MISCELÁNEA QUIRÚRGICA, QUEMADOS Y TRAUMA =================
+            { c: "CASO CLÍNICO 4 (RESERVA): Miscelánea de grandes quemados, trauma abdominal y urgencias gineco-obstétricas.",
+              q: "Paciente varón de 40 años que sufre quemaduras térmicas de segundo y tercer grado afectando al 50% de su superficie corporal total (SCQ). Pesa 80 kg. Según la fórmula de Parkland, ¿qué volumen total de Ringer Lactato debe recibir en las primeras 8 horas desde la quemadura?",
+              o: ["3.200 ml (la mitad del total calculado para 24 horas que son 6.400 ml en las primeras 8h: 4 ml x 80 kg x 50% = 16.000 ml total; la mitad son 8.000 ml... cálculo: 4 x 80 x 50 = 16.000 ml en 24h; en 8h la mitad son 8.000 ml).", "1.000 ml.", "16.000 ml.", "500 ml."],
+              e: "Fórmula de Parkland: 4 ml x kg x %SCQ = 4 x 80 x 50 = 16.000 ml en 24 horas. La mitad (8.000 ml) se administra en las primeras 8 horas desde el momento de la quemadura." },
+            { c: 4, q: "En la valoración inicial de la profundidad de una quemadura térmica, las quemaduras de segundo grado profundo se caracterizan clínicamente por:",
+              o: ["Blanquecinas o moteadas, con hipoestesia (pérdida parcial de sensibilidad al pinchazo) y curación lenta con cicatriz.", "Rojas, dolorosas intensamente con ampollas (flictenas) intactas y curación rápida sin secuelas (2er grado superficial).", "Incoloras, acartonadas, indoloras por destrucción de terminaciones nerviosas (3er grado).", "Eritematosas sin flictenas (1er grado)."],
+              e: "El segundo grado profundo presenta aspecto blanquecino/moteado, menor sensibilidad (hipoestesia) y alto riesgo de cicatrización hipertrófica, a diferencia del superficial que es rojo y muy doloroso." },
+            { c: 4, q: "Ante una quemadura eléctrica de alta tensión (ej. 15.000 voltios) con punto de entrada en mano y salida en pie, ¿qué complicación sistémica o local oculta debe descartarse obligatoriamente por el paso de corriente a través de los tejidos profundos?",
+              o: ["Rabdomiólisis masiva con fracaso renal agudo y lesiones vasculares profundas trombóticas.", "Glaucoma agudo bilateral por aumento de la presión ocular.", "Rotura de víscera hueca gástrica por expansión de gases.", "Mielinolisis pontina por alteración electrolítica."],
+              e: "Las quemaduras eléctricas de alta tensión producen un gran daño tisular profundo (necrosis muscular y rabdomiólisis) a lo largo del trayecto, a pesar de que las lesiones cutáneas parezcan pequeñas." },
+            { c: 4, q: "Paciente gran quemado que presenta de forma progresiva en las horas siguientes ronquera, estridor laríngeo, quemadura de cejas y vibrisas nasales, con carbonilla en esputo. Actitud inmediata obligatoria:",
+              o: ["Intubación orotraqueal profiláctica precoz antes de que se instale el edema laríngeo masivo por lesión inhalatoria.", "Administrar colirio anestésico y alta domiciliaria.", "Espera activa con oxigenoterapia nasal simple a 2 L/min.", "Toracocentesis bilateral descompresiva urgente."],
+              e: "Los signos de quemadura facial, vibrisas y estridor indican lesión inhalatoria inminente; la vía aérea debe asegurarse de forma precoz antes de que el edema colapse la laringe." },
+            { c: 4, q: "En el manejo del trauma abdominal cerrado, la ecografía FAST ha sustituido en gran parte al lavado peritoneal diagnóstico (LPD) por ser no invasiva. ¿Cuál es su principal limitación diagnóstica?",
+              o: ["Baja sensibilidad para detectar lesiones de víscera hueca aisladas o lesiones retroperitoneales sin sangrado intraperitoneal significativo.", "Incapacidad total para detectar líquido libre en el espacio de Morrison.", "Imposibilidad de realizarse en la camilla del paciente crítico.", "Interferencia absoluta por la presencia de marcapasos."],
+              e: "La FAST detecta sangre libre, pero tiene baja sensibilidad para diagnosticar lesiones de víscera hueca (intestino/mesenterio) o sangrados retroperitoneales puros." },
+            { c: 4, q: "Ante un traumatismo pélvico inestable con shock hemorrágico refractario, si la colocación del cinturón pélvico no logra la estabilización, ¿qué procedimiento quirúrgico urgente se realiza para control del anillo y taponamiento?",
+              o: ["Empaquetamiento pélvico preperitoneal y/o fijación con fijador externo urgente.", "Laparotomía media amplia con resección total de colon sigmoides.", "Amputación bilateral de extremidades inferiores.", "Embolización selectiva por radiología intervencionista si está disponible de inmediato."],
+              e: "El empaquetamiento preperitoneal y la fijación externa son los pilares del control de daños en el sangrado pélvico inestable incoercible." },
+            { c: 4, q: "Gestante de 30 semanas que acude por metrorragia indolora roja brillante en el tercer trimestre. Se sospecha Placenta Previa. ¿Qué prueba diagnóstica está ABSOLUTAMENTE CONTRAINDICADA en la exploración inicial en Urgencias?",
+              o: ["Tacto vaginal digital (por riesgo de desencadenar una hemorragia masiva catastrófica).", "Ecografía obstétrica transabdominal.", "Monitorización fetal externa (RCT).", "Analítica de sangre completa con coagulación."],
+              e: "El tacto vaginal está terminantemente contraindicado ante sospecha de placenta previa hasta descartarla por ecografía, ya que puede provocar una hemorragia incontrolable." },
+            { c: 4, q: "Mujer en edad fértil que acude por dolor abdominal agudo en fosa ilíaca izquierda / hipogastrio, con retraso menstrual de 6 semanas y test de embarazo positivo. Ecografía con útero vacío y anejo doloroso con líquido libre. Diagnóstico:",
+              o: ["Embarazo ectópico accidentado / roto.", "Quiste ovárico simple funcional.", "Enfermedad pélvica inflamatoria aguda.", "Aborto completo en curso con útero vacío."],
+              e: "La triada de amenorrea, dolor anexial y test positivo con útero vacío y líquido libre en ecografía es altamente sugestiva de embarazo ectópico complicado." },
+            { c: 4, q: "En un paciente con politraumatismo grave, el concepto de 'Triada Letal' (que empeora drásticamente la supervivencia y perpetúa el shock) está compuesta por:",
+              o: ["Hipotermia, Coagulopatía y Acidosis metabólica.", "Hipertensión, Taquicardia y Fiebre alta.", "Hiperglucemia, Hipopotasemia e Hipoxemia.", "Bradicardia, Hipotensión y Apnea."],
+              e: "La triada letal del trauma está formada por la hipotermia, la coagulopatía y la acidosis, las cuales se potencian entre sí creando un círculo vicioso de sangrado." },
+            { c: 4, q: "Para romper la 'triada letal' en el paciente politraumatizado sangrante, se aplica el concepto de 'Control de Daños Quirúrgico', que prioriza frente a la cirugía definitiva:",
+              o: ["Controlar la hemorragia y la contaminación mediante cirugía abreviada, corrigiendo la fisiología antes de la reconstrucción definitiva.", "Realizar cirugías reconstructivas complejas de más de 6 horas de duración en el primer tiempo.", "Suspender la transfusión de hemoderivados hasta finalizar la anatomía patológica.", "Evitar el calentamiento corporal activo para no vasodilatar."],
+              e: "El control de daños prioriza la supervivencia fisiológica (parar la hemorragia y aislar contaminación) sobre la cirugía definitiva compleja." },
+            { c: 4, q: "Paciente varón que sufre aplastamiento de la mano con exposición ósea y pérdida de sustancia cutánea con afectación tendinosa. ¿Cómo debe manejarse temporalmente la herida compleja en urgencias antes de la derivación especializada?",
+              o: ["Lavado profuso con suero salino, desbridamiento de tejido desvitalizado, cobertura con apósito húmedo estéril y férula de inmovilización.", "Sutura a tensión con puntos de seda gruesa para cerrar el defecto a toda costa.", "Aplicación directa de polvos de sulfamida y vendaje oclusivo sin lavar.", "Dejar la mano descubierta al aire libre para que se seque."],
+              e: "Las lesiones complejas de mano requieren lavado exhaustivo, protección con apósitos húmedos estériles y férula, evitando cierres a tensión y derivando a cirugía plástica/mano." },
+            { c: 4, q: "Ante una amputación traumática de un dedo en un accidente laboral, ¿cómo debe transportarse el segmento amputado para maximizar las opciones de reimplantación con éxito?",
+              o: ["Envuelto en gasa humedecida en suero salino, introducido en una bolsa estéril seca, y esta a su vez en un recipiente con agua y hielo (doble bolsa, sin contacto directo con el hielo).", "Sumergido directamente en un vaso con agua con cubitos de hielo flotando.", "Congelado directamente en el congelador a -20ºC para evitar la descomposición.", "Sumergido en formol o alcohol al 70%."],
+              e: "El segmento amputado nunca debe tocar el hielo directamente (evitar congelación); se usa doble bolsa estéril con gasa húmeda y refrigeración indirecta con hielo." },
+            { c: 4, q: "En la valoración de un paciente con sospecha de lesión vascular arterial en una extremidad tras un traumatismo, ¿cuál de los llamados 'signos duros' de lesión vascular exige exploración quirúrgica o endovascular urgente inmediata sin necesidad de arteriografía diagnóstica previa?",
+              o: ["Hemorragia pulsátil activa, hematoma expansivo, soplo o frémito palpable y ausencia de pulsos distales con isquemia.", "Parestesias leves transitorias sin alteración de pulsos.", "Historia de mecanismo lesional de alta energía sin signos clínicos vasculares.", "Edema moderado blando en el miembro afectado."],
+              e: "Los signos duros de lesión vascular (hemorragia pulsátil, soplo, ausencia de pulso con isquemia) son indicación quirúrgica inmediata sin requerir pruebas de imagen adicionales." },
+            { c: 4, q: "Paciente que acude por intoxicación aguda por setas presentando un cuadro precoz de sudoración profusa, salivación, lagrimeo, miosis y broncoespasmo a los 30 minutos de la ingestión (síndrome muscarínico o colinérgico). El antídoto específico indicado es:",
+              o: ["Atropina intravenosa en bolos repetidos hasta la atropinización.", "N-acetilcisteína intravenosa.", "Flumazenilo en perfusión rápida.", "Suero antiofídico polivalente."],
+              e: "El síndrome muscarínico por setas cursa con intoxicación colinérica aguda, tratándose eficazmente con Atropina intravenosa." },
+            { c: 4, q: "En la evaluación post-reanimación de un paciente ingresado en el box de urgencias tras una parada cardíaca recuperada, la monitorización neurológica multimodal para estimar el pronóstico funcional debe realizarse idealmente a partir de qué momento clínico:",
+              o: ["Al menos a las 72 horas de normotermia y retirada de la sedación, para evitar falsos positivos por fármacos.", "En los primeros 10 minutos tras el retorno de la circulación espontánea.", "A las 2 horas exactas de ingreso en la unidad.", "Nunca se evalúa el pronóstico neurológico en urgencias."],
+              e: "Las guías de resucitación recomiendan diferir la evaluación pronóstica neurológica fiable al menos 72 horas tras la RCE y la retirada de la sedación/hipotermia terapéutica." }
+        ];
+
+        // Algoritmo de Fisher-Yates para barajar el array de opciones de cada pregunta
+        function shuffleOptions(question) {
+            let optionsMeta = question.o.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === 0 // Siempre la posición 0 del array original es la correcta
+            }));
+            
+            for (let i = optionsMeta.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsMeta[i], optionsMeta[j]] = [optionsMeta[j], optionsMeta[i]];
+            }
+            return optionsMeta;
+        }
+
+        const form = document.getElementById('exam-form');
+        const letras = ['A', 'B', 'C', 'D'];
+
+        // Renderizado dinámico e inserción de encabezados de casos
+        let caseHeaderRendered = "";
+
+        db.forEach((p, index) => {
+            if (p.c && p.c !== caseHeaderRendered && typeof p.c === "string") {
+                const caseDiv = document.createElement('div');
+                caseDiv.className = 'case-header';
+                caseDiv.innerHTML = `<h2>${p.c}</h2>`;
+                form.appendChild(caseDiv);
+                caseHeaderRendered = p.c;
+            }
+
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            
+            let html = `<h3>Pregunta ${index + 1}. ${p.q}</h3><ul class="options">`;
+            
+            const shuffledOptions = shuffleOptions(p);
+            let indexCorrecta;
+
+            shuffledOptions.forEach((optMeta, idx) => {
+                const letra = letras[idx];
+                if (optMeta.isCorrect) indexCorrecta = letra;
+                
+                html += `
+                    <li>
+                        <label id="label-${index}-${letra}">
+                            <input type="radio" name="q${index}" value="${letra}" data-correct="${optMeta.isCorrect}">
+                            <strong>${letra})</strong> ${optMeta.text}
+                        </label>
+                    </li>
+                `;
+            });
+            
+            html += `</ul>
+                     <div id="exp-${index}" class="explanation">
+                         <strong>Respuesta correcta: ${indexCorrecta}.</strong> ${p.e}
+                     </div>`;
+            
+            qDiv.innerHTML = html;
+            form.appendChild(qDiv);
+        });
+
+        // Lógica de corrección
+        function corregir() {
+            let puntuacion = 0;
+            let fallos = 0;
+            let sinContestar = 0;
+
+            db.forEach((p, index) => {
+                const opciones = document.getElementsByName(`q${index}`);
+                let seleccion = null;
+                let seleccionCorrecta = false;
+                
+                opciones.forEach(opt => {
+                    const letra = opt.value;
+                    const label = document.getElementById(`label-${index}-${letra}`);
+                    const esCorrecta = opt.getAttribute('data-correct') === "true";
+
+                    label.classList.remove('correct-anim', 'incorrect-anim'); 
+                    opt.disabled = true; 
+                    
+                    if (opt.checked) {
+                        seleccion = letra;
+                        if (esCorrecta) seleccionCorrecta = true;
+                    }
+                    if (esCorrecta) label.classList.add('correct-anim');
+                });
+
+                if (!seleccion) {
+                    sinContestar++;
+                } else if (!seleccionCorrecta) {
+                    fallos++;
+                    document.getElementById(`label-${index}-${seleccion}`).classList.add('incorrect-anim');
+                } else {
+                    puntuacion++;
+                }
+                document.getElementById(`exp-${index}`).style.display = 'block';
+            });
+
+            // Cálculo tipo BOE: Acierto +1, Fallo -0.25
+            const notaFinal = (puntuacion * 1) - (fallos * 0.25);
+            const notaNormalizada = notaFinal < 0 ? 0 : notaFinal;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alert(`--- SIMULACRO 5 FINALIZADO ---\n\nAciertos: ${puntuacion}\nErrores: ${fallos}\nSin contestar: ${sinContestar}\n\nPUNTUACIÓN TOTAL (Criterio BOE): ${notaNormalizada.toFixed(2)} sobre 60 posibles.\n\nRevisa las explicaciones debajo de cada pregunta.`);
+            }, 300);
+        }
+    </script>
+
+    <!-- Botón opcional MSF -->
+    <div style="text-align: center; margin-top: 50px; padding: 25px; background-color: #fdfbf7; border: 2px solid #e84118; border-radius: 8px;">
+        <h3 style="margin-top: 0; color: #c23616;">¿Te ha sido útil este simulacro?</h3>
+        <p style="font-size: 0.95em; color: #2f3640;">Este proyecto es 100% gratuito. Si te ha servido de ayuda en tu preparación, te invito a transformar ese valor en una donación directa y opcional a Médicos Sin Fronteras.</p>
+        <a href="https://www.msf.es/que-puedo-hacer-yo/donativo" target="_blank" style="display: inline-block; background-color: #e84118; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; transition: 0.3s;">Hacer un donativo a MSF</a>
+    </div>
+
+</body>
+</html>

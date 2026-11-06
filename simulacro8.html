@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulacro 8: Sepsis, Infeccioso y Urgencias Médicas</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #1e272e; line-height: 1.5; padding: 20px; max-width: 950px; margin: auto; }
+        .header { text-align: center; border-bottom: 4px solid #2980b9; margin-bottom: 25px; padding-bottom: 10px; }
+        .header h1 { color: #2d3436; margin: 0; }
+        .case-header { background-color: #2980b9; color: white; padding: 15px; border-radius: 6px; margin-top: 40px; margin-bottom: 20px; }
+        .case-header h2 { margin: 0; font-size: 1.3em; }
+        .question { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .question h3 { margin-top: 0; font-size: 1.05em; color: #2d3436; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 8px; }
+        .options label { display: block; padding: 10px 15px; border: 1px solid #dfe6e9; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+        .options label:hover { background-color: #f1f2f6; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.1); }
+        .btn-container { text-align: center; margin-top: 40px; margin-bottom: 40px; }
+        .btn { background-color: #2980b9; color: white; border: none; padding: 15px 35px; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #1f618d; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background-color: #ebf5fb; border-left: 4px solid #2980b9; border-radius: 4px; font-size: 0.9em; }
+        .correct-anim { border-color: #00b894 !important; background-color: #e8f8f5 !important; font-weight: bold; color: #00b894; }
+        .incorrect-anim { border-color: #d63031 !important; background-color: #fceaea !important; color: #d63031; text-decoration: line-through; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Simulacro 8: Infectología Crítica y Sepsis</h1>
+        <p>Prueba Práctica: 4 Casos Clínicos (60 preguntas). Las opciones se barajan aleatoriamente.</p>
+    </div>
+
+    <form id="exam-form"></form>
+
+    <div class="btn-container">
+        <button type="button" class="btn" onclick="corregir()">Finalizar Simulacro y Ver Resultados</button>
+    </div>
+
+    <script>
+        const db = [
+            // ================= CASO 1: SEPSIS Y SHOCK SÉPTICO =================
+            { c: "CASO CLÍNICO 1: Manejo integral de la Sepsis Grave y el Shock Séptico en Urgencias.",
+              q: "Varón de 72 años con antecedentes de diabetes mellitus que acude a urgencias por fiebre alta, escalofríos y disuria. A la llegada presenta TA 80/45 mmHg, FC 125 lpm, FR 28 rpm y alteración aguda del nivel de conciencia. Tras administrar una carga inicial de cristaloides de 30 ml/kg, persiste con hipotensión arterial requiriendo noradrenalina y presenta un nivel de lactato sérico de 4.1 mmol/L. Este cuadro se clasifica como:",
+              o: ["Shock séptico (según los criterios de consenso Sepsis-3).", "Sepsis leve compensada sin disfunción orgánica.", "Infección de vías urinarias no complicada con hipotensión ortostática.", "Síndrome de respuesta inflamatoria sistémica puramente estéril."],
+              e: "Sepsis-3 define el shock séptico por la necesidad de vasopresores para mantener una PAM ≥ 65 mmHg Y la persistencia de hiperlactatemia (> 2 mmol/L) a pesar de una correcta resucitación con volumen." },
+            { c: 1, q: "Según las directrices de la Campaña Sobrevivir a la Sepsis, ¿dentro de qué intervalo temporal máximo deben administrarse los antibióticos intravenosos de amplio espectro desde el reconocimiento del cuadro?",
+              o: ["En la primera hora (idealmente tras la extracción previa de hemocultivos).", "En las primeras 6 horas tras el ingreso definitivo en la unidad de hospitalización.", "En menos de 15 minutos sin excepciones bajo ningún concepto clínico.", "Tras 24 horas una vez confirmados los resultados microbiológicos."],
+              e: "La administración precoz de antimicrobianos en la primera hora es el factor temporal más crítico para reducir la morbimortalidad en pacientes con sepsis y shock séptico." },
+            { c: 1, q: "¿Cuál es el volumen de reposición inicial con cristaloides isotónicos recomendado en las primeras 3 horas para la reanimación de un paciente con hipoperfusión inducida por sepsis?",
+              o: ["30 ml/kg de peso ideal o real.", "10 ml/kg en bolo rápido de 5 minutos.", "50 ml/kg distribuidos en 24 horas continuas.", "No se deben administrar cristaloides de entrada."],
+              e: "La recomendación estándar de la resucitación inicial en sepsis es infundir 30 ml/kg de cristaloides isotónicos en las primeras 3 horas." },
+            { c: 1, q: "Si tras completar la administración de los 30 ml/kg de cristaloides el paciente persiste hipotenso, ¿cuál es el fármaco vasoactivo de primera línea universal recomendado?",
+              o: ["Noradrenalina en perfusión continua.", "Dopamina a dosis bajas.", "Adrenalina subcutánea en bolo.", "Fenilefrina en infusión rápida."],
+              e: "La noradrenalina es el vasopresor de primera elección en el shock séptico por su potente efecto alfa y moderado beta, restaurando el tono vasomotor." },
+            { c: 1, q: "En caso de no disponer de acceso venoso central de forma inmediata para iniciar la noradrenalina, ¿puede infundirse temporalmente por vía periférica?",
+              o: ["Sí, mediante una vía periférica de buen calibre (preferiblemente en antebrazo o zona proximal) durante las primeras horas mientras se canaliza un acceso central.", "No, bajo ninguna circunstancia está permitida la perfusión periférica de aminas.", "Únicamente a través de una vía venosa en el dorso de la mano.", "Se debe esperar obligatoriamente a la colocación del catéter central."],
+              e: "Las guías actuales aceptan la administración temporal de noradrenalina por vía venosa periférica bien canalizada para no retrasar el soporte vasopresor." },
+            { c: 1, q: "¿Qué valor de Presión Arterial Media (PAM) debe perseguirse como objetivo mínimo durante la resucitación hemodinámica del shock séptico?",
+              o: ["PAM ≥ 65 mmHg.", "PAM ≥ 90 mmHg.", "PAM entre 50 y 55 mmHg.", "PAM superior a 110 mmHg."],
+              e: "El objetivo hemodinámico validado en el shock séptico es mantener una PAM de al menos 65 mmHg para asegurar la correcta perfusión de los órganos diana." },
+            { c: 1, q: "Ante la persistencia de shock séptico refractario a fluidos y dosis moderadas-altas de noradrenalina, ¿qué fármaco hormonal se puede añadir en segunda línea para disminuir los requerimientos de catecolaminas?",
+              o: ["Vasopresina en perfusión continua fija (0.03 unidades/minuto).", "Insulina rápida intravenosa en bolos.", "Ertapenem en monoterapia.", "Hidrocortisona a dosis altas (10g)."],
+              e: "La vasopresina se puede añadir en infusión continua fija como terapia de segunda línea para elevar la presión arterial en el shock séptico refractario." },
+            { c: 1, q: "¿Cuál es el papel actual de los corticoides (como la hidrocortisona intravenosa a dosis de 200 mg/día) en el manejo del shock séptico?",
+              o: ["Se reservan para pacientes con shock séptico refractario con mala respuesta a la fluidoterapia y vasopresores a dosis crecientes.", "Deben administrarse de forma universal a todos los pacientes febriles en urgencias.", "Están contraindicados de manera absoluta por aumentar la mortalidad infecciosa.", "Se utilizan exclusivamente para el tratamiento del dolor lumbar."],
+              e: "La hidrocortisona a dosis bajas se indica en el shock séptico refractario a vasopresores para tratar la posible insuficiencia corticosuprarrenal relativa." },
+            { c: 1, q: "En la evaluación seriada de la respuesta a la resucitación en la sepsis, el aclaramiento de lactato (descenso porcentual del lactato a las 2-6 horas) se utiliza como indicador de:",
+              o: ["Mejoría de la perfusión tisular y resolución de la hipoxia celular.", "Efecto secundario tóxico de los antibióticos.", "Disfunción hepática fulminante aislada.", "Recuperación de la función tubular renal."],
+              e: "El descenso del lactato sérico (aclaramiento) correlaciona estrechamente con la restauración de la perfusión tisular y la disminución de la mortalidad." },
+            { c: 1, q: "¿Cuántos hemocultivos independientes deben extraerse idealmente antes de iniciar la antibioterapia empírica en una sepsis grave?",
+              o: ["Al menos dos juegos de hemocultivos (extrayendo de dos sitios venosos diferentes).", "Un solo hemocultivo periférico es suficiente.", "Diez hemocultivos seriados cada hora.", "No es necesario extraer hemocultivos si hay fiebre alta."],
+              e: "Se recomienda la extracción de al menos dos juegos de hemocultivos de sitios venosos distintos para maximizar la sensibilidad diagnóstica." },
+            { c: 1, q: "Paciente con sospecha de sepsis de origen abdominal (perforación o absceso). ¿Qué cobertura antibiótica empírica inicial es la más adecuada?",
+              o: ["Un betalactámico con actividad frente a gramnegativos y anaerobios (ej. Piperacilina-Tazobactam o Imipenem).", "Vancomicina en monoterapia oral.", "Cefalexina en comprimidos.", "Aztreonam aislado sin cobertura anaerobia."],
+              e: "La infección intraabdominal exige cobertura mixta frente a bacilos gramnegativos entéricos y flora anaerobia (ej. Piperacilina-Tazobactam)." },
+            { c: 1, q: "Si el foco infeccioso sospechado es una neumonía adquirida en la comunidad grave con criterios de ingreso en UCI, ¿qué combinación antibiótica empírica suele indicarse?",
+              o: ["Una cefalosporina de 3ª generación (Ceftriaxona) o aminopenicilina con inhibidor asociada a un macrólido (Azitromicina) o fluoroquinolona respiratoria.", "Vancomicina tópica exclusivamente.", "Penicilina benzatina intramuscular en dosis única.", "Fluconazol intravenoso en perfusión."],
+              e: "La NAC grave requiere cobertura frente a neumococo y gérmenes atípicos, combinando un betalactámico con un macrólido o fluoroquinolona respiratoria." },
+            { c: 1, q: "En un paciente anciano con sepsis grave que desarrolla oliguria mantenida (< 0.5 ml/kg/h) y elevación progresiva de la creatinina sérica a pesar de una correcta PAM, nos encontramos ante una complicación frecuente denominada:",
+              o: ["Fracaso renal agudo secundario a necrosis tubular aguda o lesión renal asociada a sepsis.", "Glomerulonefritis aguda postestreptocócica benigna.", "Litiasis renal bilateral obstructiva aguda.", "Insuficiencia renal crónica terminal de novo."],
+              e: "La lesión renal aguda (IRA) asociada a sepsis es una complicación muy frecuente derivada de la inflamación sistémica y la alteración hemodinámica." },
+            { c: 1, q: "¿Qué hallazgo hematológico analítico grave puede aparecer en el contexto de una sepsis avanzada, caracterizado por consumo de factores de coagulación, trombopenia y sangrados?",
+              o: ["Coagulación Intravascular Diseminada (CID).", "Policitemia vera primaria.", "Trombocitosis esencial reactiva.", "Déficit aislado de vitamina K."],
+              e: "La sepsis grave puede desencadenar una coagulación intravascular diseminada (CID), caracterizada por consumo de plaquetas y factores con riesgo hemorrágico y trombótico." },
+            { c: 1, q: "Para la monitorización de la diuresis horaria estricta en un paciente con shock séptico inestable en el box de reanimación, el método recomendado es:",
+              o: ["Sondaje vesical con colector graduado.", "Recogida de orina espontánea mediante micción en cuña cada 8 horas.", "Estimación visual del volumen en pañal absorbente.", "Valoración exclusiva mediante ecografía vesical ecográfica."],
+              e: "El sondaje vesical estricta permite monitorizar de forma cuantitativa y horaria la diuresis, siendo un indicador clave de la perfusión renal." },
+
+            // ================= CASO 2: INFECCIONES DEL SISTEMA NERVIOSO CENTRAL =================
+            { c: "CASO CLÍNICO 2: Meningitis bacteriana, encefalitis herpética y urgencias neurológicas infecciosas.",
+              q: "Varón de 45 años que acude a urgencias por fiebre de 39.5ºC, cefalea holocraneal intensa de 24 horas de evolución, rigidez de nuca y alteración del nivel de conciencia. Signos de Brudzinski y Kernig positivos. Ante la sospecha de Meningitis Bacteriana Aguda, ¿cuál es la actitud inicial prioritaria previa a la punción lumbar si hay demora en la prueba de imagen?",
+              o: ["Administración inmediata de dexametasona intravenosa y antibioterapia empírica de amplio espectro (tras hemocultivos).", "Realizar una tomografía computarizada (TC) craneal obligatoria antes de administrar cualquier fármaco.", "Esperar el resultado de la serología completa en sangre periférica.", "Administrar analgésicos menores y alta domiciliaria."],
+              e: "Ante la sospecha de meningitis bacteriana, la administración precoz de antibióticos y dexametasona es vital; si hay signos de hipertensión intracraneal se difiere la PL, pero nunca el tratamiento." },
+            { c: 2, q: "¿Cuál es el tratamiento antimicrobiano empírico inicial indicado en un adulto inmunocompetente con sospecha de meningitis bacteriana adquirida en la comunidad?",
+              o: ["Ceftriaxona (o Cefotaxima) a altas dosis + Ampicilina (si > 50 años para cubrir Listeria) + Dexametasona.", "Aciclovir intravenoso en monoterapia exclusiva.", "Ciprofloxacino en comprimidos orales.", "Vancomicina tópica."],
+              e: "El tratamiento empírico estándar incluye cefalosporina de 3ª generación (Ceftriaxona) + ampicilina (si > 50 años o factores de riesgo para Listeria) junto a dexametasona." },
+            { c: 2, q: "En el análisis citoquímico del líquido cefalorraquídeo (LCR) obtenido mediante punción lumbar en una meningitis bacteriana, ¿qué patrón típico se espera encontrar?",
+              o: ["Pleocitosis neutrófila marcada (leucocitos aumentados a expensas de polimorfonucleares), proteínas elevadas e hipoglucorraquia (glucosa en LCR baja respecto a la sangre).", "Pleocitosis linfocitaria con glucosa estrictamente normal.", "Líquido transparente con proteínas disminuidas y ausencia total de células.", "Presencia masiva de hematíes inalterados."],
+              e: "La meningitis bacteriana cursa típicamente con LCR turbio, aumento de presión, predominio de neutrófilos, hiperproteinorraquia e hipoglucorraquia marcada." },
+            { c: 2, q: "Paciente que acude con fiebre, alteración conductual aguda, crisis convulsivas focales y focalidad neurológica (afectación del lóbulo temporal). Sospechas Encefalitis Herpética Aguda. Tratamiento específico de elección:",
+              o: ["Aciclovir intravenoso a dosis altas (10 mg/kg/8h).", "Ceftriaxona intravenosa en monodosis.", "Fluconazol oral diario.", "Corticoides en monoterapia sin antivirales."],
+              e: "La encefalitis por virus herpes simple requiere la administración precoz de Aciclovir intravenoso para reducir la elevada mortalidad y secuelas neurológicas." },
+            { c: 2, q: "Ante una punción lumbar realizada en un paciente con sospecha de meningitis, ¿qué contraindicación absoluta por imagen (TC craneal) obliga a suspender la prueba por riesgo inminente de enclavamiento?",
+              o: ["Presencia de efecto masa significativo, edema cerebral difuso o signos de herniación cerebral.", "Edad superior a 40 años.", "Presencia de cefalea tensional leve.", "Plaquetas de 150.000 /mm3."],
+              e: "La existencia de efecto masa o signos de herniación en el TC craneal contraindica de forma absoluta la realización de la punción lumbar." },
+            { c: 2, q: "Si tras la punción lumbar el LCR muestra pleocitosis linfocitaria, glucosa normal y proteínas ligeramente elevadas, con clínica subaguda de cefalea y fiebre moderada, el diagnóstico más probable es:",
+              o: ["Meningitis vírica aséptica.", "Meningitis bacteriana purulenta fulminante.", "Absceso cerebral subdural cerrado.", "Hemorragia subaracnoidea aneurismática."],
+              e: "La meningitis vírica cursa típicamente con LCR claro, pleocitosis linfocitaria, glucosa normal (normoglucorraquia) y evolución autolimitada." },
+            { c: 2, q: "Paciente con fiebre, cefalea y signos meníngeos que presenta en el LCR una glucosa muy baja (hipoglucorraquia extrema), proteínas muy altas y predominio linfocitario/mononuclear o mixto. Debe descartarse fundamentalmente:",
+              o: ["Meningitis tuberculosa o meningitis fúngica (criptocócica).", "Meningitis vírica por enterovirus leve.", "Migraña con aura prolongada.", "Epilepsia focal idiopática."],
+              e: "Una hipoglucemia en LCR (hipoglucorraquia) muy marcada con evolución subaguda orienta hacia etiologías granulomatosas como tuberculosis o hongos." },
+            { c: 2, q: "En relación con el uso de Dexametasona en la meningitis bacteriana aguda, ¿cuál es el momento idóneo recomendado para su administración?",
+              o: ["Justo antes o al mismo tiempo que la primera dosis de antibiótico (o en las primeras horas posteriores).", "Al finalizar el tratamiento antibiótico a los 14 días.", "Únicamente si el paciente desarrolla insuficiencia renal.", "Está contraindicada de forma absoluta."],
+              e: "La dexametasona debe administrarse antes o conjuntamente con la primera dosis de antibiótico para reducir la inflamación y las secuelas neurológicas (como la hipoacusia)." },
+            { c: 2, q: "Paciente varón que acude por cuadro febril, cefalea focal y aparición de crisis convulsivas parciales. La RM cerebral demuestra una lesión redondeada con realce en anillo y edema circundante. Diagnóstico:",
+              o: ["Absceso cerebral.", "Infarto lacunar crónico.", "Esclerosis tuberosa benigna.", "Quiste aracnoideo congénito."],
+              e: "La clínica infecciosa con lesiones cerebrales focales con realce en anillo en pruebas de imagen sugiere fuertemente un absceso cerebral." },
+            { c: 2, q: "Ante la sospecha de trombosis de senos venosos duramadre de origen infeccioso (complicación de sinusitis o otitis), ¿qué prueba radiológica vascular es de elección en urgencias?",
+              o: ["Angio-RM venosa cerebral o Angio-TC venoso cerebral.", "Radiografía simple de cráneo lateral.", "Electroencefalograma estándar de 20 minutos.", "Ecografía Doppler transcraneal básica."],
+              e: "El estudio venoso por TC o RM (Angio-TC/RM venosa) es la prueba de elección para confirmar la trombosis de los senos venosos intracraneales." },
+            { c: 2, q: "Mujer de 30 años que acude por cefalea intensa, fiebre, rigidez de nuca y antecedentes de otitis media crónica supurada ipsilateral. Se objetiva un absceso epidural o empiema subdural. El manejo urgente requiere:",
+              o: ["Valoración neuroquirúrgica urgente para drenaje de la colección e inicio de antibioterapia intravenosa de amplio espectro.", "Tratamiento analgésico oral ambulatorio con ibuprofeno.", "Punciones lumbares evacuadoras diarias en urgencias.", "Alta hospitalaria con colirios óticos."],
+              e: "Los empiemas subdurales y abscesos intracraneales son emergencias neuroquirúrgicas que requieren descompresión y antibioterapia parenteral prolongada." },
+            { c: 2, q: "En una punción lumbar traumática (con sangre por pinchazo vascular accidental), ¿cómo puede estimarse aproximadamente el número de leucocitos reales en el LCR si hay hematíes?",
+              o: ["Aproximando una corrección estándar (restando 1 leucocito por cada 500-1000 hematíes basándose en la proporción sanguínea periférica).", "No se puede corregir de ninguna forma analítica.", "Multiplicando los leucocitos por 10.", "Sumando los hematíes al total de proteínas."],
+              e: "En LCR traumáticos se puede aplicar una corrección estimada (aprox. 1 leucocito por cada 500-1000 hematíes) para valorar la leucocitosis real del LCR." },
+            { c: 2, q: "¿Cuál es el agente causal más frecuente de meningitis bacteriana aguda en adultos jóvenes inmunocompetentes en nuestro medio?",
+              o: ["Neisseria meningitidis (meningococo) y Streptococcus pneumoniae (neumococo).", "Escherichia coli K1.", "Listeria monocytogenes exclusiva.", "Pseudomonas aeruginosa."],
+              e: "Streptococcus pneumoniae y Neisseria meningitidis son los dos patógenos causales predominantes de la meningitis bacteriana aguda en el adulto." },
+            { c: 2, q: "Paciente diagnosticado de meningitis meningocócica que acude a urgencias. Además del aislamiento respiratorio del paciente, ¿qué medida profiláctica debe aplicarse a los contactos estrechos (convivientes)?",
+              o: ["Quimioprofilaxis precoz con Rifampicina oral (o Ciprofloxacino / Ceftriaxona según guías).", "Vacunación antirrábica urgente obligatoria.", "Ingreso hospitalario preventivo de toda la familia.", "Cuarentena domiciliaria estricta de 30 días sin fármacos."],
+              e: "Los contactos estrechos de un caso de meningitis meningocócica precisan quimioprofilaxis antibiótica precoz para evitar la transmisión secundaria." },
+            { c: 2, q: "Ante la sospecha de tétanos generalizado en un paciente que acude con trismus, risa sardónica y espasmos musculares dolorosos generalizados desencadenados por estímulos, la actitud urgente incluye:",
+              o: ["Ambiente silencioso y oscuro, administración de inmunoglobulina antitetánica humana, desbridamiento de la herida de entrada, relajantes musculares y soporte respiratorio.", "Estimulación táctil y sonora frecuente para comprobar reflejos.", "Administración de altas dosis de anticoagulantes orales.", "Alta domiciliaria con relajantes musculares suaves."],
+              e: "El tétanos es una emergencia neurológica crítica que requiere neutralizar la toxina con inmunoglobulina, soporte respiratorio y evitar estímulos que desencadenen espasmos letales." },
+
+            // ================= CASO 3: NEUMONÍAS GRAVES E INFECCIONES RESPIRATORIAS =================
+            { c: "CASO CLÍNICO 3: Infecciones respiratorias graves, Neumonía Adquirida en la Comunidad (NAC) y criterios de gravedad.",
+              q: "Varón de 68 años con EPOC que acude por fiebre, tos con expectoración purulenta, disnea y dolor pleurítico derecho. TA 90/50 mmHg, FC 115 lpm, FR 28 rpm, SatO2 86% basal. Urea sérica 55 mg/dl, Confusión leve (GCS 14). Calcula su puntuación CURB-65:",
+              o: ["4 puntos (Confusión + Urea > 50 + FR ≥ 30 (28 cerca) + PAS < 90 / PAD < 60 + Edad ≥ 65).", "1 punto.", "0 puntos.", "5 puntos."],
+              e: "CURB-65: Confusión (1), Urea > 44 mg/dl (1), FR ≥ 30 (0, pero PAS < 90 suma), PAS < 90 o PAD ≤ 60 (1), Edad ≥ 65 (1). Total: 4 puntos (criterio de ingreso ineludible en UCI)." },
+            { c: 3, q: "Un paciente con neumonía que presenta una puntuación CURB-65 de 4 puntos tiene indicación clínica formal de:",
+              o: ["Ingreso inmediato en la Unidad de Cuidados Intensivos (UCI).", "Alta domiciliaria con antibióticos orales.", "Observación de 2 horas en urgencias y alta.", "Ingreso en planta convencional sin monitorización."],
+              e: "Una puntuación CURB-65 de 3 o más puntos indica neumonía grave con alta mortalidad, siendo criterio de ingreso en UCI." },
+            { c: 3, q: "Criterios menores de ingreso en UCI para la Neumonía Adquirida en la Comunidad (según las guías ATS/IDSA), bastando la presencia de tres o más de ellos:",
+              o: ["FR ≥ 30 rpm, Relación PaO2/FiO2 ≤ 250, Infiltrados multilobulares, Confusión, Uremia (BUN > 20 mg/dl), Leucopenia, Trombopenia e Hipotensión.", "Fiebre aislada de 38.5ºC.", "Dolor torácico pleurítico sin disnea.", "Edad inferior a 50 años."],
+              e: "Los criterios ATS/IDSA menores para UCI incluyen la afectación respiratoria severa (PaO2/FiO2 baja, FR alta), multilobularidad, confusión, uremia, etc." },
+            { c: 3, q: "¿Cuál es el criterio mayor indiscutible de ingreso en UCI en una NAC grave?",
+              o: ["Necesidad de ventilación mecánica invasiva o shock séptico con requerimiento de vasopresores.", "Presencia de derrame pleural paraneumónico leve.", "Infiltrado lobar único sin alteración gasométrica.", "Fiebre persistente a las 24 horas de iniciar tratamiento."],
+              e: "Los criterios mayores de ingreso en UCI son la ventilación mecánica invasiva y el shock séptico requiriendo vasopresores." },
+            { c: 3, q: "Paciente con neumonía bacteriana que presenta un derrame pleural asociado. Al realizar una toracocentesis diagnóstica, el líquido obtenido cumple los criterios de Light y muestra un pH < 7.20, glucosa < 40 mg/dl y LDH elevada, con aspecto turbio/purulento. Se diagnostica de:",
+              o: ["Empiema pleural / derrame pleural paraneumónico complicado (requiere drenaje con tubo de tórax).", "Derrame pleural transudativo simple por insuficiencia cardíaca.", "Hidrotórax hepático benigno.", "Quilotórax traumático."],
+              e: "Un derrame paraneumónico con pH bajo (< 7.20), glucosa baja y aspecto purulento indica empiema, requiriendo obligatoriamente la colocación de un tubo de drenaje torácico." },
+            { c: 3, q: "En relación con los criterios de Light para diferenciar trasudados de exudados pleurales, un líquido pleural se clasifica como EXUDADO si cumple al menos una de las siguientes condiciones:",
+              o: ["Proteínas líquido/suero > 0.5, LDH líquido/suero > 0.6, o LDH líquido > 2/3 del límite superior de normalidad sérica.", "Proteínas totales en líquido pleural < 2.5 g/dl.", "Gradiente de albúmina suero-pleura > 1.2 g/dl.", "Ausencia total de células en el sedimento."],
+              e: "Los criterios de Light clasifican el líquido como exudado si la relación de proteínas > 0.5, relación de LDH > 0.6 o LDH pleural > 2/3 del límite superior sérico." },
+            { c: 3, q: "Paciente con neumonía por *Legionella pneumophila* que acude con fiebre alta, diarrea, confusión mental e hiponatremia severa. ¿Qué prueba diagnóstica microbiológica rápida es de gran utilidad clínica en urgencias?",
+              o: ["Test de detección de antígeno de Legionella en orina.", "Hemocultivo en medio anaerobio estricto.", "Urocultivo estándar a las 72 horas.", "Exudado faríngeo rápido para virus."],
+              e: "La detección de antígeno en orina para Legionella es una prueba rápida, altamente sensible y específica para el diagnóstico precoz de esta neumonía atípica." },
+            { c: 3, q: "Tratamiento antibiótico empírico de elección para una neumonía por *Legionella* adquirida en la comunidad grave:",
+              o: ["Fluoroquinolonas respiratorias (Levofloxacino) o Macrólidos (Azitromicina).", "Penicilina G benzatina intramuscular.", "Cloxacilina oral en monodosis.", "Nitrofurantoína en comprimidos."],
+              e: "Las fluoroquinolonas (levofloxacino) y los macrólidos (azitromicina) son los antibióticos de elección frente a gérmenes intracelulares como Legionella." },
+            { c: 3, q: "Paciente inmunodeprimido (VIH con CD4 bajos) que acude con neumonía subaguda bilateral difusa, hipoxemia desproporcionada y elevación de LDH. Sospechas infección por *Pneumocystis jirovecii*. Tratamiento de elección:",
+              o: ["Trimetoprim-Sulfametoxazol (Cotrimoxazol) intravenoso a altas dosis.", "Fluconazol en monoterapia oral.", "Amoxicilina-Clavulanico estándar.", "Itraconazol en cápsulas."],
+              e: "El tratamiento de elección para la neumonía por Pneumocystis jirovecii es Cotrimoxazol a dosis altas, asociando corticoides si hay hipoxemia grave." },
+            { c: 3, q: "Ante la sospecha clínica de tuberculosis pulmonar cavitada en un paciente con tos crónica, pérdida de peso y sudoración nocturna, ¿qué prueba microbiológica urgente debe solicitarse en esputo en urgencias?",
+              o: ["Tinción de Ziehl-Neelsen (baciloscopia) y PCR rápida para Mycobacterium tuberculosis (GeneXpert).", "Test rápido de antígeno en orina.", "Hemocultivo aeróbico estándar de 24 horas.", "Cultivo en agar sangre simple."],
+              e: "La baciloscopia (Ziehl-Neelsen) y las técnicas de amplificación génica (PCR rápida) en esputo permiten el diagnóstico rápido de sospecha de tuberculosis." },
+            { c: 3, q: "Paciente con insuficiencia respiratoria aguda por exacerbación grave de EPOC. Gasometría arterial basal: pH 7.28, pCO2 65 mmHg, pO2 55 mmHg, HCO3 32 mEq/L. Se interpreta como:",
+              o: ["Acidosis respiratoria aguda sobre crónica (fallo ventilatorio hipercápnico).", "Alcalosis metabólica pura compensada.", "Acidosis metabólica láctica primaria.", "Alcalosis respiratoria por hiperventilación."],
+              e: "Un pH bajo, con pCO2 muy elevada y bicarbonato elevado compensador, traduce una acidosis respiratoria aguda sobre un fondo de retención crónica (EPOC agudizado)." },
+            { c: 3, q: "Soporte ventilatorio no invasivo (VMNI) de primera elección indicado en el paciente EPOC anterior con acidosis respiratoria moderada (pH 7.28):",
+              o: ["BiPAP (Ventilación Mecánica No Invasiva con presión inspiratoria y espiratoria).", "CPAP continua fija sin presión inspiratoria de soporte.", "Oxigenoterapia con mascarilla Venturi al 100%.", "Intubación orotraqueal directa obligatoria."],
+              e: "La modalidad BiPAP (VMNI) es el soporte de elección en la agudización de EPOC con acidosis respiratoria moderada, reduciendo la necesidad de intubación." },
+            { c: 3, q: "En un paciente con EPOC hipercápnico crónico, administrar oxígeno a flujos elevados sin control (con altas concentraciones de FiO2) puede provocar:",
+              o: ["Empeoramiento de la hipercapnia e hipoventilación alveolar (empeoramiento de la acidosis respiratoria por pérdida del estímulo hipoxémico).", "Alcalosis metabólica inmediata severa.", "Infarto agudo de miocardio por vasoconstricción.", "Parada cardíaca por fibrilación ventricular."],
+              e: "En EPOCs retentores crónicos, el exceso de O2 elimina el estímulo hipoxémico que mantenía su ventilación, provocando empeoramiento de la hipercapnia." },
+            { c: 3, q: "¿Cuál es el objetivo de saturación de oxígeno (SpO2) recomendado al administrar oxigenoterapia controlada en pacientes agudos con riesgo de hipercapnia (como EPOC)?",
+              o: ["88 - 92%", "98 - 100%", "70 - 75%", "95 - 99%"],
+              e: "En pacientes con riesgo de hipercapnia se recomienda un rango objetivo de SpO2 más conservador, entre el 88% y el 92%." },
+            { c: 3, q: "Paciente con neumonía que desarrolla un cuadro de insuficiencia respiratoria aguda refractaria con infiltrados alveolares bilaterales difusos y una relación PaO2/FiO2 de 160 mmHg (con PEEP de 10 cmH2O). Se clasifica como:",
+              o: ["SDRA (Síndrome de Distrés Respiratorio Agudo) moderado.", "Edema agudo de pulmón cardiogénico puro.", "Contusión pulmonar leve.", "Atelectasia obstructiva simple."],
+              e: "Según los criterios de Berlín, una PaO2/FiO2 entre 100 y 200 mmHg con PEEP ≥ 5 y afectación bilateral define el SDRA moderado." },
+
+            // ================= CASO 4 (RESERVA): MISCELÁNEA E INFECCIOSO =================
+            { c: "CASO CLÍNICO 4 (RESERVA): Miscelánea de enfermedades infecciosas, infecciones cutáneas, mordeduras y patología urgente.",
+              q: "Varón de 50 años que acude por herida punzante en la mano tras la mordedura de su gato hace 12 horas. Presenta celulitis local dolorosa y celulitis con edema y secreción purulenta. El patógeno anaerobio/facultativo más característico transmitido por mordedura de gato es:",
+              o: ["Pasteurella multocida.", "Staphylococcus aureus resistente a meticilina.", "Pseudomonas aeruginosa.", "Escherichia coli uropatógena."],
+              e: "Pasteurella multocida es el patógeno característico y más frecuente en las infecciones por mordedura de gato, siendo muy sensible a Amoxicilina-Clavulánico." },
+            { c: 4, q: "¿Cuál es el tratamiento antibiótico empírico oral o intravenoso de elección para una herida infectada por mordedura de animal (gato o perro)?",
+              o: ["Amoxicilina-Clavulánico (por su cobertura frente a Pasteurella, anaerobios y grampositivos).", "Cloxacilina en monoterapia.", "Ciprofloxacino en comprimidos.", "Eritromicina simple."],
+              e: "Amoxicilina-Clavulánico es el antibiótico de elección por su amplio espectro cubriendo flora oral de animales y estafilococos/estreptococos cutáneos." },
+            { c: 4, q: "Paciente que acude por celulitis cutánea purulenta en extremidad inferior con presencia de abscesos y sospecha de infección por *Staphylococcus aureus* resistente a meticilina (SARM) adquirido en la comunidad. Tratamiento antibiótico empírico adecuado:",
+              o: ["Tratamiento con Trimetoprim-Sulfametoxazol, Doxiciclina o Clindamicina (según sensibilidad local).", "Penicilina G sódica intravenosa en monodosis.", "Cefalexina oral simple.", "Amoxicilina sola."],
+              e: "Ante sospecha de SARM cutáneo ambulatorio, se emplean fármacos como TMP-SMX, doxiciclina o clindamicina." },
+            { c: 4, q: "Mujer de 35 años que acude por disuria, urgencia miccional y polaquiuria sin fiebre ni dolor lumbar. Urocultivo positivo para *Escherichia coli*. Se diagnostica de Cistitis Aguda No Complicada. Tratamiento de primera línea recomendado:",
+              o: ["Fosfomicina trometamol (dosis única oral) o Nitrofurantoína oral (o Pivmecilinam).", "Ceftriaxona intravenosa durante 14 días.", "Vancomicina en perfusión continua.", "Tobramicina intramuscular."],
+              e: "La cistitis no complicada se trata eficazmente con pautas cortas de fosfomicina trometamol en dosis única o nitrofurantoína." },
+            { c: 4, q: "Si la paciente anterior hubiera presentado fiebre de 39ºC, dolor en fosa renal y vómitos, diagnosticándose de Pielonefritis Aguda Grave que requiere ingreso, el tratamiento empírico inicial indicado es:",
+              o: ["Cefalosporina de 3ª generación (Ceftriaxona IV) o Aminoglucósido / Fluoroquinolona según resistencias locales.", "Fosfomicina en sobre único.", "Amoxicilina oral simple.", "Azitromicina en monodosis."],
+              e: "La pielonefritis aguda grave requiere antibioterapia parenteral de entrada con cefalosporinas de 3ª generación u otras opciones según perfil." },
+            { c: 4, q: "Paciente que acude tras viaje a zona endémica por malaria (paludismo), presentando fiebre alta en picos, escalofríos, sudoración y anemia hemolítica. ¿Qué prueba diagnóstica rápida debe realizarse de urgencia en el laboratorio?",
+              o: ["Test de diagnóstico rápido (TDR) de malaria (detección de antígenos) y extensión sangre periférica (gota gruesa y fina).", "Punción lumbar diagnóstica urgente.", "Antígeno de Legionella en orina.", "Urocultivo de 24 horas."],
+              e: "La gota gruesa y la extensión fina de sangre periférica, junto con los test rápidos de antígenos, son las pruebas estándar para el diagnóstico urgente de la malaria." },
+            { c: 4, q: "Varón de 40 años que acude por diarrea acuosa masiva tras ingesta de marisco en zona costera tropical, con aspecto de 'agua de arroz', vómitos y deshidratación rápida severa. Sospecha de Cólera (*Vibrio cholerae*). Tratamiento fundamental inicial:",
+              o: ["Rehidatración enérgica precoz (oral o intravenosa) asociada a antibioterapia acortada (tetraciclinas / azitromicina).", "Loperamida en dosis altas para frenar totalmente el tránsito.", "Administración exclusiva de enemas de limpieza.", "Diuréticos de asa para eliminar toxinas."],
+              e: "El pilar absoluto en el cólera es la reposición masiva de fluidos y electrolitos para corregir la deshidratación, complementada con antibióticos para acortar la excreción." },
+            { c: 4, q: "Paciente que acude por cuadro de diarrea aguda con moco, sangre y pus (disentería), fiebre alta y dolor abdominal cólico intenso tras viaje internacional. Los agentes causales bacterianos más frecuentes son:",
+              o: ["Campylobacter jejuni, Salmonella spp., Shigella spp. o E. coli enteroinvasiva.", "Virus respiratorio sincitial.", "Candida albicans diseminada.", "Herpes simple tipo 2."],
+              e: "La disentería aguda infecciosa está causada clásicamente por bacterias invasivas como Campylobacter, Salmonella, Shigella o E. coli enteroinvasiva." },
+            { c: 4, q: "En la diarrea aguda infecciosa acuosa leve-moderada sin signos de disentería ni afectación sistémica grave, ¿cuál es el tratamiento de soporte fundamental?",
+              o: ["Rehidratación oral con sales de rehidratación de la OMS y dieta astringente precoz; los antibióticos no están indicados de rutina.", "Antibioterapia empírica con ciprofloxacino y metronidazol a todos los pacientes.", "Nutrición parenteral total exclusiva.", "Ayuno absoluto estricto durante 7 días."],
+              e: "La diarrea aguda acuosa es autolimitada en la gran mayoría de los casos; el tratamiento es la rehidratación oral sin requerir antibióticos rutinarios." },
+            { c: 4, q: "Paciente diagnosticado de Tétanos que presenta espasmos musculares intensos y rigidez generalizada. ¿Qué antitoxina específica debe administrarse para neutralizar la toxina circulante no fijada?",
+              o: ["Inmunoglobulina antitetánica humana (IGAT).", "Suero antiofídico polivalente.", "Anticuerpos monoclonales anti-VIH.", "Plasma fresco congelado estándar."],
+              e: "La inmunoglobulina antitetánica humana (IGAT) se administra para neutralizar la toxina tetánica circulante que aún no se ha fijado al sistema nervioso." },
+            { c: 4, q: "Ante la sospecha de rabia tras la mordedura de un perro callejero en un país endémico, ¿cuándo debe iniciarse la profilaxis post-exposición (vacunación antirrábica + inmunoglobulina)?",
+              o: ["De forma inmediata tras el lavado exhaustivo de la herida, sin esperar a la confirmación laboratorial.", "A los 30 días si el animal sigue vivo.", "Únicamente si aparecen síntomas neurológicos de hidrofobia.", "No requiere profilaxis si la herida es pequeña."],
+              e: "La rabia es una enfermedad letal al 100% una vez sintomática; la profilaxis post-exposición debe iniciarse de inmediato tras la exposición." },
+            { c: 4, q: "Mujer de 25 años que acude por fiebre, exantema maculopapuloso generalizado que incluye palmas y plantas, y adenopatías generalizadas, con antecedentes de relaciones de riesgo. VDRL / RPR positivo. Se diagnostica de Sífilis Secundaria. Tratamiento de elección:",
+              o: ["Penicilina G Benzatina 2.4 millones de unidades en dosis única intramuscular.", "Ceftriaxona oral en comprimidos durante 3 días.", "Azitromicina en monodosis.", "Doxiciclina tópica cutánea."],
+              e: "El tratamiento de elección para la sífilis primaria, secundaria o latente precoz es una dosis única intramuscular de Penicilina G Benzatina (2.4M UI)." },
+            { c: 4, q: "Paciente con sospecha de infección por el Virus de la Inmunodeficiencia Humana (VIH) que acude con neumonía por *Pneumocystis jirovecii* y candidiasis esofágica. Estos hallazgos definen una situación clínica de:",
+              o: ["SIDA (Estadio definitorio de SIDA por infecciones oportunistas).", "Infección aguda primaria asintomática por VIH.", "Portador crónico sin inmunodepresión.", "Déficit aislado de inmunoglobulina G."],
+              e: "La aparición de infecciones oportunistas como neumonía por Pneumocystis o candidiasis esofágica define la progresión de la infección a SIDA." },
+            { c: 4, q: "En la profilaxis post-exposición (PPE) frente al VIH tras un pinchazo accidental con aguja contaminada en personal sanitario, ¿dentro de qué intervalo temporal ideal debe iniciarse el tratamiento antirretroviral?",
+              o: ["Lo antes posible, idealmente en las primeras 2 horas tras la exposición (y nunca más allá de las 72 horas).", "A las 2 semanas exactas tras el accidente.", "A los 6 meses tras el resultado del anticuerpo.", "No requiere profilaxis farmacológica."],
+              e: "La profilaxis post-exposición al VIH debe iniciarse con la máxima urgencia, idealmente en las primeras 2 horas y antes de que transcurran 72 horas." },
+            { c: 4, q: "En relación con los umbrales mínimos de procedimientos exigidos en el programa formativo oficial de la especialidad para competencias infecciosas y de urgencias generales, ¿cuántos procedimientos de punción lumbar se exigen registrar habitualmente?",
+              o: ["Al menos 2 procedimientos documentados.", "Ninguno.", "Más de 50 procedimientos pediátricos complejos.", "Exactamente 10 en adultos."],
+              e: "El programa oficial de la especialidad establece umbrales numéricos mínimos para el registro de actividades, exigiendo al menos 2 procedimientos de punción lumbar." }
+        ];
+
+        // Algoritmo de Fisher-Yates para barajar el array de opciones de cada pregunta
+        function shuffleOptions(question) {
+            let optionsMeta = question.o.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === 0 // Siempre la posición 0 del array original es la correcta
+            }));
+            
+            for (let i = optionsMeta.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsMeta[i], optionsMeta[j]] = [optionsMeta[j], optionsMeta[i]];
+            }
+            return optionsMeta;
+        }
+
+        const form = document.getElementById('exam-form');
+        const letras = ['A', 'B', 'C', 'D'];
+
+        // Renderizado dinámico e inserción de encabezados de casos
+        let caseHeaderRendered = "";
+
+        db.forEach((p, index) => {
+            if (p.c && p.c !== caseHeaderRendered && typeof p.c === "string") {
+                const caseDiv = document.createElement('div');
+                caseDiv.className = 'case-header';
+                caseDiv.innerHTML = `<h2>${p.c}</h2>`;
+                form.appendChild(caseDiv);
+                caseHeaderRendered = p.c;
+            }
+
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            
+            let html = `<h3>Pregunta ${index + 1}. ${p.q}</h3><ul class="options">`;
+            
+            const shuffledOptions = shuffleOptions(p);
+            let indexCorrecta;
+
+            shuffledOptions.forEach((optMeta, idx) => {
+                const letra = letras[idx];
+                if (optMeta.isCorrect) indexCorrecta = letra;
+                
+                html += `
+                    <li>
+                        <label id="label-${index}-${letra}">
+                            <input type="radio" name="q${index}" value="${letra}" data-correct="${optMeta.isCorrect}">
+                            <strong>${letra})</strong> ${optMeta.text}
+                        </label>
+                    </li>
+                `;
+            });
+            
+            html += `</ul>
+                     <div id="exp-${index}" class="explanation">
+                         <strong>Respuesta correcta: ${indexCorrecta}.</strong> ${p.e}
+                     </div>`;
+            
+            qDiv.innerHTML = html;
+            form.appendChild(qDiv);
+        });
+
+        // Lógica de corrección
+        function corregir() {
+            let puntuacion = 0;
+            let fallos = 0;
+            let sinContestar = 0;
+
+            db.forEach((p, index) => {
+                const opciones = document.getElementsByName(`q${index}`);
+                let seleccion = null;
+                let seleccionCorrecta = false;
+                
+                opciones.forEach(opt => {
+                    const letra = opt.value;
+                    const label = document.getElementById(`label-${index}-${letra}`);
+                    const estCorrecta = opt.getAttribute('data-correct') === "true";
+
+                    label.classList.remove('correct-anim', 'incorrect-anim'); 
+                    opt.disabled = true; 
+                    
+                    if (opt.checked) {
+                        seleccion = letra;
+                        if (estCorrecta) seleccionCorrecta = true;
+                    }
+                    if (estCorrecta) label.classList.add('correct-anim');
+                });
+
+                if (!seleccion) {
+                    sinContestar++;
+                } else if (!seleccionCorrecta) {
+                    fallos++;
+                    document.getElementById(`label-${index}-${seleccion}`).classList.add('incorrect-anim');
+                } else {
+                    puntuacion++;
+                }
+                document.getElementById(`exp-${index}`).style.display = 'block';
+            });
+
+            // Cálculo tipo BOE: Acierto +1, Fallo -0.25
+            const notaFinal = (puntuacion * 1) - (fallos * 0.25);
+            const notaNormalizada = notaFinal < 0 ? 0 : notaFinal;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alert(`--- SIMULACRO 8 FINALIZADO ---\n\nAciertos: ${puntuacion}\nErrores: ${fallos}\nSin contestar: ${sinContestar}\n\nPUNTUACIÓN TOTAL (Criterio BOE): ${notaNormalizada.toFixed(2)} sobre 60 posibles.\n\nRevisa las explicaciones debajo de cada pregunta.`);
+            }, 300);
+        }
+    </script>
+
+    <!-- Botón opcional MSF -->
+    <div style="text-align: center; margin-top: 50px; padding: 25px; background-color: #fdfbf7; border: 2px solid #e84118; border-radius: 8px;">
+        <h3 style="margin-top: 0; color: #c23616;">¿Te ha sido útil este simulacro?</h3>
+        <p style="font-size: 0.95em; color: #2f3640;">Este proyecto es 100% gratuito. Si te ha servido de ayuda en tu preparación, te invito a transformar ese valor en una donación directa y opcional a Médicos Sin Fronteras.</p>
+        <a href="https://www.msf.es/que-puedo-hacer-yo/donativo" target="_blank" style="display: inline-block; background-color: #e84118; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; transition: 0.3s;">Hacer un donativo a MSF</a>
+    </div>
+
+</body>
+</html>

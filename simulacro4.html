@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulacro 4: Cardiología, Ecografía de Urgencias y SVA</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #1e272e; line-height: 1.5; padding: 20px; max-width: 950px; margin: auto; }
+        .header { text-align: center; border-bottom: 4px solid #8e44ad; margin-bottom: 25px; padding-bottom: 10px; }
+        .header h1 { color: #2d3436; margin: 0; }
+        .case-header { background-color: #8e44ad; color: white; padding: 15px; border-radius: 6px; margin-top: 40px; margin-bottom: 20px; }
+        .case-header h2 { margin: 0; font-size: 1.3em; }
+        .question { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .question h3 { margin-top: 0; font-size: 1.05em; color: #2d3436; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 8px; }
+        .options label { display: block; padding: 10px 15px; border: 1px solid #dfe6e9; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+        .options label:hover { background-color: #f1f2f6; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.1); }
+        .btn-container { text-align: center; margin-top: 40px; margin-bottom: 40px; }
+        .btn { background-color: #8e44ad; color: white; border: none; padding: 15px 35px; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #6c3483; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background-color: #f4ecf7; border-left: 4px solid #8e44ad; border-radius: 4px; font-size: 0.9em; }
+        .correct-anim { border-color: #00b894 !important; background-color: #e8f8f5 !important; font-weight: bold; color: #00b894; }
+        .incorrect-anim { border-color: #d63031 !important; background-color: #fceaea !important; color: #d63031; text-decoration: line-through; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Simulacro 4: Cardiología, Ecografía Clínica y SVA</h1>
+        <p>Prueba Práctica: 4 Casos Clínicos (60 preguntas). Las opciones se barajan aleatoriamente.</p>
+    </div>
+
+    <form id="exam-form"></form>
+
+    <div class="btn-container">
+        <button type="button" class="btn" onclick="corregir()">Finalizar Simulacro y Ver Resultados</button>
+    </div>
+
+    <script>
+        const db = [
+            // ================= CASO 1: ECOGRAFÍA CLÍNICA Y SHOCK (PROTOCOLOS RUSH / POCUS) =================
+            { c: "CASO CLÍNICO 1: Ecografía clínica de urgencias y aproximación al paciente en shock inestable.",
+              q: "Ante un paciente en shock indiferenciado en el box de reanimación, aplicas el protocolo ecográfico RUSH, cuya mnemotecnia se estructura en tres grandes componentes (BTT):",
+              o: ["La bomba, El tanque, Las tuberías.", "El brillo, La tensión, El trayecto.", "La base, El torrente, El tejido.", "La biometría, El tono, El tracto."],
+              e: "El protocolo RUSH utiliza la mnemotecnia BTT (Bomba, Tanque y Tuberías) para evaluar de forma rápida el origen del shock en menos de tres minutos[cite: 2]." },
+            { c: 1, q: "El primer paso del protocolo RUSH evalúa 'la bomba' mediante ecocardiografía simplificada a pie de cama. ¿Qué patologías agudas de riesgo vital inmediato permite descartar principalmente?",
+              o: ["TEP masivo o Taponamiento cardíaco.", "Neumotórax hipertensivo bilateral.", "Rotura de aneurisma de aorta abdominal infrarrenal.", "Obstrucción intestinal alta estrangulada."],
+              e: "Evaluar la bomba permite identificar datos ecográficos sugestivos de TEP masivo o Taponamiento cardíaco agudo[cite: 2]." },
+            { c: 1, q: "Al evaluar 'el tanque' en el protocolo RUSH mediante ecografía, te centras principalmente en valorar el estado de volemia y posibles focos hemorrágicos ocultos utilizando la ventana FAST ampliada. ¿Cuál es la estructura clave para estimar la precarga derecha?",
+              o: ["La vena cava inferior (VCI) y su grado de colapso respiratorio.", "El diámetro de la arteria aorta ascendente torácica.", "El grosor de la pared libre del ventrículo izquierdo en eje corto.", "La velocidad de flujo en las arterias carótidas comunes."],
+              e: "El estudio del tanque incluye la valoración de la VCI (su diámetro y colapsabilidad inspiratoria) para estimar la volemia y presión de llenado de cavidades derechas." },
+            { c: 1, q: "Si al examinar la VCI observas un diámetro inferior a 1 cm con colapso inspiratorio superior al 50% en un paciente normoventilado, sugiere:",
+              o: ["Hipovolemia severa o depleción de volumen (tanque vació).", "Sobrecarga hídrica e insuficiencia cardíaca congestiva avanzada.", "Taponamiento cardíaco con presiones de llenado elevadas.", "Hipertensión pulmonar aguda grave."],
+              e: "Una VCI pequeña y colapsada indica colapso del compartimento intravascular (hipovolemia o vasoplejía severa con baja precarga)." },
+            { c: 1, q: "Al evaluar 'las tuberías' (tercer componente del RUSH), buscas descartar patologías vasculares catastróficas como la rotura de aneurisma de aorta abdominal (AAA). ¿Qué diámetro anteroposterior medido en eje transversal define patológicamente un aneurisma de aorta abdominal?",
+              o: ["Mayor o igual a 3.0 cm.", "Mayor o igual a 5.5 cm únicamente.", "Superior a 2.0 cm en mujeres y 2.5 cm en varones.", "Superior a 4.0 cm en cualquier tramo."],
+              e: "Se considera aneurisma de aorta abdominal cuando el diámetro transversal máximo supera o es igual a 3.0 cm." },
+            { c: 1, q: "Utilizando la ecografía pulmonar (protocolo BLUE), la presencia bilateral de múltiples líneas B verticales (en 'cola de cometa') sincronizadas con la respiración indica:",
+              o: ["Síndrome intersticial o edema agudo de pulmón (EAP).", "Neumotórax total izquierdo por pérdida de deslizamiento.", "Consolidación lobar neumónica con broncograma aéreo.", "EPAC agudo hiperinsuflado sin líquido extravascular."],
+              e: "La presencia difusa bilateral de líneas B indica aumento de agua extravascular pulmonar, siendo el patrón ecográfico característico del EAP cardiogénico o no cardiogénico." },
+            { c: 1, q: "En la exploración ecográfica pulmonar orientada a descartar un neumotórax traumático urgente, el signo ecográfico M-Mode (modo movimiento) que descarta con altísima seguridad el neumotórax en la línea pleural anterior es:",
+              o: ["El signo de la 'playa' (laminación superior estática y granularidad inferior móvil).", "El signo de la 'barcaza' o código de barras uniforme.", "La ausencia total de líneas A horizontales.", "El deslizamiento pleural abolido por completo."],
+              e: "El signo de la 'playa' (patrón arenoso debajo de la línea pleural) indica que la pleura visceral se desliza contra la parietal, descartando neumotórax en ese punto." },
+            { c: 1, q: "Si en el modo M sobre la línea pleural anterior observas el 'signo de la estratificación' o 'código de barras' (líneas paralelas idénticas arriba y abajo de la pleura), esto es patognomónico de:",
+              o: ["Neumotórax (ausencia de deslizamiento pleural pulmonar).", "Derrame pleural masivo encapsulado.", "Contusión pulmonar leve sin compromiso aéreo.", "Atelectasia pasiva por compresión diafragmática."],
+              e: "El código de barras en modo M sustituye al signo de la playa cuando el pulmón no se desliza contra la pared torácica, confirmando la presencia de aire en el espacio pleural (neumotórax)." },
+            { c: 1, q: "¿Qué ventana ecográfica del protocolo FAST es la más sensible para detectar líquido libre intraperitoneal (sangre) en el paciente politraumatizado en supino?",
+              o: ["El espacio hepatorrenal (Espacio de Morrison).", "El fondo de saco de Douglas o receso rectouterino.", "El receso esplenorrenal izquierdo.", "El espacio subxifoideo pericárdico."],
+              e: "El espacio de Morrison (cuadrante superior derecho) es la zona declive más sensible y precoz para la acumulación de sangre libre peritoneal en el paciente acostado." },
+            { c: 1, q: "Durante la evaluación de la ventana pericárdica subxifoidea en un taponamiento cardíaco, ¿qué signo ecocardiográfico es altamente sugestivo de compromiso hemodinámico por presión diastólica elevada?",
+              o: ["Colapso sistodiastólico de la pared libre del ventrículo derecho y de la aurícula derecha.", "Hipertrofia severa simétrica del tabique interventricular basal.", "Inversión de las válvulas sigmoideas aórticas en sístole.", "Ausencia completa de movimiento en la aurícula izquierda."],
+              e: "El colapso de las cavidades derechas (aurícula y ventrículo derecho) durante la fase diastólica debido a la presión del líquido pericárdico define el taponamiento ecocardiográfico." },
+            { c: 1, q: "Paciente varón con síncope brusco y disnea. Al realizar POCUS observas un ventrículo derecho enormemente dilatado, con hipoquinesia de su pared libre pero con movilidad conservada de la punta (Signo de McConnell). Sospechas:",
+              o: ["Tromboembolismo pulmonar masivo.", "Infarto agudo de miocardio de ventrículo izquierdo.", "Miocardiopatía hipertrófica obstructiva.", "Disección aórtica tipo B crónica."],
+              e: "El signo de McConnell (hipoquinesia de la pared libre del VD con hiperquinesia o normalidad del ápex derecho) es muy específico de TEP agudo con sobrecarga derecha." },
+            { c: 1, q: "En la valoración ecográfica de las extremidades inferiores en busca de trombosis venosa profunda (POCUS compresivo de 2 puntos), ¿qué localizaciones anatómicas básicas deben explorarse por su alta prevalencia de TVP proximal?",
+              o: ["Vena femoral común (en la ingle) y vena poplítea (en el hueco poplíteo).", "Venas tibiales anteriores y venas safenas accesorias externas.", "Vena cava inferior infrarrenal y venas ilíacas primitivas.", "Venas yugulares internas y externas."],
+              e: "El protocolo básico de compresión en urgencias evalúa la confluencia de la vena femoral común y la vena poplítea, donde asienta la gran mayoría de TVP proximales sintomáticas." },
+            { c: 1, q: "¿Cómo se define un resultado positivo en la prueba de compresión venosa ecográfica realizada en urgencias?",
+              o: ["Incapacidad para colapsar o coaptar totalmente las paredes de la vena al ejercer presión suave con la sonda.", "Aumento del flujo Doppler color espontáneo a través del trombo.", "Visualización directa de un trombo ecogénico móvil con oclusión del 10%.", "Ausencia de pulso arterial adyacente a la vena explorada."],
+              e: "El signo ecográfico clave de trombosis es la no compresibilidad de la luz venosa, que impide que las paredes anterior y posterior se unan al presionar con el transductor." },
+            { c: 1, q: "Al monitorizar la respuesta a fluidos mediante ecografía, observas que el diámetro de la VCI varía ampliamente con la respiración (colapso inspiratorio > 50% con respiración espontánea). Esto indica que el paciente es probablemente:",
+              o: ["Respondedor a volumen (sus cavidades se beneficiarán de la administración de fluidos).", "No respondedor a volumen por sobrecarga hídrica establecida.", "Portador de una hipertensión pulmonar crónica descompensada.", "Sujeto con fallo cardíaco sistólico global irreversible."],
+              e: "Una VCI muy colapsable en respiración espontánea denota baja precarga y correlaciona con una alta probabilidad de respuesta hemodinámica positiva a la administración de volumen." },
+            { c: 1, q: "Para evitar artefactos y obtener imágenes óptimas al realizar ecografía clínica en el paciente crítico, ¿qué tipo de transductor multifrecuencia es el más versátil para explorar el abdomen, la VCI y la ventana cardíaca subxifoidea?",
+              o: ["Transductor sectorial o phased array (y en segundo lugar el convexo).", "Transductor lineal de alta frecuencia exclusivamente.", "Transductor endocavitario curvo.", "Transductor matricial 3D de alta resolución."],
+              e: "El transductor sectorial (phased array), por su pequeña huella, es ideal para la ventana cardíaca y abdominal profunda entre las costillas, complementado por el convexo." },
+
+            // ================= CASO 2: ARRITMIAS GRAVES Y SOPORTE VITAL AVANZADO (SVA) =================
+            { c: "CASO CLÍNICO 2: Manejo avanzado de arritmias periparada y algoritmos de SVA en el adulto.",
+              q: "Paciente varón de 60 años que acude a urgencias por palpitaciones rápidas. En el monitor ECG presenta taquicardia de QRS ancho (> 120 ms), regular, monomorfa, con estabilidad hemodinámica relativa (PA 110/70 mmHg). El diagnóstico y actitud inicial de elección es:",
+              o: ["Tratar como una Taquicardia Ventricular (TV); administrar Amiodarona intravenosa (300 mg en 20-60 min) o sincronización si empeora.", "Administrar adenosina en bolo rápido de 6 mg por sospecha de TVP supraventricular con aberrancia.", "Aplicar masaje carotideo bilateral simultáneo prolongado.", "Realizar desfibrilación eléctrica no sincronizada a 200J de inmediato."],
+              e: "Ante una taquicardia regular de QRS ancho, por seguridad debe asumirse que es una Taquicardia Ventricular (TV). Estando estable, se maneja con antiarrítmicos IV (amiodarona) o cardioversión." },
+            { c: 2, q: "Si el paciente anterior con TV monomorfa estable empeora de forma brusca, desarrollando hipotensión severa (PA 75/40 mmHg), alteración del nivel de conciencia y dolor torácico isquémico, ¿cuál es el paso terapéutico inmediato estipulado por el SVA?",
+              o: ["Cardioversión eléctrica sincronizada urgente (hasta 3 intentos previos de choque sincronizado).", "Administración de infusión rápida de 2 litros de bicarbonato hiperosmolar.", "Masaje cardíaco externo continuado sin comprobar pulso.", "Atropina intravenosa en bolo de 1 mg."],
+              e: "La presencia de criterios de inestabilidad (shock, alteración de consciencia, dolor torácico, insuficiencia cardíaca) obliga a realizar cardioversión eléctrica sincronizada de urgencia." },
+            { c: 2, q: "Ante una Fibrilación Ventricular (FV) o Taquicardia Ventricular sin pulso (TVSP) durante una parada cardiorrespiratoria, ¿cuál es la secuencia de máxima prioridad según el algoritmo de SVA de la ERC?",
+              o: ["RCP de alta calidad (30:2) interrumpida el menor tiempo posible para realizar una desfibrilación precoz.", "Administrar Adrenalina 1 mg intravenosa antes de realizar cualquier descarga.", "Canalizar vía venosa central obligatoria previa antes de desfibrilar.", "Intubación orotraqueal exclusiva previa a iniciar compresiones torácicas."],
+              e: "En FV/TVSP, la combinación de compresiones torácicas ininterrumpidas de alta calidad y la desfibrilación eléctrica precoz son los pilares fundamentales que determinan la supervivencia." },
+            { c: 2, q: "Durante la reanimación por FV refractaria tras el tercer choque eléctrico, se administra Amiodarona intravenosa. ¿Cuál es la dosis recomendada en ese preciso momento según el algoritmo de SVA?",
+              o: ["300 mg IV en bolo (pudiendo añadir una dosis adicional de 150 mg tras el quinto choque).", "150 mg IV lentos diluidos en glucosa al 5% cada 2 minutos.", "900 mg en perfusión continua de 24 horas obligatoria.", "50 mg en bolo directo sin repetir."],
+              e: "El algoritmo SVA especifica un bolo de 300 mg de Amiodarona intravenosa tras el tercer choque en FV/TVSP refractaria." },
+            { c: 2, q: "En una parada cardiorrespiratoria por Asistolia o Actividad Eléctrica Sin Pulso (AESP), ¿en qué momento exacto debe administrarse la primera dosis de Adrenalina 1 mg intravenosa?",
+              o: ["Lo antes posible (tan pronto como se disponga de acceso vascular), y posteriormente repetirla cada 3-5 minutos.", "Únicamente después de haber administrado 3 dosis de Amiodarona.", "Solo cuando el ritmo cardíaco se convierta espontáneamente en Fibrilación Ventricular.", "Tras 20 minutos de reanimación infructuosa como última opción."],
+              e: "En ritmos no desfibrilables (Asistolia/AESP), la adrenalina se administra de forma inmediata al conseguir acceso vascular y se repite cada 3-5 minutos durante la RCP." },
+            { c: 2, q: "Paciente que presenta una Bradicardia Sinusal sintomática grave (FC 32 lpm) con hipotensión y mareo intenso. ¿Cuál es el fármaco farmacológico de primera línea recomendado en el algoritmo de bradicardia del SVA?",
+              o: ["Atropina intravenosa (0.5 mg en bolo, repitiendo hasta un máximo de 3 mg).", "Isoprenalina en perfusión continua a altas dosis.", "Adrenalina en bolos subcutáneos de 1 mg.", "Amiodarona intravenosa rápida."],
+              e: "La Atropina (0.5 mg IV, repetible hasta 3 mg) es el fármaco anticolinérgico de primera línea para el tratamiento de la bradicardia sintomática inestable." },
+            { c: 2, q: "Si la bradicardia sintomática anterior no responde a la administración repetida de Atropina y persiste con inestabilidad hemodinámica grave, ¿cuál es la medida transitoria de elección antes o mientras se prepara la estimulación definitiva?",
+              o: ["Estimulación transcutánea (marcapasos externo) o perfusión de fármacos cronotropos positivos (adrenalina/noradrenalina).", "Administración de un bolo de lidocaína al 2%.", "Masaje carotideo bilateral enérgica para estimular el nodo sinusal.", "Intubación endotraqueal profiláctica sin fármacos inotrópicos."],
+              e: "Fracasada la atropina, el protocolo exige iniciar estimulación transcutánea (marcapasos marcapasos externo) o infusión de fármacos inotrópicos/cronotropos (adrenalina, isoprenalina)." },
+            { c: 2, q: "Paciente con Taquicardia Supraventricular (TSV) paroxística de QRS estrecho, regular, a 180 lpm, estable hemodinámicamente. Tras fracasar las maniobras vagales, el fármaco de primera elección para revertir la arritmia es:",
+              o: ["Adenosina intravenosa en bolo rápido (6 mg, seguidos de lavado con 20 ml de suero salino, pudiendo administrar 12 mg posteriores).", "Verapamilo intravenoso en bolo lento de 40 mg.", "Digoxina intravenosa a dosis de carga de 1 mg.", "Atropina 1 mg intravenoso directo."],
+              e: "La Adenosina, por su vida media ultracorta y alta eficacia bloqueando el nodo AV, es el fármaco de elección para el cese agudo de las TSV estables tras las maniobras vagales." },
+            { c: 2, q: "Al administrar Adenosina por vía periférica en bolo rápido, debes advertir al paciente de un efecto secundario transitorio muy frecuente y totalmente benigno que suele durar unos segundos:",
+              o: ["Sensación de sofoco intenso (flushing), opresión torácica transitoria y bradicardia momentánea.", "Hipertensión arterial sistémica severa mantenida durante 1 hora.", "Pérdida de visión bilateral reversible a las 24 horas.", "Convulsiones tónico-clónicas generalizadas autolimitadas."],
+              e: "La adenosina produce típicamente una sensación muy desagradable pero pasajera de opresión torácica, rubor facial y disnea de pocos segundos de duración debido a su mecanismo de acción." },
+            { c: 2, q: "En un paciente con Fibrilación Auricular (FA) de nueva evolución en urgencias (duración < 48 horas) con respuesta ventricular rápida (FC 150 lpm) pero hemodinámicamente estable, ¿cuál es el objetivo del control de frecuencia inicial y fármacos útiles?",
+              o: ["Controlar la frecuencia cardíaca con betabloqueantes (ej. Metoprolol, Bisoprolol) o antagonistas del calcio no dihidropiridínicos (Diltiazem/Verapamilo).", "Cardioversión eléctrica obligatoria en los primeros 10 minutos de llegada.", "Administración de Atropina intravenosa para desacelerar el ritmo nodal.", "Inyección de adrenalina para forzar el ritmo sinusal."],
+              e: "En la FA estable, el control de la frecuencia ventricular con betabloqueantes o calcioantagonistas es el tratamiento sintomático inicial de elección antes de valorar el control de ritmo." },
+            { c: 2, q: "¿Qué complicación tromboembólica sistémica grave debe descartarse o prevenirse antes de intentar una cardioversión (eléctrica o farmacológica) en una Fibrilación Auricular cuya fecha exacta de inicio es incierta o superior a 48 horas?",
+              o: ["La presencia de trombos auriculares mediante ecocardiograma transesofágico (ETE) o anticoagulación previa adecuada durante al menos 3 semanas.", "El desarrollo de un infarto agudo de miocardio por rotura de placa coronaria.", "La aparición de un edema agudo de pulmón por hipervolemia severa.", "Una disección aórtica aguda tipo B incidental."],
+              e: "Una FA de más de 48 horas (o tiempo desconocido) tiene alto riesgo de tromboembolismo si se cardioversión sin asegurar anticoagulación previa 3 semanas o descartar trombos mediante ETE." },
+            { c: 2, q: "Ante una Taquicardia Polimorfa de QRS ancho con intervalo QT largo previo (Torsades de Pointes - Torsor de puntas), el tratamiento farmacológico intravenoso específico de urgencia es:",
+              o: ["Sulfato de Magnesio (1-2 g disueltos en glucosado administrados en 10-15 minutos).", "Amiodarona intravenosa en bolos repetidos de 300 mg.", "Lidocaína intravenosa en perfusión continua rápida.", "Adenosina en bolo rápido de 18 mg."],
+              e: "El Sulfato de Magnesio intravenoso es el tratamiento de elección para estabilar la membrana y detener las Torsades de Pointes asociadas a QT largo." },
+            { c: 2, q: "Durante el manejo de una parada cardíaca, si se utiliza vía intraósea (IO) en lugar de vía venosa periférica, ¿cómo deben administrarse los bolos de fármacos (como la Adrenalina)?",
+              o: ["Seguidos siempre de un bolo de lavado con 10-20 ml de suero salino para facilitar su llegada a la circulación central.", "Diluidos obligatoriamente en 500 ml de suero glucosado al 5%.", "A una velocidad diez veces más lenta que por vía venosa periférica.", "Unicamente mediante perfusión continua con bomba mecánica."],
+              e: "Cualquier fármaco administrado por vía intraósea debe ser lavado con un bolo de suero salino para asegurar su llegada rápida a la circulación central." },
+            { c: 2, q: "En la RCP avanzada pediátrica o de adultos, cuando se establece una vía aérea avanzada (tubo endotraqueal o mascarilla supraglótica), la relación de ventilaciones y compresiones cambia respecto a la RCP básica:",
+              o: ["Las compresiones torácicas son continuas (100-120 lpm) sin interrumpirse, y se ventila de forma independiente a una frecuencia de 10 respiraciones por minuto.", "Se mantiene la relación estricta de 30 compresiones por 2 ventilaciones con pausa obligatoria.", "Se realizan 15 compresiones por cada 2 ventilaciones de forma invariable.", "Se suspenden las compresiones cada minuto para verificar el pulso carotideo."],
+              e: "Con vía aérea avanzada ya colocada, las compresiones torácicas son continuas (sin pausas para ventilar) y las ventilaciones se administran a un ritmo constante de 1 respiración cada 6 segundos (10 rpm)." },
+            { c: 2, q: "Tras la recuperación de la circulación espontánea (RCE) en una parada cardiorrespiratoria, ¿qué rango de presión arterial media (PAM) debe perseguirse mediante fluidos y vasopresores para asegurar una adecuada perfusión orgánica postparo?",
+              o: ["Mantener una PAM ≥ 65 mmHg (presión arterial sistólica ≥ 100 mmHg).", "Mantener una TAS superior a 160 mmHg obligatoriamente.", "Permitir hipotensión permisiva con TAS entre 70 y 80 mmHg.", "Evitar el uso de vasopresores a toda costa por riesgo de isquemia."],
+              e: "Las guías de soporte vital post-resucitación recomiendan evitar la hipotensión y asegurar una PAM mínima de 65 mmHg para garantizar la perfusión cerebral y miocárdica." },
+
+            // ================= CASO 3: SÍNDROME CORONARIO AGUDO Y URGENCIAS CARDIOVASCULARES =================
+            { c: "CASO CLÍNICO 3: Dolor torácico agudo, SCASEST, IAMCEST y complicaciones mecánicas.",
+              q: "Varón de 55 años con factores de riesgo cardiovascular que acude por dolor torácico opresivo irradiado a mandíbula de 45 minutos de duración. El ECG muestra descenso del ST de 2 mm en V4-V6 con ondas T invertidas. Se clasifica como:",
+              o: ["Síndrome Coronario Agudo sin Elevación del ST (SCASEST) / IAMNSTEMI.", "Infarto Agudo de Miocardio con Elevación del ST (IAMCEST) extenso.", "Angina de Prinzmetal por vasoespasmo coronario puramente benigno.", "Pericarditis aguda epistenocárdica clásica."],
+              e: "El descenso del segmento ST y/o inversión de ondas T en un paciente con clínica típica sin elevación persistente del ST define el SCASEST." },
+            { c: 3, q: "¿Cuál es la estrategia invasiva recomendada (tiempo hasta la angiografía coronaria) en un paciente diagnosticado de SCASEST que presenta criterios de muy alto riesgo (ej. inestabilidad hemodinámica o arritmias ventriculares)?",
+              o: ["Estrategia invasiva inmediata urgente en < 2 horas (igual que el IAMCEST).", "Estrategia invasiva precoz en las primeras 24 horas.", "Estrategia invasiva diferida a los 7 días tras prueba de esfuerzo.", "Manejo puramente médico exclusivo sin cateterismo."],
+              e: "La presencia de criterios de muy alto riesgo en el SCASEST (shock, inestabilidad, arritmias malignas, dolor refractario) indica una estrategia invasiva inmediata en menos de 2 horas." },
+            { c: 3, q: "Respecto al manejo antitrombótico inicial de un paciente con SCASEST al que se le va a realizar una coronariografía, además de la administración de Ácido Acetilsalicílico (AAS), ¿qué inhibidor P2Y12 se recomienda preferentemente frente al clopidogrel según las guías?",
+              o: ["Ticagrelor o Prasugrel (salvo contraindicaciones o riesgo alto de sangrado).", "Ticlopidina oral a dosis altas.", "Abciximab intravenoso profiláctico domiciliario.", "Warfarina sódica en pauta rápida."],
+              e: "Ticagrelor o Prasugrel son los inhibidores P2Y12 potentes de elección en el SCASEST por su superioridad demostrada frente a clopidogrel en la reducción de eventos isquémicos." },
+            { c: 3, q: "Paciente con IAMCEST inferior intervenido mediante ICP primaria que desarrolla a las 24 horas hipotensión grave, ingurgitación yugular y campos pulmonares limpios. En el ECG destaca elevación de ST en derivaciones derechas (V3R-V4R). Sospechas:",
+              o: ["Infarto agudo de ventrículo derecho asociado.", "Taponamiento cardíaco por rotura de pared libre.", "Edema agudo de pulmón cardiogénico izquierdo puro.", "Embolia pulmonar bilateral masiva."],
+              e: "La tríada de hipotensión, yugulares ingurgitadas y pulmones limpios en un IAM inferior sugiere fuertemente infarto de ventrículo derecho, que requiere precaución extrema con los diuréticos y aporte de volumen." },
+            { c: 3, q: "¿Qué fármaco o grupo terapéutico debe evitarse o utilizarse con extrema precaución en el manejo de un infarto aislado de ventrículo derecho por su riesgo de colapso hemodinámico severo?",
+              o: ["Los diuréticos (como la furosemida) y vasodilatadores potentes (nitratos).", "Los betabloqueantes cardioselectivos a dosis bajas.", "La antiagregación dual con AAS y ticagrelor.", "La heparina sódica intravenosa en perfusión."],
+              e: "Los diuréticos y los nitratos reducen drásticamente la precarga, lo que en el infarto de ventrículo derecho (dependiente de precarga) precipita un colapso hemodinámico letal." },
+            { c: 3, q: "Mujer de 75 años con IAMCEST anterior extenso que presenta al 3er día un deterioro hemodinámico súbito con disnea extrema y shock. A la auscultación se detecta un nuevo soplo sistólico rudo irradiado a mesocardio. Sospechas:",
+              o: ["Comunicación interventricular (CIV) post-infarto por rotura del tabique.", "Insuficiencia aórtica aguda severa por rotura valvular.", "Pericarditis constrictiva crónica.", "Disfunción protésica valvular mitral."],
+              e: "Un soplo sistólico nuevo y brusco tras un infarto anterior, acompañado de shock y fallo cardíaco agudo, indica rotura del septo interventricular (CIV mecánica)." },
+            { c: 3, q: "En la insuficiencia cardíaca aguda descompensada con perfil clínico 'húmedo y caliente' (congestión sistémica/pulmonar y buena perfusión periférica, TA conservada o elevada), el tratamiento médico fundamental de urgencia se basa en:",
+              o: ["Diuréticos de asa intravenosos (furosemida) y vasodilatadores (nitroglicerina si HTA).", "Infusión inmediata de altas dosis de noradrenalina y dopamina.", "Administración exclusiva de suero salino isotónico para rellenar el lecho vascular.", "Suplementos masivos de potasio y calcio intravenoso."],
+              e: "El perfil 'húmedo y caliente' (el más frecuente) requiere diuréticos para eliminar la congestión y vasodilatadores para reducir la postcarga." },
+            { c: 3, q: "Si el paciente con insuficiencia cardíaca aguda presenta un perfil 'húmedo y frío' (congestión pulmonar y signos de hipoperfusión tisular / shock cardiogénico), la actitud terapéutica incluye:",
+              o: ["Optimizar la precarga con precaución, usar inotrópicos (dobutamina) y/o vasopresores (noradrenalina) si persiste hipotensión.", "Administrar bolos masivos de betabloqueantes para frenar el corazón.", "Realizar sangría urgente de 500 ml para descongestionar.", "Restringir totalmente la medicación y observar evolución."],
+              e: "El perfil 'frío' indica bajo gasto; requiere soporte inotrópico y/o vasopresor para restaurar la perfusión tisular, valorando diuréticos con extrema prudencia." },
+            { c: 3, q: "En un paciente con edema agudo de pulmón cardiogénico hipertensivo, si la presión arterial sistólica es > 160 mmHg, ¿cuál es el tratamiento vasodilatador de primera línea recomendado junto a los diuréticos?",
+              o: ["Nitroglicerina o Urapidilo intravenoso en perfusión continua.", "Nifedipino sublingual en cápsulas pinchadas.", "Nitroprusiato sódico como única alternativa sin diuréticos.", "Hidralazina intramuscular."],
+              e: "La nitroglicerina IV reduce rápidamente la precarga y la postcarga, siendo excelente en el EAP hipertensivo." },
+            { c: 3, q: "Ante una Pericarditis Aguda en Urgencias, ¿cuál es el patrón electrocardiográfico clásico evolutivo en las primeras fases del proceso?",
+              o: ["Elevación cóncava del segmento ST de forma difusa en la mayoría de las derivaciones (excepto aVR y V1) con descenso del PR.", "Descenso generalizado del ST con ondas T picudas simétricas.", "Bloqueo auriculoventricular completo con ondas de P ultraintensas.", "Ondas Q de necrosis profundas en cara anteroseptal."],
+              e: "La pericarditis cursa clásicamente con elevación cóncava del ST difusa y descenso del segmento PR, diferenciándose del IAM (donde el ST es convexo y localizado)." },
+            { c: 3, q: "Tratamiento médico de primera línea recomendado para la pericarditis aguda idiopática o vírica sin complicaciones en Urgencias:",
+              o: ["Antiinflamatorios no esteroideos (AINEs, ej. Ibuprofeno o Ácido Acetilsalicílico) asociados a Colchicina oral para prevenir recidivas.", "Corticoides a altas dosis (Prednisona) en monoterapia desde el primer día.", "Antibioterapia de amplio espectro intravenosa con cefalosporinas.", "Reposo absoluto en cama sin fármacos antiinflamatorios."],
+              e: "Los AINEs asociados a Colchicina constituyen la base farmacológica de primera línea para el tratamiento y prevención de recidivas de la pericarditis aguda." },
+            { c: 3, q: "Cuando un paciente con pericarditis aguda desarrolla taponamiento cardíaco, el tratamiento de urgencia definitivo para evacuar el líquido y restablecer el gasto cardíaco es:",
+              o: ["Pericardiocentesis urgente (guiada por ecografía o quirúrgica).", "Administración de diuréticos tiazídicos a dosis máximas.", "Cardioversión eléctrica sincronizada a 150J.", "Colocación de un balón de contrapulsación intraaórtico."],
+              e: "La pericardiocentesis (evacuación del líquido pericárdico) es el tratamiento urgente salvador en el taponamiento cardíaco sintomático." },
+            { c: 3, q: "Paciente con antecedente de HTA mal controlada que acude por dolor torácico transfixiante. En la exploración se ausculta un soplo diastólico de nueva aparición en foco aórtico. ¿Qué patología debe descartarse de forma urgente?",
+              o: ["Disección aórtica aguda (con afectación de la raíz aórtica e insuficiencia aórtica aguda).", "Infarto agudo de miocardio de pared libre.", "Rotura de cuerda tendinosa mitral.", "Embolia pulmonar crónica recidivante."],
+              e: "El soplo diastólico de nueva aparición por insuficiencia aórtica aguda en un paciente con dolor torácico desgarrador es muy sugestivo de disección aórtica proximal (tipo A)." },
+            { c: 3, q: "En la evaluación analítica de un paciente con sospecha de SCASEST, ¿cuál es el biomarcador miocárdico de elección por su alta sensibilidad y especificidad para detectar necrosis miocárdica?",
+              o: ["Troponina cardíaca de alta sensibilidad (hs-cTn).", "Creatin-cinasa total (CK total sérica).", "Mioglobina plasmática precoz.", "Transaminasa glutamico-oxalacética (GOT)."],
+              e: "Las troponinas cardíacas de alta sensibilidad (hs-cTn) son el biomarcador de referencia para la detección precoz y precisa de la lesión miocárdica isquémica." },
+            { c: 3, q: "Si un paciente con IAMCEST es atendido en un centro sin capacidad para ICP primaria y el tiempo estimado desde el primer contacto médico hasta el inflado del balón supera los 120 minutos, la actitud indicada es:",
+              o: ["Administrar tratamiento fibrinolítico inmediato (en < 30 min) y posterior traslado programado para cateterismo.", "Esperar el traslado al centro de referencia aunque tarde 4 horas.", "Realizar angioplastia primaria en el centro actual sin medios especializados.", "Administrar antiagregantes y suspender el traslado."],
+              e: "Si el tiempo de traslado para ICP primaria excede los 120 minutos, las guías recomiendan fibrinólisis inmediata (puerta-aguja < 30 min) seguida de traslado." },
+
+            // ================= CASO 4 (RESERVA): URGENCIAS CARDIOVASCULARES Y MISCELÁNEA =================
+            { c: "CASO CLÍNICO 4 (RESERVA): Miscelánea de emergencias cardiovasculares, crisis hipertensivas y soporte vital.",
+              q: "Paciente que acude por una Crisis Hipertensiva tipo Emergencia Hipertensiva (PA de 230/130 mmHg asociada a encefalopatía y déficit neurológico agudo). El objetivo tensional inicial en la primera hora no debe superar un descenso de la presión arterial media superior a:",
+              o: ["Un 25% de la PAM inicial para evitar hipoperfusión de órganos diana isquémicos.", "Un 50% de la presión sistólica de forma brusca en 10 minutos.", "Descender la TAS por debajo de 100 mmHg de inmediato.", "Mantener la presión arterial sin cambios durante 24 horas."],
+              e: "En las emergencias hipertensivas, la presión arterial debe reducirse de forma controlada y gradual (no más de un 20-25% de la PAM en la primera hora) para prevenir isquemia cerebral o renal." },
+            { c: 4, q: "Fármaco vasodilatador intravenoso de elección en la mayoría de las emergencias hipertensivas (excepto en eclampsia o patología aórtica específica):",
+              o: ["Urapidilo o Labetalol intravenoso en perfusión continua.", "Nifedipino sublingual en cápsulas.", "Captopril por vía oral en dosis altas.", "Hidralazina intramuscular en bolo único."],
+              e: "El Urapidilo y el Labetalol intravenosos son fármacos altamente seguros y titulables para el manejo de las emergencias hipertensivas en urgencias." },
+            { c: 4, q: "Ante una gestante en la semana 36 de gestación que presenta preeclampsia grave con cifras de 170/110 mmHg y clínica de eclampsia (convulsiones tónico-clónicas), el tratamiento anticonvulsivante específico de elección es:",
+              o: ["Sulfato de magnesio intravenoso (bolo inicial y perfusión continua).", "Diazepam intravenoso a dosis plenas.", "Fenitoína sódica intravenosa en bolo rápido.", "Valproato sódico oral."],
+              e: "El sulfato de magnesio es el tratamiento de elección indiscutible para la prevención y el tratamiento de las convulsiones eclámpticas en la gestante." },
+            { c: 4, q: "En la reanimación cardiopulmonar avanzada, ¿cada cuánto tiempo debe realizarse obligatoriamente la rotación del reanimador que comprime el tórax para evitar la fatiga y asegurar compresiones de alta calidad?",
+              o: ["Cada 2 minutos (coincidiendo con los ciclos de análisis del ritmo por el desfibrilador).", "Cada 10 minutos exactos.", "Únicamente cuando el reanimador manifieste cansancio verbal.", "Cada 30 segundos de forma ininterrumpida."],
+              e: "Para mantener una profundidad y frecuencia óptimas, las guías de SVA recomiendan rotar al compresor cada 2 minutos (aprovechando las pausas para analizar el ritmo)." },
+            { c: 4, q: "La profundidad recomendada de las compresiones torácicas externas en el adulto durante la RCP de alta calidad se sitúa entre:",
+              o: ["Al menos 5 cm y no más de 6 cm.", "De 2 a 3 cm.", "Exactamente 4 cm.", "Entre 7 y 8 cm."],
+              e: "La profundidad estándar eficaz en adultos es de al menos 5 cm sin exceder los 6 cm para evitar lesiones traumáticas costales innecesarias." },
+            { c: 4, q: "La frecuencia de las compresiones torácicas en la RCP del adulto debe mantenerse en el rango de:",
+              o: ["100 a 120 compresiones por minuto.", "60 a 80 compresiones por minuto.", "140 a 160 compresiones por minuto.", "80 a 90 compresiones por minuto."],
+              e: "El rango óptimo de frecuencia cardíaca externa en la RCP del adulto es de 100 a 120 compresiones por minuto." },
+            { c: 4, q: "En un paciente con fibrilación ventricular refractaria tras múltiples choques eléctricos y fármacos (amiodarona), ¿qué otra medida eléctrica alternativa puede plantearse según las guías de SVA?",
+              o: ["Desfibrilación doble secuencial (cambiando la orientación de los parches o empleando dos desfibriladores) o cambio de vectores.", "Aumentar la energía del choque monofásico a 500 Joules.", "Aplicar un choque directo con corriente alterna de alta frecuencia.", "Suspender los choques y aplicar estimulación auricular."],
+              e: "Ante FV refractaria, la desfibrilación doble secuencial o el cambio de posición anteroposterior de los parches son opciones recogidas en las actualizaciones de SVA." },
+            { c: 4, q: "Paciente con intoxicación aguda por digoxina que presenta arritmias ventriculares graves e hiperpotasemia secundaria. Tras medidas de soporte, el antídoto específico de elección es:",
+              o: ["Fragmentos de anticuerpos antidigoxina (Fab antidigoxina).", "Gluconato cálcico en bolo rápido.", "Atropina a dosis máximas.", "Flumazenilo intravenoso."],
+              e: "Los anticuerpos antidigoxina (fragmentos Fab) son el antídoto específico altamente eficaz para revertir la toxicidad grave por digital." },
+            { c: 4, q: "Durante el soporte vital avanzado, la vía intraósea (IO) en adultos puede colocarse de forma prioritaria en varias localizaciones anatómicas seguras. ¿Cuál es la más habitual?",
+              o: ["Tuberosidad tibial proximal (cara anteromedial).", "Maleolo interno del tobillo distal.", "Apófisis espinosa de la vértebra lumbar L3.", "Tercio medio de la clavícula derecha."],
+              e: "La meseta tibial proximal (cara anteromedial) y la cabeza humeral son los accesos intraóseos preferidos y de mayor tasa de éxito en el adulto." },
+            { c: 4, q: "Ante la sospecha clínica de un TEP masivo con parada cardiorrespiratoria en curso, tras iniciar RCP avanzada, se valora la administración de fibrinolisis de rescate. Si se administra un trombolítico, ¿cuánto tiempo mínimo debe prolongarse la RCP antes de declarar la inutilidad de la maniobra?",
+              o: ["Al menos 60 a 90 minutos de RCP continuada, ya que el fármaco necesita tiempo para actuar sobre el émbolo.", "Exactamente 5 minutos tras el bolo.", "15 minutos sin excepciones.", "No debe realizarse RCP si se administra fibrinolítico."],
+              e: "Cuando se administra trombólisis por TEP en parada cardíaca, las guías recomiendan prolongar la reanimación al menos 60-90 minutos dado que el trombolítico requiere tiempo para lisis del trombo." },
+            { c: 4, q: "En el contexto de la atención prehospitalaria o de urgencias, ¿cómo se define el Triaje estructurado (ej. Sistema de Triaje Manchester - MTS)?",
+              o: ["Un sistema clínico de categorización de pacientes basado en prioridades de atención según la urgencia clínica y no en el orden de llegada.", "Un registro administrativo exclusivamente para calcular el tiempo de espera por orden estricto de llegada.", "Un método médico para dictar el alta directa sin pasar por consulta médica.", "Una escala destinada únicamente a evaluar la gravedad de pacientes psiquiátricos."],
+              e: "El triaje estructurado clasifica a los pacientes según su nivel de urgencia clínica basado en discriminadores y algoritmos de síntomas, garantizando una atención equitativa y segura." },
+            { c: 4, q: "Paciente varón de 40 años que acude tras accidente de moto con traumatismo torácico cerrado. Presenta ingurgitación yugular, tonos cardíacos apagados (hipofononía) y cifras de presión arterial limítrofes. Es la clásica Tríada de:",
+              o: ["Beck (taponamiento cardíaco).", "Cushing (hipertensión intracraneal).", "Whipple (hipoglucemia).", "Virchow (trombosis venosa)."],
+              e: "La tríada de Beck (hipotensión, tonos cardíacos apagados e ingurgitación yugular) es clásica del taponamiento cardíaco secundario a traumatismo o patología médica." },
+            { c: 4, q: "Ante un paciente con sospecha de taponamiento cardíaco traumático grave con inestabilidad extrema, si la ecografía no está disponible de inmediato, la medida salvadora provisional en urgencias es:",
+              o: ["Pericardiocentesis subxifoidea de urgencia o ventana pericárdica quirúrgica.", "Toracocentesis con aguja en segundo espacio intercostal izquierdo.", "Administración de un bolo rápido de 3 litros de suero salino.", "Intubación endotraqueal en apnea prolongada."],
+              e: "La pericardiocentesis urgente alivia temporalmente la presión intrapericárdica permitiendo recuperar el gasto cardíaco mientras se prepara el quirófano." },
+            { c: 4, q: "En la valoración del dolor torácico en Urgencias, la regla de decisión clínica EDACS (Emergency Department Assessment of Chest Pain Score) combinada con troponinas seriadas (0 y 2 horas) tiene como objetivo principal:",
+              o: ["Identificar de forma segura y precoz a los pacientes con bajo riesgo de SCASEST susceptibles de alta directa o menor demora.", "Calcular la dosis exacta de fibrinolítico necesaria para el alta.", "Descartar de forma absoluta la presencia de disección aórtica sin necesidad de TC.", "Diagnosticar patología psiquiátrica ansiosa en el 100% de los casos."],
+              e: "Las escalas de bajo riesgo como EDACS permiten estratificar y dar de alta de forma segura a pacientes con dolor torácico de bajo riesgo tras descartar isquemia con troponinas seriadas." },
+            { c: 4, q: "Respecto a la cadena de supervivencia en la parada cardiorrespiratoria intrahospitalaria, el primer eslabón fundamental es:",
+              o: ["Prevención y reconocimiento precoz del deterioro clínico para evitar la parada.", "Aplicación inmediata de desfibrilación por cualquier ciudadano.", "Traslado a la unidad de cuidados intensivos en menos de 5 minutos.", "Firma del consentimiento informado de reanimación."],
+              e: "En el ámbito intrahospitalario, el eslabón inicial de la cadena de supervivencia es la prevención de la parada mediante la detección precoz del paciente crítico en riesgo." }
+        ];
+
+        // Algoritmo de Fisher-Yates para barajar el array de opciones de cada pregunta
+        function shuffleOptions(question) {
+            let optionsMeta = question.o.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === 0 // Siempre la posición 0 del array original es la correcta
+            }));
+            
+            for (let i = optionsMeta.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsMeta[i], optionsMeta[j]] = [optionsMeta[j], optionsMeta[i]];
+            }
+            return optionsMeta;
+        }
+
+        const form = document.getElementById('exam-form');
+        const letras = ['A', 'B', 'C', 'D'];
+
+        // Renderizado dinámico e inserción de encabezados de casos
+        let caseHeaderRendered = "";
+
+        db.forEach((p, index) => {
+            if (p.c && p.c !== caseHeaderRendered && typeof p.c === "string") {
+                const caseDiv = document.createElement('div');
+                caseDiv.className = 'case-header';
+                caseDiv.innerHTML = `<h2>${p.c}</h2>`;
+                form.appendChild(caseDiv);
+                caseHeaderRendered = p.c;
+            }
+
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            
+            let html = `<h3>Pregunta ${index + 1}. ${p.q}</h3><ul class="options">`;
+            
+            const shuffledOptions = shuffleOptions(p);
+            let indexCorrecta;
+
+            shuffledOptions.forEach((optMeta, idx) => {
+                const letra = letras[idx];
+                if (optMeta.isCorrect) indexCorrecta = letra;
+                
+                html += `
+                    <li>
+                        <label id="label-${index}-${letra}">
+                            <input type="radio" name="q${index}" value="${letra}" data-correct="${optMeta.isCorrect}">
+                            <strong>${letra})</strong> ${optMeta.text}
+                        </label>
+                    </li>
+                `;
+            });
+            
+            html += `</ul>
+                     <div id="exp-${index}" class="explanation">
+                         <strong>Respuesta correcta: ${indexCorrecta}.</strong> ${p.e}
+                     </div>`;
+            
+            qDiv.innerHTML = html;
+            form.appendChild(qDiv);
+        });
+
+        // Lógica de corrección
+        function corregir() {
+            let puntuacion = 0;
+            let fallos = 0;
+            let sinContestar = 0;
+
+            db.forEach((p, index) => {
+                const opciones = document.getElementsByName(`q${index}`);
+                let seleccion = null;
+                let seleccionCorrecta = false;
+                
+                opciones.forEach(opt => {
+                    const letra = opt.value;
+                    const label = document.getElementById(`label-${index}-${letra}`);
+                    const esCorrecta = opt.getAttribute('data-correct') === "true";
+
+                    label.classList.remove('correct-anim', 'incorrect-anim'); 
+                    opt.disabled = true; 
+                    
+                    if (opt.checked) {
+                        seleccion = letra;
+                        if (esCorrecta) seleccionCorrecta = true;
+                    }
+                    if (esCorrecta) label.classList.add('correct-anim');
+                });
+
+                if (!seleccion) {
+                    sinContestar++;
+                } else if (!seleccionCorrecta) {
+                    fallos++;
+                    document.getElementById(`label-${index}-${seleccion}`).classList.add('incorrect-anim');
+                } else {
+                    puntuacion++;
+                }
+                document.getElementById(`exp-${index}`).style.display = 'block';
+            });
+
+            // Cálculo tipo BOE: Acierto +1, Fallo -0.25
+            const notaFinal = (puntuacion * 1) - (fallos * 0.25);
+            const notaNormalizada = notaFinal < 0 ? 0 : notaFinal;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alert(`--- SIMULACRO 4 FINALIZADO ---\n\nAciertos: ${puntuacion}\nErrores: ${fallos}\nSin contestar: ${sinContestar}\n\nPUNTUACIÓN TOTAL (Criterio BOE): ${notaNormalizada.toFixed(2)} sobre 60 posibles.\n\nRevisa las explicaciones debajo de cada pregunta.`);
+            }, 300);
+        }
+    </script>
+
+    <!-- Botón opcional MSF -->
+    <div style="text-align: center; margin-top: 50px; padding: 25px; background-color: #fdfbf7; border: 2px solid #e84118; border-radius: 8px;">
+        <h3 style="margin-top: 0; color: #c23616;">¿Te ha sido útil este simulacro?</h3>
+        <p style="font-size: 0.95em; color: #2f3640;">Este proyecto es 100% gratuito. Si te ha servido de ayuda en tu preparación, te invito a transformar ese valor en una donación directa y opcional a Médicos Sin Fronteras.</p>
+        <a href="https://www.msf.es/que-puedo-hacer-yo/donativo" target="_blank" style="display: inline-block; background-color: #e84118; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; transition: 0.3s;">Hacer un donativo a MSF</a>
+    </div>
+
+</body>
+</html>

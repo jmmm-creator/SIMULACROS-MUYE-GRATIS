@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulacro 2: Alteraciones Hidroelectrolíticas y Fluidoterapia</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #1e272e; line-height: 1.5; padding: 20px; max-width: 950px; margin: auto; }
+        .header { text-align: center; border-bottom: 4px solid #e1b12c; margin-bottom: 25px; padding-bottom: 10px; }
+        .header h1 { color: #2d3436; margin: 0; }
+        .case-header { background-color: #e1b12c; color: white; padding: 15px; border-radius: 6px; margin-top: 40px; margin-bottom: 20px; }
+        .case-header h2 { margin: 0; font-size: 1.3em; }
+        .question { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .question h3 { margin-top: 0; font-size: 1.05em; color: #2d3436; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 8px; }
+        .options label { display: block; padding: 10px 15px; border: 1px solid #dfe6e9; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+        .options label:hover { background-color: #f1f2f6; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.1); }
+        .btn-container { text-align: center; margin-top: 40px; margin-bottom: 40px; }
+        .btn { background-color: #e1b12c; color: #2d3436; border: none; padding: 15px 35px; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #fbc531; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background-color: #fdf6e3; border-left: 4px solid #e1b12c; border-radius: 4px; font-size: 0.9em; }
+        .correct-anim { border-color: #00b894 !important; background-color: #e8f8f5 !important; font-weight: bold; color: #00b894; }
+        .incorrect-anim { border-color: #d63031 !important; background-color: #fceaea !important; color: #d63031; text-decoration: line-through; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Simulacro 2: Alteraciones Hidroelectrolíticas y Metabólicas</h1>
+        <p>Prueba Práctica: 4 Casos Clínicos (60 preguntas). Las opciones se barajan aleatoriamente.</p>
+    </div>
+
+    <form id="exam-form"></form>
+
+    <div class="btn-container">
+        <button type="button" class="btn" onclick="corregir()">Finalizar Simulacro y Ver Resultados</button>
+    </div>
+
+    <script>
+        const db = [
+            // ================= CASO 1: DISNATREMIAS Y OSMOLARIDAD =================
+            { c: "CASO CLÍNICO 1: Alteraciones del Sodio y Osmolaridad. Evaluaciones clínicas en urgencias sobre hiponatremia e hipernatremia.",
+              q: "Para calcular de forma precisa la osmolaridad plasmática en urgencias, la fórmula correcta a emplear es:",
+              o: ["[2 x Na (mEq/L)] + [Glucosa (mg/dl) / 18] + [Urea (mg/dl) / 2.8].", "[Na (mEq/L) + K (mEq/L)] + [Glucosa (mg/dl) / 18] + [BUN / 2.8].", "[2 x (Na + K)] + [Glucosa / 18].", "[Na (mEq/L) / 2] + [Glucosa (mg/dl) / 18] + [Urea / 2.8]."],
+              e: "La fórmula validada en urgencias para el cálculo es: Osmolaridad Plasmática = [2 x Na (p)(mEq/L)] + [Glucosa (p)(mg/dl)/18] + [Urea (mg/dl)/2.8][cite: 2]." },
+            { c: 1, q: "Paciente varón de 65 años acude con náuseas, malestar general y calambres musculares. En analítica destaca Na 112 mEq/L de 12 horas de evolución. Presenta estupor progresivo. El tratamiento indicado es:",
+              o: ["Bolos de suero salino hipertónico al 3% para elevar el sodio 2-3 mEq/L rápidamente.", "Restricción hídrica estricta (800 ml/día) y Tolvaptan oral.", "Suero fisiológico al 0.9% a ritmo de 100 ml/h durante 24 horas.", "Reposición de sodio a ritmo lento, máximo 0.5 mEq/L/h desde el inicio por riesgo de desmielinización."],
+              e: "En hiponatremia aguda y sintomática (< 115 mEq/L) con clínica neurológica grave (estupor), se requiere actuación rápida con suero salino hipertónico (ej. bolos cada 10 min) para reducir el edema cerebral[cite: 2]." },
+            { c: 1, q: "¿Cómo se debe preparar una solución de Cloruro Sódico (ClNa) al 3% si la farmacia del hospital no dispone de ella formulada?",
+              o: ["Añadiendo 15 ml de ClNa al 20% en 85 ml de suero glucosado al 5%.", "Mezclando 50 ml de suero fisiológico al 0.9% con 50 ml de ClNa al 20%.", "Añadiendo 30 ml de ClNa al 20% en 1000 ml de suero fisiológico.", "Diluyendo 1 ampolla de ClNa 20% (10ml) en 90 ml de agua destilada."],
+              e: "La solución de ClNa al 3% se consigue añadiendo 15 ml de ClNa al 20% en 85 ml de suero glucosado al 5%[cite: 1]." },
+            { c: 1, q: "En pacientes con hiponatremia crónica severa (<120 mEq/L), una reposición de sodio excesivamente rápida puede causar:",
+              o: ["Mielinolisis pontina o síndrome de desmielinización osmótica.", "Edema cerebral agudo y enclavamiento amigdalar.", "Insuficiencia renal aguda prerrenal por vasoconstricción.", "Convulsiones generalizadas por hiperhidratación neuronal secundaria."],
+              e: "Una corrección demasiado rápida en hiponatremia crónica provoca la destrucción de la mielina de la protuberancia (síndrome de desmielinización osmótica/mielinolisis pontina), cuadro irreversible[cite: 1, 2]." },
+            { c: 1, q: "¿Cuál es el límite máximo seguro de corrección del sodio en un paciente con hiponatremia crónica para evitar daño neurológico irreversible?",
+              o: ["No aumentar más de 10 mEq/L en 24 horas ni más de 18 mEq/L en 48 horas.", "No aumentar más de 15 mEq/L en las primeras 12 horas.", "Aumentar un mínimo de 1 mEq/L/h durante las primeras 24 horas continuadas.", "Corregir íntegramente el déficit en las primeras 48 horas independientemente de la cifra basal."],
+              e: "En la hiponatremia crónica la velocidad de reposición es de 0.5 mEq/L/h, no superando un aumento de 10 mEq/L en 24 horas ni de 18 mEq/L en las primeras 48 horas[cite: 2]." },
+            { c: 1, q: "En un paciente con insuficiencia cardiaca congestiva severa y edemas bimaleolares, la analítica muestra un Na de 125 mEq/L. Esta hiponatremia se clasifica fisiopatológicamente como:",
+              o: ["Hiponatremia hipervolémica.", "Hiponatremia hipovolémica por pérdida de tercer espacio.", "Hiponatremia normovolémica (SIADH).", "Hiponatremia isotónica (pseudohiponatremia)."],
+              e: "En la insuficiencia cardíaca, cirrosis y síndrome nefrótico, hay retención hídrica (edemas) que supera a la de sodio por activación compensatoria (ADH, aldosterona), originando hiponatremia hipervolémica[cite: 2]." },
+            { c: 1, q: "Para el tratamiento específico de la hiponatremia secundaria al Síndrome de Secreción Inadecuada de ADH (SIADH) refractaria a la restricción hídrica, ¿qué grupo farmacológico está indicado?",
+              o: ["Antagonistas de los receptores V2 de la vasopresina (ej. Tolvaptan).", "Análogos de la aldosterona (ej. Fludrocortisona).", "Diuréticos tiazídicos a altas dosis.", "Resinas de intercambio iónico orales."],
+              e: "En el SIADH, además de restricción hídrica y diuréticos de asa, están indicados los antagonistas de los receptores V2 de la vasopresina, conocidos como acuaréticos (Tolvaptan)[cite: 2]." },
+            { c: 1, q: "Mujer de 80 años institucionalizada acude por bajo nivel de conciencia. Na plasmático: 165 mEq/L. Presenta mucosas secas y pliegue positivo. Para calcular el déficit de agua libre, se emplea la fórmula:",
+              o: ["Déficit (L) = 0.6 x peso (kg) x [(Na actual / Na deseado) - 1].", "Déficit (L) = 0.4 x peso (kg) x (Na deseado - Na actual).", "Déficit (L) = Peso (kg) x 0.6 x (Na actual - 140).", "Déficit (L) = (140 - Na actual) / 0.6 x peso (kg)."],
+              e: "El déficit de agua libre se calcula como: Déficit de agua (litros) = 0.6 x peso (kg) x [(Na plasmático actual / Na plasmático deseado) - 1][cite: 2]." },
+            { c: 1, q: "En el manejo inicial de una hipernatremia grave con inestabilidad hemodinámica e hipovolemia franca (hipotensión severa), el fluido intravenoso de primera elección es:",
+              o: ["Suero salino isotónico (0.9%).", "Suero glucosado al 5%.", "Suero salino hipotónico (0.45%).", "Agua destilada intravenosa a ritmo muy lento."],
+              e: "En hipernatremia con hipovolemia severa/shock, primero hay que reponer la volemia con soluciones salinas isotónicas (0.9%) de inicio; posteriormente se usan hipotónicos o glucosados para el déficit de agua libre[cite: 2]." },
+            { c: 1, q: "Paciente varón de 40 años sufre un TCE grave (GCS 7). En Urgencias presenta pupilas anisocóricas e hipertensión con bradicardia (Reflejo de Cushing). Decides iniciar terapia hiperosmolar con Suero Salino Hipertónico (SSH) al 7.2%. La pauta recomendada es:",
+              o: ["2 mL/kg en 20 minutos por vía intravenosa.", "10 mL/kg en 60 minutos por vía intravenosa.", "5 mL/kg en 10 minutos por vía intraósea exclusivamente.", "Bolo rápido de 50 mL seguido de perfusión a 20 mL/h."],
+              e: "La administración recomendada de SSH 7.2% en TCE grave con signos de hipertensión intracraneal es de 2 mL/kg en 20 minutos por vía intravenosa (preferible en bomba de perfusión)." },
+            { c: 1, q: "¿Cuál es la osmolaridad fisiológica estándar del Suero Fisiológico al 0.9%?",
+              o: ["308 mOsm/L.", "277 mOsm/L.", "154 mOsm/L.", "2000 mOsm/L."],
+              e: "El Suero Fisiológico aporta 154 mEq/L de Na y 154 mEq/L de Cl, lo que suma una osmolaridad de 308 mOsm/L[cite: 1]." },
+            { c: 1, q: "En las deshidrataciones pediátricas, cuando se comprueba una hiponatremia grave (Na < 120 mEq/L) secundaria a gastroenteritis, la fórmula de corrección parcial rápida busca alcanzar un sodio objetivo de seguridad de:",
+              o: ["125 mEq/L.", "135 mEq/L.", "140 mEq/L.", "115 mEq/L."],
+              e: "Para la corrección aguda de la hiponatremia pediátrica grave con riesgo convulsivo, la fórmula es: Na a aportar = (125 – Na observado) x 0.6 x kg. La cifra objetivo inicial de seguridad es 125 mEq/L[cite: 1]." },
+            { c: 1, q: "Al evaluar la orina de un paciente con hipernatremia, detectas una Osmolaridad urinaria < 300 mOsm/kg a pesar de la hiperosmolaridad plasmática. El diagnóstico más probable es:",
+              o: ["Diabetes insípida.", "Pérdidas insensibles extrarrenales masivas (sudoración).", "Fase poliúrica de recuperación de necrosis tubular aguda.", "Consumo exclusivo de diuréticos de asa encubierto."],
+              e: "Una orina diluida (Osm < 300 mOsm/kg) frente a un plasma hiperosmolar con hipernatremia es el sello diagnóstico de la Diabetes Insípida por falta de secreción o acción de la ADH[cite: 2]." },
+            { c: 1, q: "En una paciente mujer de 45 años con antecedentes de psicosis, acude por convulsiones. Sodio sérico de 118 mEq/L. No toma fármacos y el volumen extracelular es normal. Se sospecha de una polidipsia psicógena. En este cuadro, la ADH habitualmente está:",
+              o: ["Suprimida, con orina máximamente diluida.", "Elevada ectópicamente simulando un SIADH.", "Elevada por estimulación del centro de la sed talámico.", "Suprimida, con orina hiperconcentrada por encima de 800 mOsm/kg."],
+              e: "La polidipsia psicógena genera una ingesta masiva de agua que suprime fisiológicamente la ADH, produciendo una orina muy diluida al intentar excretar el exceso de agua libre, hasta que se supera la capacidad renal[cite: 2]." },
+            { c: 1, q: "Si preparas Suero Salino Hipertónico al 3% mezclando ClNa 20% y suero salino al 0.9%, las proporciones indicadas por el protocolo MUYE son:",
+              o: ["13 mL ClNa 20% + 100 mL suero salino 0.9%.", "50 mL ClNa 20% + 100 mL suero salino 0.9%.", "20 mL ClNa 20% + 50 mL suero salino 0.9%.", "10 mL ClNa 20% + 90 mL suero salino 0.9%."],
+              e: "El manual andaluz detalla que para conseguir 113 mL de SSH 3% se mezclan 13 mL de ClNa 20% + 100 mL de suero salino 0.9%. (Mezclar 50ml de ClNa 20% da SSH 7.2%)." },
+
+            // ================= CASO 2: HIPERPOTASEMIA Y RABDOMIÓLISIS =================
+            { c: "CASO CLÍNICO 2: Urgencias hiperpotasémicas, rabdomiólisis y uso de fármacos modificadores del potasio celular.",
+              q: "Acude a Urgencias un varón de 60 años con ERC estadio V. Potasio sérico 7.8 mmol/L. El ECG muestra ondas T picudas y ensanchamiento del QRS. El primer fármaco a administrar de forma inmediata para antagonizar los efectos de membrana es:",
+              o: ["Gluconato Cálcico al 10% en bolo lento (10 ml).", "Insulina rápida (10 UI) + 50 ml glucosa al 50%.", "Salbutamol nebulizado a dosis altas.", "Furosemida intravenosa (40-80 mg)."],
+              e: "El Gluconato Cálcico antagoniza rápidamente (minutos) los efectos deletéreos del potasio sobre la excitabilidad de la membrana celular cardíaca, estando indicado ante alteraciones electrocardiográficas de hiperpotasemia[cite: 2]." },
+            { c: 2, q: "Respecto a la pauta estabilizadora intracelular con insulina para la hiperpotasemia urgente, ¿cuál es la dosis y preparación estandarizada recomendada?",
+              o: ["10 UI de insulina rápida en 500 cc de Suero Glucosado al 10%.", "25 UI de insulina rápida en 1000 cc de Suero Fisiológico al 0.9%.", "5 UI de insulina rápida en bolo directo seguida de glucagón intramuscular.", "50 UI de insulina en 500 cc de suero fisiológico pasando a 60 ml/h."],
+              e: "La tabla de tratamiento de la hiperpotasemia aguda propone dosis orientativas de: 10 UI de insulina en 500 cc de SG al 10% (o 10 UI + 50 ml de glucosa 50%), introduciendo el potasio a la célula[cite: 2]." },
+            { c: 2, q: "El salbutamol es un fármaco coadyuvante útil en la hiperpotasemia. ¿Cuál es su mecanismo de acción principal en este contexto?",
+              o: ["Mete el potasio en el interior de la célula por estímulo beta-2 adrenérgico.", "Aumenta la excreción tubular de potasio en el asa de Henle.", "Inhibe la absorción intestinal de potasio compitiendo con los receptores.", "Estabiliza el miocardio ventricular alargando el periodo refractario."],
+              e: "Los agonistas beta adrenérgicos como el salbutamol favorecen la entrada de potasio al interior de la célula. Se usa junto a la insulina por su efecto sinérgico[cite: 2]." },
+            { c: 2, q: "Ingresa paciente por accidente de tráfico con aplastamiento severo de extremidades inferiores de 12 horas de evolución. CPK de 45.000 U/L. ¿Qué riesgo principal presenta si no iniciamos fluidoterapia precoz y masiva?",
+              o: ["Fracaso renal agudo cercano al 100% por toxicidad de mioglobina.", "Desmielinización osmótica cerebral fulminante.", "Hipercalcemia precoz refractaria.", "Hipokalemia severa con arritmias ventriculares."],
+              e: "En la rabdomiólisis grave, si el tratamiento con fluidos se retrasa más de 12 horas, prácticamente el 100% presentará fracaso renal agudo." },
+            { c: 2, q: "En el manejo de la rabdomiólisis traumática aguda, el ritmo inicial de fluidoterapia con Suero Fisiológico para prevenir el fallo renal debe ser:",
+              o: ["1 - 1.5 L/h (10-20 ml/kg/h) para mantener diuresis de 200-300 ml/h.", "500 ml/h de Suero Glucosado al 5% con suplementos de potasio.", "Reposición exclusiva según la fórmula de Parkland para quemados.", "20-25 ml/kg/día como mantenimiento estándar."],
+              e: "La medida más importante en rabdomiólisis es la administración precoz y masiva de Suero Fisiológico a ritmo de 1-1.5 L/h para mantener diuresis de 200-300 ml/h." },
+            { c: 2, q: "Decides alcalinizar la orina en este paciente con rabdomiólisis para disminuir la nefrotoxicidad de la mioglobina. El tratamiento indicado es:",
+              o: ["Bicarbonato sódico 1/6 Miliar a 150 ml/h, ajustando para pH urinario > 6.5.", "Bicarbonato sódico 1 Molar en bolo de 100 mEq cada hora.", "Trometamol (THAM) en perfusión continua durante 24 horas.", "Furosemida a altas dosis asociada a manitol al 20% como primera línea sin bicarbonato."],
+              e: "La alcalinización disminuye el ciclo redox de la mioglobina. Se administra bicarbonato 1/6 M a unos 150 ml/h ajustando para mantener el pH urinario > 6.5." },
+            { c: 2, q: "Durante el tratamiento de la rabdomiólisis con bicarbonato, observas contracturas musculares y espasmos carpopedales (signo de Trousseau). Sospechas de hipocalcemia sintomática. ¿Cómo debes actuar sobre el nivel de calcio?",
+              o: ["Tratar solo si es sintomática (ej. cloruro cálcico 10%), ya que reponerlo sistemáticamente agrava la hipercalcemia de rebote en fase de recuperación.", "Administrar gluconato cálcico profilácticamente desde el minuto cero a todo paciente con rabdomiólisis.", "Aumentar el ritmo de infusión de bicarbonato para quelar el calcio sérico.", "Perfundir Calcitonina para proteger el hueso de la pérdida de calcio."],
+              e: "En la rabdomiólisis se desaconseja tratar la hipocalcemia inicial salvo que sea sintomática. Al rehidratar, el calcio sale de las células musculares necrosadas y tratarlo en exceso precipita hipercalcemia grave posterior." },
+            { c: 2, q: "Para eliminar potasio del organismo a nivel del tubo digestivo en un paciente hiperpotasémico no crítico, el fármaco indicado es:",
+              o: ["Resincalcio (Resina de intercambio catiónico) a dosis de 15g/8h oral o rectal.", "Lactulosa oral 30 ml cada 8 horas.", "Manitol al 20% vía oral.", "Dosis altas de Omeprazol intravenoso."],
+              e: "Las resinas de intercambio catiónico, como el Resincalcio (15g/8h oral o 40g rectal), actúan ligando el potasio en el tubo digestivo y expulsándolo por las heces[cite: 2]." },
+            { c: 2, q: "El paciente con rabdomiólisis precisa intubación de urgencia por deterioro respiratorio y agitación. ¿Qué relajante muscular está ABSOLUTAMENTE CONTRAINDICADO por el riesgo de inducir hiperpotasemia letal?",
+              o: ["Succinilcolina (relajante despolarizante).", "Rocuronio (relajante no despolarizante).", "Cisatracurio.", "Vecuronio."],
+              e: "La Succinilcolina es un relajante despolarizante que produce aumento de la concentración de potasio; en pacientes con rabdomiólisis masiva, grandes quemados (>72h) o lesiones denervantes, puede causar hiperpotasemia fatal[cite: 5]." },
+            { c: 2, q: "El uso de Manitol al 20% en la rabdomiólisis se reserva para casos oligúricos rehidratados y está contraindicado si:",
+              o: ["El intervalo osmolar (osmolar gap) supera los 55 mOsm/L por el riesgo de hiperosmolaridad y sobrecarga de volumen.", "La CPK sérica es inferior a 100.000 U/L en el primer día.", "El paciente presenta hiponatremia leve concomitante.", "La mioglobina en orina resulta negativa mediante tira reactiva."],
+              e: "El Manitol 20% debe suspenderse o evitarse si el intervalo osmótico supera los 55 mOsm/L o no se obtiene diuresis de 200 ml/h, por el alto riesgo de hiperosmolaridad severa." },
+            { c: 2, q: "Tras la intubación del paciente con Rocuronio a doble dosis (secuencia rápida), ¿qué tiempo de duración de acción debes esperar aproximadamente antes de que desaparezca el bloqueo motor?",
+              o: ["35-45 minutos.", "5 minutos.", "10-15 minutos.", "2-3 horas."],
+              e: "El Rocuronio es un relajante no despolarizante de acción rápida cuya duración de efecto se sitúa en torno a los 35-45 minutos[cite: 5]." },
+            { c: 2, q: "¿Qué complicación local grave debes vigilar activamente (regla de las '5P') en extremidades inferiores afectadas por lesión de aplastamiento y síndrome de reperfusión?",
+              o: ["Síndrome Compartimental, requiriendo fasciotomía temprana.", "Celulitis necrotizante por anaerobios secundaria a hipoxia.", "Trombosis Venosa Profunda asintomática.", "Osteomielitis aguda fulminante."],
+              e: "Tras la rabdomiólisis/aplastamiento, el edema muscular masivo en fascias inelásticas genera Síndrome Compartimental (Dolor, Ausencia de Pulso, Parálisis, Palidez, Parestesias), que requiere fasciotomía." },
+            { c: 2, q: "Acerca de la hiperpotasemia secundaria al uso prolongado de diuréticos ahorradores de potasio. Si el ECG del paciente es estrictamente NORMAL y el Potasio es de 6.1 mEq/L (leve-moderada), la primera línea es:",
+              o: ["Retirar el fármaco causante, dieta estricta, diuréticos de asa (furosemida) y control evolutivo.", "Administración inmediata de Cloruro Cálcico al 10% en menos de 3 minutos.", "Diálisis urgente sin dilación.", "Perfusión de Amiodarona preventiva para arritmias ventriculares."],
+              e: "En hiperpotasemias asintomáticas y leves/moderadas sin alteraciones ECG, el tratamiento se basa en eliminar la causa, favorecer excreción renal (diuréticos de asa) y/o digestiva (resinas), sin requerir estabilizadores de membrana como el calcio[cite: 2]." },
+            { c: 2, q: "Un niño con quemaduras en el 35% de la superficie corporal, ingresado hace 5 días en la UCI pediátrica, requiere nueva intubación. La succinilcolina en este momento está:",
+              o: ["Contraindicada por riesgo de hiperpotasemia severa debido a la sobrerregulación de receptores de acetilcolina tras 72h de la quemadura.", "Indicada como fármaco de elección por su acción fugaz y excelente perfil cardiovascular.", "Contraindicada exclusivamente si el paciente padece asma bronquial concomitante.", "Indicada, pero a dosis reducidas a la mitad por hipoalbuminemia."],
+              e: "Los grandes quemados, a partir de las 72 horas (y durante meses), sufren una sobrerregulación extrajuncional de receptores de ACh. Al recibir succinilcolina liberan potasio de forma masiva y fatal." },
+            { c: 2, q: "Si indicas bicarbonato sódico para corrección de acidosis o hiperpotasemia, debes saber que su eficacia pura para descender el potasio es:",
+              o: ["Limitada, con estudios contradictorios, indicándose principalmente solo en caso de acidosis metabólica severa asociada.", "El mecanismo más rápido de todos, actuando en segundos.", "Permanente, excretando potasio por la orina irreversiblemente.", "Exclusiva a través del bloqueo del canal lento de calcio."],
+              e: "El uso de bicarbonato sódico puro para meter potasio en la célula tiene eficacia limitada y resultados contradictorios; las guías restringen su uso a hiperpotasemias asociadas a acidosis metabólica severa[cite: 2]." },
+
+            // ================= CASO 3: CETOACIDOSIS, URGENCIAS ENDOCRINAS Y PEDIATRÍA =================
+            { c: "CASO CLÍNICO 3: Cetoacidosis diabética, hiperglucemias, y reposición de fluidos basal pediátrica.",
+              q: "Llega un joven diabético tipo 1 con vómitos, dolor abdominal y respiración de Kussmaul. Glucemia 450 mg/dl, pH 7.15, HCO3 12 mEq/L, cetonuria +++. Se diagnostica Cetoacidosis Diabética (CAD). La medida terapéutica de máxima prioridad inicial es:",
+              o: ["Reposición de volemia con Suero Fisiológico al 0.9% (1000-1500 ml en la primera hora).", "Administración inmediata de insulina rápida subcutánea (0.5 UI/kg).", "Administración de bicarbonato sódico 1 Molar en bolo para corregir el pH.", "Antibioterapia empírica con Cefotaxima IV para cubrir el foco desencadenante."],
+              e: "En la CAD la reposición de la volemia es la medida prioritaria (revierte el shock y mejora la perfusión renal para eliminar cetoácidos). Se inicia con 1L-1.5L de suero fisiológico en la 1ª hora[cite: 1]." },
+            { c: 3, q: "Antes de iniciar la perfusión de insulina en una CAD, es CRÍTICO conocer los niveles plasmáticos de potasio, ya que la insulina introducirá potasio en la célula. Se debe diferir la insulina si la kaliemia inicial es inferior a:",
+              o: ["3.5 mEq/L.", "4.5 mEq/L.", "5.3 mEq/L.", "2.5 mEq/L."],
+              e: "En pacientes con hipokaliemia inicial, el tratamiento con insulina debe diferirse hasta que la kaliemia sea repuesta y se sitúe en un nivel superior a 3.5 mEq/L, por el alto riesgo de arritmias letales[cite: 1]." },
+            { c: 3, q: "En el manejo estándar de la CAD del adulto, una vez resuelta la hipovolemia extrema, ¿cómo se administra y titula la insulina regular (cristalina)?",
+              o: ["Bolo intravenoso de 0.15 UI/kg, seguido de perfusión a 0.1 UI/kg/h buscando descensos de glucosa de 50-75 mg/dl/h.", "Bolos intramusculares repetidos cada 4 horas según glucemia capilar cruzada.", "Perfusión a alta dosis de 0.5 UI/kg/h sin bolos iniciales.", "Se restringe su uso a la vía subcutánea desde el ingreso (pauta basal-bolo)."],
+              e: "La pauta estándar indica un bolo inicial de 0.15 UI/kg seguido de perfusión a 0.1 UI/kg/h, con objetivo de descenso glucémico suave de 50-75 mg/dl a la hora[cite: 1]." },
+            { c: 3, q: "Durante el tratamiento de la CAD, el paciente presenta una glucemia capilar que ha descendido de 450 a 190 mg/dl, pero persiste con acidosis (pH 7.25 y bicarbonato 15). La actitud correcta con los sueros es:",
+              o: ["Sustituir la mitad de los fluidos salinos por Suero Glucosado al 5% y mantener la perfusión de insulina.", "Apagar la bomba de insulina completamente para evitar la hipoglucemia y mantener suero fisiológico.", "Administrar bolos de Glucagón subcutáneo cada hora.", "Cambiar a insulina NPH subcutánea inmediatamente y dar alta a planta."],
+              e: "Cuando la glucemia cae por debajo de 200 mg/dl pero aún no se ha resuelto la cetosis/acidosis, NO debe pararse la insulina; se añade Suero Glucosado al 5% a la fluidoterapia para mantener niveles seguros de glucosa mientras la insulina aclara los cuerpos cetónicos[cite: 1]." },
+            { c: 3, q: "Complicación temida en el tratamiento de la CAD en niños, que cursa con cefalea, bradicardia, vómitos, e hipertensión en las primeras 12h, asociada a veces al uso innecesario de bicarbonato:",
+              o: ["Edema cerebral secundario a cetoacidosis.", "Hemorragia subaracnoidea espontánea.", "Mielinolisis pontina central.", "Encefalitis viral intercurrente."],
+              e: "El edema cerebral es la causa más frecuente de muerte en CAD infantil (20% mortalidad). Se trata de urgencia con suero salino hipertónico al 3% (5 ml/kg en 30 min) o manitol[cite: 1]." },
+            { c: 3, q: "Acude a urgencias un anciano de 82 años diabético tipo 2 con neumonía. Letárgico. Glucemia de 850 mg/dl, osmolaridad plasmática de 345 mOsm/kg, pH 7.35 y ausencia de cetonuria. Este cuadro define al:",
+              o: ["Estado Hiperosmolar Hiperglucémico (EHH).", "Cetoacidosis Diabética grave compensada respiratoriamente.", "Síndrome de secreción inadecuada de insulina.", "Acidosis láctica tipo A por shock séptico."],
+              e: "Hiperglucemia grave (>600), hiperosmolaridad (>320), pH normal (>7.3) y ausencia de cetonemia/cetonuria definen el Estado Hiperosmolar Hiperglucémico (clásico en ancianos DM2)[cite: 1]." },
+            { c: 3, q: "Para calcular las necesidades basales diarias de agua de un niño eutrófico de 15 kg ingresado en observación, usando la regla de Holliday-Segar, debes pautar:",
+              o: ["1250 ml en 24 horas.", "1500 ml en 24 horas.", "1000 ml en 24 horas.", "500 ml en 24 horas."],
+              e: "Holliday-Segar: los primeros 10 kg requieren 1000 ml. Los 5 kg restantes requieren 50 ml/kg (250 ml). Total: 1000 + 250 = 1250 ml[cite: 1]." },
+            { c: 3, q: "Un paciente diabético tipo 1 se inyectó 20 UI de insulina rápida por error. Llega a urgencias en coma hipoglucémico (Glucemia 25 mg/dl). No consigues canalizar vía venosa periférica. Tratamiento de rescate:",
+              o: ["Glucagón intramuscular o subcutáneo a dosis de 30 mcg/kg (máx. 1 mg).", "Azucarillos sublinguales y esperar 30 minutos.", "Adrenalina subcutánea 1 mg puro.", "Glucosa al 50% administrada por sonda nasogástrica."],
+              e: "En hipoglucemia grave sin acceso venoso, el glucagón IM o SC (1 mg en adultos o 30 mcg/kg) provoca glucogenólisis hepática rápida, revirtiendo el coma temporalmente hasta lograr vía[cite: 1]." },
+            { c: 3, q: "Lactante de 10 meses con gastroenteritis severa de 3 días. Estima pérdida de peso del 12%. Presenta letargia, ojos hundidos y relleno capilar de 4 segundos. El grado de deshidratación es:",
+              o: ["Deshidratación Grave (>10% lactantes).", "Deshidratación Leve (<5%).", "Deshidratación Moderada (5-10%).", "Deshidratación Hipernatrémica crónica obligada."],
+              e: "Pérdida de peso > 10% en lactantes (o > 7% en niños mayores) con signos de hipoperfusión (letargia, relleno lento) define la deshidratación grave que requiere reposición venosa urgente[cite: 1]." },
+            { c: 3, q: "Al recibir los resultados del lactante anterior, el Na sérico es de 165 mEq/L. Se clasifica como deshidratación hipertónica grave. ¿Cuál debe ser el ritmo de corrección del líquido de rehidratación para este cuadro?",
+              o: ["Lenta y constante a lo largo de 48 horas.", "Extremadamente rápida en las primeras 6 horas con Suero Fisiológico.", "Administración del 100% del déficit en 12 horas.", "Reposición en 24 horas usando exclusivamente agua libre destilada."],
+              e: "La deshidratación hipertónica requiere una corrección lenta en 48 horas para evitar el descenso rápido de la osmolaridad sérica, que causaría un dramático edema cerebral intracelular[cite: 1]." },
+            { c: 3, q: "Paciente que acude con hiperglucemia de 350 mg/dl sin acidosis (pH 7.38) y con indicios mínimos de cetonuria (+). Tolera vía oral perfectamente y no tiene vómitos. Actitud terapéutica más adecuada en urgencias:",
+              o: ["Dosis suplementarias de análogos de insulina rápida subcutánea, reposición hidroelectrolítica oral y alta precoz si mejora.", "Ingreso en UCI para protocolo de bomba de insulina intravenosa estricta.", "Bicarbonato sódico oral e inhibidores SGLT2 de rescate.", "Hidratación venosa masiva 6 litros en 24h y dieta absoluta 48h."],
+              e: "La 'Cetosis sin acidosis' tolerando vía oral se maneja con pautas correctoras de insulina subcutánea rápida, rehidratación oral en pequeñas tomas y reposo; no exige manejo parenteral de entrada[cite: 1]." },
+            { c: 3, q: "Según las guías expuestas en tu manual para el diagnóstico de neumonía y sepsis: en la valoración de los reactantes, un valor de Proteína C Reactiva (PCR) de 150 mg/L (normal < 10) sugiere fuertemente:",
+              o: ["Infección severa y probablemente bacteriana.", "Proceso inflamatorio vírico de carácter autolimitado.", "Infección fúngica pulmonar diseminada exclusiva.", "Marcador de baja especificidad en este contexto clínico, sin valor predictivo."],
+              e: "La PCR es un reactante de fase aguda donde valores > 100 mg/L son típicamente indicativos de infecciones severas de etiología bacteriana (diferenciándose de los picos víricos < 40-100)." },
+            { c: 3, q: "Un paciente alcohólico crónico ingresa severamente desnutrido. Al iniciar fluidoterapia con suero glucosado al 5% sin añadir otras vitaminas profilácticas, desarrolla diplopía, nistagmo y ataxia. Ha desarrollado:",
+              o: ["Encefalopatía de Wernicke por déficit de Tiamina desencadenado por la glucosa.", "Mielinolisis pontina central inducida por el suero hiposódico.", "Hipertensión intracraneal idiopática por exceso de líquido.", "Síndrome de Reye adulto tardío."],
+              e: "La infusión de sueros glucosados en pacientes con déficit de tiamina (Vitamina B1) -como alcohólicos o malnutridos- acelera el consumo de tiamina y precipita la Encefalopatía de Wernicke; siempre administrar tiamina antes de la glucosa [Conocimiento médico general derivado de urgencias]." },
+            { c: 3, q: "El tratamiento de la hiponatremia inducida por tiazidas, que cursa generalmente con hipovolemia leve y Na de 124 mEq/L, se basa fundamentalmente en:",
+              o: ["Retirada del diurético y administración de suero fisiológico al 0.9%.", "Demeclociclina para bloquear los receptores V2.", "Litio oral para antagonizar la hormona antidiurética.", "Hiperhidratación con 4 litros de agua libre (hiposódica) diarios."],
+              e: "Las tiazidas producen pérdida de Na urinario. La hiponatremia hipovolémica consecuente (por depleción primaria) responde excelentemente a suspender el fármaco y reponer la volemia con SSF isotónico 0.9%[cite: 2]." },
+            { c: 3, q: "Al evaluar la gasometría arterial de un paciente con sepsis grave en Urgencias (pH 7.30, pCO2 35, HCO3 16), te fijas en el lactato. Un valor de lactato de 4.5 mmol/L (normal < 2) indica:",
+              o: ["Insuficiencia circulatoria severa con isquemia tisular y riesgo de fracaso multiorgánico.", "Buena perfusión tisular y respuesta adecuada al tratamiento con fluidos inicial.", "Fallo puramente respiratorio sin afectación hemodinámica.", "Alcalosis metabólica compensadora por hiperventilación psicógena."],
+              e: "Un lactato > 2 mmol/L es marcador de hipoperfusión. Si supera los 4 mmol/L, indica insuficiencia circulatoria severa con isquemia tisular y alto riesgo de fracaso multiorgánico (criterio de shock críptico)." },
+
+            // ================= CASO 4: SHOCK, FLUIDOS MASIVOS, INTOXICACIONES =================
+            { c: "CASO CLÍNICO 4: Monitorización de fluidoterapia, shock de diversa etiología e intoxicaciones cardiológicas.",
+              q: "Paciente en postoperatorio de cirugía digestiva sufre sangrado masivo. Tras recibir 2 litros de cristaloides (Ringer Lactato) y 3 concentrados de hematíes, persiste hipotenso. Como parte del control homeostático (MTP), además del plasma y plaquetas, el ion que probablemente requiera reposición urgente por toxicidad del citrato es:",
+              o: ["Calcio (usando Cloruro Cálcico o Gluconato Cálcico).", "Potasio (usando Cloruro potásico iv).", "Sodio (con SSH al 3%).", "Magnesio (con Sulfato de Magnesio al 15%)."],
+              e: "La transfusión masiva aporta grandes dosis de citrato (anticoagulante de las bolsas), que quela el calcio plasmático libre. La hipocalcemia secundaria a sangrado masivo causa vasoplejía miocárdica y debe corregirse con calcio intravenoso." },
+            { c: 4, q: "En un paciente con shock hipovolémico severo por hemorragia intraabdominal, ¿cuál de los siguientes accesos o métodos de monitorización te proporciona información directa de la presión de llenado de cavidades derechas (precarga)?",
+              o: ["Presión Venosa Central (PVC) medida a través de un catéter central en cava superior.", "La determinación clínica de la frecuencia respiratoria.", "La medición del lactato sérico en vena periférica.", "La pulsioximetría (SatO2) a nivel capilar en el pulgar."],
+              e: "La Presión Venosa Central (PVC), con valores normales de 6-12 cm H2O en cava superior, indica el estado de llenado del sistema venoso y la precarga cardíaca derecha." },
+            { c: 4, q: "Ingresa paciente por sobredosis de betabloqueantes. Presenta FC de 35 lpm, hipotensión (70/40 mmHg) y bajo gasto cardíaco. Tras nula respuesta a Atropina y fluidos, el antídoto o terapia específica de primera elección es:",
+              o: ["Glucagón en bolo IV de 5-10 mg, pudiendo seguir de perfusión continua.", "Naloxona 0.4 mg IV cada 3 minutos.", "Flumazenilo 0.2 mg IV en bolo lento.", "Adrenalina intracardíaca directa."],
+              e: "En la intoxicación por betabloqueantes con bradicardia e hipotensión graves refractarias, el fármaco de elección (antídoto) es el Glucagón IV, por sus propiedades inotrópicas y cronotrópicas positivas independientes del receptor beta[cite: 1]." },
+            { c: 4, q: "Paciente de 75 años con antecedente de insuficiencia renal aguda que ingresó con edema agudo de pulmón. Recibió dosis muy altas de Furosemida intravenosa. En la gasometría venosa extraída tras el tratamiento, ¿qué trastorno ácido-base es el más esperable que haya desarrollado?",
+              o: ["Alcalosis metabólica (por contracción de volumen y pérdida de potasio/cloro).", "Acidosis metabólica con anión gap elevado (hiperlactacidemia).", "Acidosis respiratoria pura por hipoventilación alveolar.", "Acidosis metabólica hiperclorémica profunda."],
+              e: "Los diuréticos del asa (furosemida) causan pérdida renal masiva de H+, K+ y Cl-, generando una contracción del volumen plasmático con alcalosis metabólica (alcalosis de contracción e hipopotasémica) [Conocimiento médico de balance electrolítico]." },
+            { c: 4, q: "Un paciente gran quemado es tratado según la fórmula de Parkland (4ml x kg x %SCQ) y fluidoterapia intensiva. Si nos excedemos administrando fluidos más allá de sus necesidades reales (fluidoterapia agresiva incontrolada), la complicación extra-pulmonar más grave a vigilar es:",
+              o: ["Síndrome compartimental abdominal (hipertensión intraabdominal grave).", "Estenosis traqueal hipertrófica fibrosa.", "Hiponatremia hipervolémica severa asintomática.", "Necrosis aséptica de la cabeza femoral bilateral."],
+              e: "Las pautas alertan sobre vigilar datos de sobrecarga de fluidos, dado el riesgo asociado de edema pulmonar y el letal síndrome compartimental abdominal en caso de fluidoterapia demasiado agresiva[cite: 5]." },
+            { c: 4, q: "Se decide sedoanalgesia para intubación en el paciente quemado anterior inestable hemodinámicamente. ¿Qué hipnótico inducería anestesia disociativa con efecto estimulante cardiovascular (útil en hipovolemia)?",
+              o: ["Ketamina.", "Propofol.", "Tiopental sódico.", "Midazolam a dosis máximas."],
+              e: "La Ketamina actúa inhibiendo los receptores NMDA, produce anestesia disociativa, mantiene la respiración espontánea y tiene un perfil simpatomimético (estimulante cardiovascular) que mantiene la PA en el shock hipovolémico[cite: 5]." },
+            { c: 4, q: "Atiendes a un paciente psiquiátrico joven por ingestión de decenas de comprimidos de Diazepam (Benzodiacepinas). Glasgow 9. Respiración superficial 8 rpm, sin hipoxia severa. Suponiendo que decides revertirlo por la depresión respiratoria, la posología inicial correcta del antídoto (Flumazenilo) es:",
+              o: ["Dosis inicial de 0.2 mg i.v., redosificando 0.1 mg cada 60 segundos (dosis máxima 1 mg).", "Dosis inicial de 2 mg i.v. en bolo rápido.", "Dosis de 5 mg diluidos en 500 cc de Suero Fisiológico a pasar en 24h.", "Bolo de 0.04 mg i.v. repitiendo hasta alcanzar un máximo de 0.4 mg."],
+              e: "El antídoto específico de benzodiacepinas es el flumazenilo. Dosis inicial 0.2 mg IV, repitiendo 0.1 mg/min (máximo 1 mg)[cite: 5]. El régimen de 0.04-0.4 mg es propio de la naloxona." },
+            { c: 4, q: "En caso de shock séptico con hipotensión persistente tras resucitación adecuada con al menos 30 ml/kg de cristaloides, inicias infusión del fármaco vasoactivo de elección (Noradrenalina). ¿Cuál es la dosificación estándar recomendada para mantener perfusión tisular?",
+              o: ["Dosis inicial de 0.05 a 0.5 mcg/kg/minuto.", "Bolo intravenoso directo de 1 mg cada 5 minutos.", "Dosis inicial de 5 a 10 mg/kg/hora en perfusión rápida.", "Infusión de 20 mcg/kg/minuto desde el primer minuto."],
+              e: "En shock séptico (y otros tipos de shock distributivo), la noradrenalina se inicia en perfusión continua entre 0.05 y 0.5 µg/Kg/min, ajustando dosis para alcanzar PAM > 65 mmHg." },
+            { c: 4, q: "Ante la imposibilidad técnica momentánea de instaurar una bomba de infusión de noradrenalina en un shock profundo, o como puente hasta su preparación, el protocolo MUYE sugiere para ganar tono vasomotor transitoriamente:",
+              o: ["Microbolos de adrenalina intravenosa (diluir 1 ampolla de 1 mg en 99 ml SS, administrando bolos de 2 ml cada 4-5 min).", "Administrar doble dosis de Metilprednisolona en bolo directo 1 gramo.", "Compresión abdominal externa masiva prolongada.", "Bolo de 5 mg de atropina pura en 10 segundos."],
+              e: "Los microbolos de adrenalina (1mg en 99ml de SF = 10 mcg/ml) administrando 2 ml (20 mcg) están indicados para el aumento del tono vasomotor de forma transitoria hasta instaurar la perfusión continua de aminas." },
+            { c: 4, q: "Una paciente sufre una crisis hipertensiva tipo emergencia por Eclampsia (HTA + convulsiones periparto). La fisiopatología del daño endotelial cerebral y edema vasogénico en la encefalopatía hipertensiva depende fundamentalmente de:",
+              o: ["La tasa de cambio y velocidad de instauración del aumento de presión más que de los valores absolutos propiamente dichos.", "Alcanzar cifras de PA sistólica sostenida obligatoriamente > 240 mmHg independientemente de la base.", "La activación parasimpática refleja que causa bradicardia severa.", "El depósito crónico subintimal de placas de calcio que impiden la autorregulación."],
+              e: "El daño en la encefalopatía hipertensiva depende más de la tasa de cambio (rapidez con la que sube la TA, ej. eclampsia) que del valor final alcanzado. Una subida brusca rompe la autorregulación cerebral." },
+            { c: 4, q: "En caso de emergencia hipertensiva (no por eclampsia) con afectación de órgano diana, decides emplear Urapidilo. ¿Cuál es el mecanismo de acción dual de este excelente antihipertensivo?",
+              o: ["Bloqueante de los receptores Alfa-1 periféricos y acción central sobre receptores serotoninérgicos 5-HT1A.", "Vasodilatador venoso puro por donación de óxido nítrico.", "Inhibidor de la enzima convertidora de la angiotensina (IECA) de acción ultra-corta y betabloqueante selectivo.", "Bloqueante de los canales de calcio dihidropiridínicos de liberación intravenosa lenta."],
+              e: "El Urapidilo es un antagonista de los receptores alfa y, al mismo tiempo, actúa sobre receptores serotoninérgicos centrales. Su principal ventaja es que controla la TA sin provocar taquicardia refleja excesiva (común en vasodilatadores)." },
+            { c: 4, q: "Paciente varón de 30 años se presenta en urgencias como 'body packer' (mula). Ingresa asintomático, pero las radiografías confirman docenas de paquetes en tracto digestivo. Respecto a su manejo en urgencias, ¿qué medida está CONTRAINDICADA?",
+              o: ["Extracción endoscópica digestiva convencional o uso sistemático de eméticos por alto riesgo de rotura de las bolsas.", "Realización de monitorización electrocardiográfica estricta continua.", "Administración de solución evacuante (Polietilenglicol) por sonda nasogástrica u oral.", "Mantenimiento en observación clínica estrecha durante un mínimo de 6 horas."],
+              e: "En los 'body packers', la extracción endoscópica y el uso de fármacos eméticos (jarabe de ipecacuana) están formalmente contraindicados debido al altísimo riesgo mecánico de perforar las bolsas de droga, lo que resultaría fatal[cite: 1]." },
+            { c: 4, q: "Durante la atención al 'body packer' previo, una bolsa de cocaína se rompe, presentando el paciente agitación psicomotriz severa, FC 150 lpm y TA de 220/120 mmHg. Para el control de esta hipertensión e hiperactividad simpática, ¿qué fármaco NO se recomienda?",
+              o: ["Betabloqueantes puros (ej. Propranolol) debido al riesgo de sobreestimulación alfa 'sin oposición'.", "Benzodiacepinas intravenosas (ej. Diazepam).", "Fentolamina o Nitroprusiato.", "Nitroglicerina intravenosa."],
+              e: "En la intoxicación por cocaína, los betabloqueantes puros están contraindicados ya que bloquean los receptores beta (vasodilatadores musculares), dejando a la potente estimulación alfa (vasoconstrictora) sin oposición, lo que dispara la TA y la isquemia coronaria a niveles críticos[cite: 1]." },
+            { c: 4, q: "Paciente asmático conocido sufre una exacerbación grave. La gasometría extraída al inicio muestra pH 7.48, pCO2 25, pO2 55. A las 2 horas, la clínica empeora y el paciente se agota, una nueva gasometría extrae: pH 7.28, pCO2 50, pO2 45. Esta evolución denota:",
+              o: ["Fatiga de la musculatura respiratoria y fracaso ventilatorio inminente (pseudonormalización y posterior retención de carbónico).", "Mejoría objetiva del patrón obstructivo bronquial por desaparición de la hiperventilación.", "Desarrollo de un cuadro de acidosis láctica puramente metabólica por los beta-agonistas.", "Efecto adverso tóxico por sobredosis exclusiva de bromuro de ipratropio."],
+              e: "En la crisis asmática el paciente hiperventila de entrada (pCO2 baja). Si con el paso del tiempo la pCO2 sube y se normaliza o se retiene (acidosis respiratoria), indica agotamiento muscular severo, no mejoría; el paciente necesita soporte ventilatorio inminente [Conocimiento global de la gasometría]." },
+            { c: 4, q: "Se va a intubar al paciente asmático agotado. En la Intubación de Secuencia Rápida, para asegurar que la sedación/hipnosis relaja la musculatura bronquial y no causa depresión cardiovascular excesiva en hipoxia, ¿qué hipnótico inductor suele preferirse?",
+              o: ["Ketamina (posee propiedades broncodilatadoras marcadas).", "Propofol (produce marcada hipotensión y carece de efecto simpático).", "Midazolam a dosis de mantenimiento.", "Morfina en bolo rápido masivo."],
+              e: "La Ketamina relaja la musculatura bronquial y no deprime excesivamente el drive respiratorio ni la hemodinámica, siendo un inductor excelente para la ISR del paciente asmático grave o en status asmático[cite: 5]." }
+        ];
+
+        // Algoritmo de Fisher-Yates para barajar el array de opciones de cada pregunta
+        function shuffleOptions(question) {
+            let optionsMeta = question.o.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === 0 // Siempre la posición 0 del array original es la correcta (se baraja debajo)
+            }));
+            
+            for (let i = optionsMeta.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsMeta[i], optionsMeta[j]] = [optionsMeta[j], optionsMeta[i]];
+            }
+            return optionsMeta;
+        }
+
+        const form = document.getElementById('exam-form');
+        const letras = ['A', 'B', 'C', 'D'];
+
+        // Renderizado dinámico e inserción de encabezados de casos
+        let caseHeaderRendered = "";
+
+        db.forEach((p, index) => {
+            // Renderizar el encabezado de bloque de caso clínico si procede
+            if (p.c && p.c !== caseHeaderRendered && typeof p.c === "string") {
+                const caseDiv = document.createElement('div');
+                caseDiv.className = 'case-header';
+                caseDiv.innerHTML = `<h2>${p.c}</h2>`;
+                form.appendChild(caseDiv);
+                caseHeaderRendered = p.c;
+            }
+
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            
+            let html = `<h3>Pregunta ${index + 1}. ${p.q}</h3><ul class="options">`;
+            
+            const shuffledOptions = shuffleOptions(p);
+            let indexCorrecta;
+
+            shuffledOptions.forEach((optMeta, idx) => {
+                const letra = letras[idx];
+                if (optMeta.isCorrect) indexCorrecta = letra;
+                
+                html += `
+                    <li>
+                        <label id="label-${index}-${letra}">
+                            <input type="radio" name="q${index}" value="${letra}" data-correct="${optMeta.isCorrect}">
+                            <strong>${letra})</strong> ${optMeta.text}
+                        </label>
+                    </li>
+                `;
+            });
+            
+            html += `</ul>
+                     <div id="exp-${index}" class="explanation">
+                         <strong>Respuesta correcta: ${indexCorrecta}.</strong> ${p.e}
+                     </div>`;
+            
+            qDiv.innerHTML = html;
+            form.appendChild(qDiv);
+        });
+
+        // Lógica de corrección
+        function corregir() {
+            let puntuacion = 0;
+            let fallos = 0;
+            let sinContestar = 0;
+
+            db.forEach((p, index) => {
+                const opciones = document.getElementsByName(`q${index}`);
+                let seleccion = null;
+                let seleccionCorrecta = false;
+                
+                opciones.forEach(opt => {
+                    const letra = opt.value;
+                    const label = document.getElementById(`label-${index}-${letra}`);
+                    const esCorrecta = opt.getAttribute('data-correct') === "true";
+
+                    label.classList.remove('correct-anim', 'incorrect-anim'); 
+                    opt.disabled = true; 
+                    
+                    if (opt.checked) {
+                        seleccion = letra;
+                        if (esCorrecta) seleccionCorrecta = true;
+                    }
+                    if (esCorrecta) label.classList.add('correct-anim');
+                });
+
+                if (!seleccion) {
+                    sinContestar++;
+                } else if (!seleccionCorrecta) {
+                    fallos++;
+                    document.getElementById(`label-${index}-${seleccion}`).classList.add('incorrect-anim');
+                } else {
+                    puntuacion++;
+                }
+                document.getElementById(`exp-${index}`).style.display = 'block';
+            });
+
+            // Cálculo tipo BOE: Acierto +1, Fallo -0.25
+            const notaFinal = (puntuacion * 1) - (fallos * 0.25);
+            const notaNormalizada = notaFinal < 0 ? 0 : notaFinal;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alert(`--- SIMULACRO FINALIZADO ---\n\nAciertos: ${puntuacion}\nErrores: ${fallos}\nSin contestar: ${sinContestar}\n\nPUNTUACIÓN TOTAL (Criterio BOE): ${notaNormalizada.toFixed(2)} sobre 60 posibles.\n\nRevisa las explicaciones debajo de cada pregunta.`);
+            }, 300);
+        }
+    </script>
+
+    <!-- Botón opcional MSF actualizado con la nueva dirección -->
+    <div style="text-align: center; margin-top: 50px; padding: 25px; background-color: #fdfbf7; border: 2px solid #e84118; border-radius: 8px;">
+        <h3 style="margin-top: 0; color: #c23616;">¿Te ha sido útil este simulacro?</h3>
+        <p style="font-size: 0.95em; color: #2f3640;">Este proyecto es 100% gratuito. Si te ha servido de ayuda en tu preparación, te invito a transformar ese valor en una donación directa y opcional a Médicos Sin Fronteras.</p>
+        <a href="https://www.msf.es/que-puedo-hacer-yo/donativo" target="_blank" style="display: inline-block; background-color: #e84118; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; transition: 0.3s;">Hacer un donativo a MSF</a>
+    </div>
+
+</body>
+</html>

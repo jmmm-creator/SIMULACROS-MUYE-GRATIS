@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulacro Oficial MUYE - 60 Preguntas</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #1e272e; line-height: 1.5; padding: 20px; max-width: 950px; margin: auto; }
+        .header { text-align: center; border-bottom: 4px solid #0984e3; margin-bottom: 25px; padding-bottom: 10px; }
+        .header h1 { color: #2d3436; margin: 0; }
+        .case-header { background-color: #0984e3; color: white; padding: 15px; border-radius: 6px; margin-top: 40px; margin-bottom: 20px; }
+        .case-header h2 { margin: 0; font-size: 1.3em; }
+        .question { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .question h3 { margin-top: 0; font-size: 1.05em; color: #2d3436; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 8px; }
+        .options label { display: block; padding: 10px 15px; border: 1px solid #dfe6e9; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+        .options label:hover { background-color: #f1f2f6; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.1); }
+        .btn-container { text-align: center; margin-top: 40px; margin-bottom: 40px; }
+        .btn { background-color: #0984e3; color: white; border: none; padding: 15px 35px; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #0768b5; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background-color: #e3f2fd; border-left: 4px solid #0984e3; border-radius: 4px; font-size: 0.9em; }
+        .correct-anim { border-color: #00b894 !important; background-color: #e8f8f5 !important; font-weight: bold; color: #00b894; }
+        .incorrect-anim { border-color: #d63031 !important; background-color: #fceaea !important; color: #d63031; text-decoration: line-through; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Simulacro Oficial Especialidad MUYE</h1>
+        <p>Prueba Práctica: 4 Casos Clínicos (60 preguntas). Las opciones se barajan aleatoriamente.</p>
+    </div>
+
+    <form id="exam-form"></form>
+
+    <div class="btn-container">
+        <button type="button" class="btn" onclick="corregir()">Finalizar Simulacro y Ver Resultados</button>
+    </div>
+
+    <script>
+        // La opción correcta SIEMPRE es la primera (índice 0) en este array. 
+        // El script las barajará automáticamente al generar el HTML para que sea aleatoria.
+        const db = [
+            // ================= CASO 1: CARDIOVASCULAR Y RESPIRATORIO =================
+            { c: "CASO CLÍNICO 1: Varón de 65 años, hipertenso y diabético. Acude por dolor torácico opresivo de 2 horas de evolución con cortejo vegetativo. TA 85/50 mmHg, FC 115 lpm, SatO2 88%.",
+              q: "Se realiza ECG de 12 derivaciones en los primeros 10 minutos. ¿Qué hallazgo determina la activación inminente del Código Infarto?",
+              o: ["Elevación del ST > 1 mm en dos derivaciones contiguas (ej. V2-V3) de nueva aparición.", "Inversión profunda de la onda T en cara inferior sin alteraciones del ST.", "Bloqueo incompleto de rama derecha de nueva aparición.", "Descenso del ST de 0.5 mm en V5-V6 con dolor torácico típico."],
+              e: "El IAMCEST requiere elevación del ST en 2 derivaciones contiguas o un Bloqueo de Rama Izquierda (BRI) presuntamente nuevo, no derecho. El descenso del ST indica SCASEST." },
+            { c: 1, q: "El hospital tiene capacidad de ICP primaria. ¿Cuál es el tiempo máximo recomendado desde el primer contacto médico hasta el paso de la guía (tiempo puerta-balón)?",
+              o: ["≤ 90 minutos.", "≤ 120 minutos.", "≤ 30 minutos.", "≤ 60 minutos."],
+              e: "Las GPC establecen que, en centros con ICP, el tiempo puerta-balón debe ser ≤ 90 minutos. El límite de 120 min es para decidir si se traslada o se fibrinólisa en centros sin ICP." },
+            { c: 1, q: "Dada la hipotensión (TA 85/50 mmHg) y el infarto, se sospecha shock cardiogénico. ¿Qué fármaco inotrópico/vasopresor es de primera elección para la estabilización inicial?",
+              o: ["Noradrenalina.", "Dobutamina en monoterapia.", "Dopamina a dosis renales.", "Milrinona intravenosa."],
+              e: "En el shock cardiogénico con hipotensión severa, la noradrenalina es el vasopresor de elección por su perfil alfa-adrenérgico que mejora la presión de perfusión coronaria sin aumentar tanto la taquicardia/arritmias como la dopamina." },
+            { c: 1, q: "Realizas una ecografía clínica a pie de cama (POCUS). ¿Qué hallazgo confirmaría un componente de fallo ventricular derecho aislado?",
+              o: ["Ventrículo derecho dilatado (VD > VI) con desplazamiento del septo y VCI pletórica sin colapso.", "Fracción de eyección del VI < 30% con líneas B difusas pulmonares.", "Derrame pericárdico circunferencial > 2 cm con colapso diastólico del VD.", "Vena cava inferior de 1.5 cm con colapso inspiratorio > 50%."],
+              e: "Un VD dilatado (signo de la D o relación VD/VI > 1) con una VCI dilatada sin variación respiratoria sugiere fallo derecho o TEP, diferenciándolo del fallo izquierdo puro." },
+            { c: 1, q: "Decides administrar antiagregación dual. El paciente no tiene riesgo de sangrado elevado. Además de AAS, ¿cuál es el inhibidor P2Y12 de elección si va a ICP primaria?",
+              o: ["Prasugrel o Ticagrelor.", "Clopidogrel 300 mg.", "Cangrelor intravenoso exclusivo.", "Abciximab intravenoso."],
+              e: "Prasugrel (60 mg) o Ticagrelor (180 mg) son superiores a Clopidogrel en el contexto de ICP primaria por su inicio de acción más rápido y potente." },
+            { c: 1, q: "El paciente desarrolla insuficiencia respiratoria aguda por edema agudo de pulmón. Decides iniciar Soporte Ventilatorio No Invasivo (VNI). ¿Qué modalidad/parámetros son los más adecuados inicialmente?",
+              o: ["CPAP con presión de 8-10 cmH2O.", "BiPAP con IPAP de 25 cmH2O y EPAP de 15 cmH2O.", "Gafas nasales de alto flujo a 20 L/min sin PEEP.", "Ventilación invasiva directa sin ensayo previo de VNI."],
+              e: "La CPAP a 8-10 cmH2O (o BiPAP ajustada) es el tratamiento de primera línea en el EAP cardiogénico para reclutar alvéolos, disminuir la precarga y postcarga del VI." },
+            { c: 1, q: "Repentinamente, auscultas un soplo holosistólico rudo de nueva aparición en borde paraesternal izquierdo. El paciente empeora hemodinámicamente. Sospechas:",
+              o: ["Comunicación interventricular (CIV) o insuficiencia mitral aguda por rotura de músculo papilar.", "Rotura de pared libre con taponamiento cardíaco inminente.", "Desarrollo de insuficiencia aórtica aguda severa.", "Pericarditis epistenocárdica (Síndrome de Dressler)."],
+              e: "Un soplo holosistólico nuevo en contexto de IAM y deterioro súbito sugiere fuertemente una complicación mecánica intracavitaria (CIV o rotura de papilar)." },
+            { c: 1, q: "El paciente sufre una parada cardiorrespiratoria. En el monitor observas Fibrilación Ventricular. ¿Cuál es la intervención de máxima prioridad?",
+              o: ["Desfibrilación temprana a 150-200J bifásica.", "Administrar Adrenalina 1 mg IV inmediatamente.", "Intubación orotraqueal aislada antes de reanimar.", "Golpe precordial seguido de Amiodarona 300 mg."],
+              e: "En ritmos desfibrilables (FV/TVSP), la desfibrilación inmediata es la medida que más impacta en la supervivencia, priorizándose sobre fármacos o vía aérea avanzada." },
+            { c: 1, q: "Tras el tercer choque por FV refractaria, ¿cuál es el bolo inicial recomendado de Amiodarona según el algoritmo SVA?",
+              o: ["300 mg IV.", "150 mg IV.", "1 mg IV.", "600 mg IV."],
+              e: "El algoritmo SVA indica Amiodarona 300 mg IV tras el tercer choque en FV/TVSP, pudiendo repetir una dosis de 150 mg tras el quinto choque." },
+            { c: 1, q: "El paciente recupera pulso (RCE). Permanece comatoso (Glasgow 3). ¿Qué medida de neuroprotección debes indicar inminentemente?",
+              o: ["Control de temperatura objetivo (Manejo Terapéutico de la Temperatura) evitando la hipertermia.", "Inducción de hipotermia profunda (< 30ºC) durante 72 horas.", "Hiperventilación profiláctica (pCO2 < 30 mmHg) para evitar edema cerebral.", "Administración de corticoides a altas dosis (Metilprednisolona)."],
+              e: "El manejo de la temperatura objetivo (mantener entre 32-36ºC o evitar fiebre estrictamente) es clave en el RCE comatoso; la hipertermia empeora drásticamente el pronóstico." },
+            { c: 1, q: "Ante la persistencia de shock cardiogénico refractario post-RCE a pesar de drogas vasoactivas, se plantea asistencia ventricular temporal. ¿Cuál es el dispositivo extra-corpóreo indicado?",
+              o: ["ECMO Veno-Arterial (VA).", "ECMO Veno-Venoso (VV).", "Balón de contrapulsación intraaórtico de forma aislada.", "Hemodiálisis veno-venosa continua."],
+              e: "El ECMO VA proporciona soporte hemodinámico (cardíaco) y respiratorio. El ECMO VV solo proporciona soporte respiratorio y no asiste en el shock cardiogénico." },
+            { c: 1, q: "Previo a la intubación durante su estabilización, el paciente presenta agitación e hipoxia. ¿Qué inductor anestésico ofrece mayor estabilidad hemodinámica en shock profundo?",
+              o: ["Ketamina o Etomidato.", "Propofol.", "Tiopental.", "Midazolam a altas dosis."],
+              e: "Ketamina (simpatomimético) y Etomidato son cardioestables. Propofol y Tiopental producen vasoplejía severa e inotropismo negativo, precipitantes de PCR en shock." },
+            { c: 1, q: "Para colocar una vía venosa central, decides usar control ecográfico. ¿Cuál es el abordaje con menor riesgo de neumotórax y más fácil compresión en caso de sangrado?",
+              o: ["Vena Yugular Interna.", "Vena Subclavia.", "Vena Femoral.", "Vena Basílica (PICC)."],
+              e: "La yugular interna eco-guiada tiene menor riesgo de neumotórax que la subclavia y, al ser compresible en el cuello, es más segura si hay coagulopatía." },
+            { c: 1, q: "La gasometría arterial extraída tras el paro muestra: pH 7.15, pCO2 55, pO2 60, HCO3 18, Lactato 6. Se interpreta como:",
+              o: ["Acidosis mixta (metabólica láctica y respiratoria).", "Acidosis metabólica pura compensada.", "Acidosis respiratoria aguda sin alteración metabólica.", "Alcalosis respiratoria por hiperventilación."],
+              e: "Tiene pCO2 alta (acidosis respiratoria) y HCO3 bajo con lactato alto (acidosis metabólica), clásico del RCE por hipoventilación previa e hipoperfusión." },
+            { c: 1, q: "Debe ser trasladado a la UCI. En relación al traslado de pacientes críticos, ¿cuál es la premisa fundamental durante el transporte intra/interhospitalario?",
+              o: ["Mantener el mismo nivel de monitorización, cuidados y soporte que en el box de reanimación.", "Reducir la monitorización a FC y SatO2 para agilizar el movimiento.", "Suspender temporalmente las aminas para evitar extravasaciones en el ascensor.", "Priorizar la velocidad sobre la estabilización previa del paciente."],
+              e: "El transporte del paciente crítico exige que los cuidados y la monitorización sean idénticos a los del box de origen para no añadir morbimortalidad secundaria." },
+
+            // ================= CASO 2: POLITRAUMA Y NEUROLÓGICO =================
+            { c: "CASO CLÍNICO 2: Mujer de 30 años. Accidente de tráfico de alta energía (coche frontal). Llega en tablero espinal. Glasgow 8. Hipotensa (80/40), taquicárdica (125 lpm). Sospecha de TCE grave.",
+              q: "En la valoración inicial (ABCDE), la vía aérea no es permeable por caída de la lengua y sangre. ¿Qué maniobra es la correcta para abrir la vía aérea de forma manual?",
+              o: ["Tracción mandibular sin extensión cervical, manteniendo alineación.", "Maniobra frente-mentón con hiperextensión cervical máxima.", "Elevación del cuello por debajo de la nuca.", "Rotación lateral de la cabeza para drenar la sangre."],
+              e: "En todo politraumatizado se presupone lesión cervical, por lo que la maniobra de elección para abrir la vía aérea es la tracción mandibular (jaw thrust) sin extensión del cuello." },
+            { c: 2, q: "Decides intubar. ¿Cuál es el paso crítico al retirar el collarín cervical transitoriamente para facilitar la laringoscopia?",
+              o: ["Un ayudante debe realizar inmovilización bimanual en línea de la columna cervical.", "Aplicar tracción axial fuerte de 10 kg desde la cabeza.", "Rotar la cabeza 15 grados hacia el laringoscopista.", "Colocar un rodillo occipital para flexionar el cuello."],
+              e: "Al retirar el collarín rígido para intubar, un segundo reanimador debe mantener la Inmovilización Manual en Línea (MILS) estabilizando la cabeza desde abajo." },
+            { c: 2, q: "En la 'B' (Ventilación), presenta asimetría torácica, ausencia de murmullo vesicular derecho, ingurgitación yugular y desviación traqueal a la izquierda. Sospechas:",
+              o: ["Neumotórax a tensión derecho.", "Taponamiento cardíaco.", "Hemotórax masivo derecho.", "Rotura diafragmática."],
+              e: "La clínica de asimetría, hipoventilación, ingurgitación yugular, desviación traqueal e hipotensión es patognomónica del neumotórax a tensión (requiere descompresión inmediata)." },
+            { c: 2, q: "Tratamiento inmediato del neumotórax a tensión antes del tubo de tórax definitivo:",
+              o: ["Toracocentesis descompresiva con aguja (4º-5º espacio intercostal línea axilar anterior/media).", "Pericardiocentesis subxifoidea eco-guiada.", "Administración rápida de 2000 cc de cristaloides.", "Intubación selectiva del bronquio izquierdo."],
+              e: "La descompresión con aguja gruesa (actualmente recomendada en el 4º-5º EIC axilar anterior/media en adultos) transforma el neumotórax a tensión en simple, salvando la vida." },
+            { c: 2, q: "En la 'C', la paciente sigue en shock hemorrágico clase III-IV. Se activa protocolo de transfusión masiva. ¿Cuál es la ratio inicial recomendada de hemoderivados?",
+              o: ["1 Concentrado de Hematíes : 1 Plasma : 1 Plaquetas (1:1:1).", "3 Concentrados de Hematíes : 1 Plasma sin plaquetas.", "Solo fluidos cristaloides (hasta 3 litros) antes de transfundir.", "Plasma fresco congelado exclusivamente hasta tener pruebas cruzadas."],
+              e: "El soporte transfusional precoz y equilibrado 1:1:1 (Hematíes:Plasma:Plaquetas) previene la coagulopatía traumática, evitando la dilución por cristaloides excesivos." },
+            { c: 2, q: "¿Cuál es el antifibrinolítico indicado en las primeras 3 horas del trauma grave con sangrado o riesgo de sangrado masivo?",
+              o: ["Ácido Tranexámico (1g en 10 min seguido de 1g en 8 horas).", "Factor VIIa recombinante.", "Complejo Protrombínico.", "Vitamina K intravenosa."],
+              e: "El estudio CRASH-2 demostró que el Ácido Tranexámico reduce la mortalidad si se administra precozmente (< 3h) en trauma con hemorragia significativa." },
+            { c: 2, q: "Realizas un ecografía FAST. ¿Qué ventana es más sensible para detectar líquido libre (sangre) en la cavidad abdominal en decúbito supino?",
+              o: ["Receso hepatorrenal (Espacio de Morrison).", "Receso esplenorrenal.", "Espacio retrovesical / Fondo de saco de Douglas.", "Subxifoidea (ventana pericárdica)."],
+              e: "El espacio de Morrison (cuadrante superior derecho) es la localización más frecuente de acumulación temprana de líquido libre peritoneal en el paciente supino." },
+            { c: 2, q: "La paciente tiene un TCE severo y una pupila derecha dilatada y arrefléxica (anisocoria). Sospechas herniación uncal. ¿Qué medida osmolar utilizas para reducir la PIC aguda?",
+              o: ["Manitol al 20% o Suero Salino Hipertónico.", "Suero Glucosado al 5% a alto flujo.", "Furosemida intravenosa continua.", "Solución Ringer Lactato (bolo de 2L)."],
+              e: "La terapia hiperosmolar con Manitol o Suero Salino Hipertónico extrae agua del parénquima cerebral intacto, reduciendo la PIC agudamente ante signos de herniación." },
+            { c: 2, q: "La hiperventilación en el manejo del TCE severo con signos de herniación...",
+              o: ["Se usa de forma temporal y breve (objetivo pCO2 30-35 mmHg) solo si hay deterioro neurológico inminente.", "Es una medida de mantenimiento preventivo continuo durante 48h (pCO2 < 25 mmHg).", "Está contraindicada siempre porque induce isquemia por vasoconstricción extrema.", "Aumenta la perfusión cerebral al dilatar la microvasculatura."],
+              e: "La hiperventilación profiláctica está proscrita por causar isquemia grave, pero puede usarse de forma temporal y controlada como medida salvadora ante herniación activa." },
+            { c: 2, q: "En la evaluación secundaria, identificas inestabilidad de la pelvis (libro abierto). ¿Cuál es la actitud ortopédica inicial prioritaria en urgencias?",
+              o: ["Cierre y compresión con faja/cinturón pélvico a nivel de los trocánteres mayores.", "Compresión con vendaje sobre las crestas ilíacas anterosuperiores.", "Tracción esquelética transfemoral de 15 kg.", "Fijación interna definitiva de urgencia inmediata en el box."],
+              e: "El cinturón pélvico a la altura de los trocánteres reduce el volumen pélvico, generando taponamiento del sangrado venoso o de hueso esponjoso en fracturas de pelvis abiertas." },
+            { c: 2, q: "Al explorar las extremidades, encuentras una deformidad en muslo derecho sin pulsos distales, extremidad pálida y fría. Actitud vascular urgente:",
+              o: ["Alinear la extremidad mediante tracción longitudinal y reevaluar pulsos.", "Elevar el miembro afectado por encima del corazón y esperar.", "Indicar una arteriografía diferida a 24h.", "Colocar un torniquete en la raíz del miembro de forma profiláctica."],
+              e: "En fracturas/luxaciones con compromiso neurovascular distal, la maniobra inicial obligada es la reducción y alineación anatómica urgente para restaurar el flujo." },
+            { c: 2, q: "Debido al accidente, hay implicaciones legales. ¿Qué documento es obligatorio emitir y remitir al juzgado de guardia?",
+              o: ["Parte judicial de lesiones.", "Certificado de defunción en grado de tentativa.", "Consentimiento informado de negativa al tratamiento.", "Hoja de reclamaciones del servicio de salud."],
+              e: "El Parte Judicial de Lesiones es una obligación legal del médico ante cualquier atención secundaria a actos violentos, agresiones o accidentes con implicación penal/civil." },
+            { c: 2, q: "Si la paciente fuera donante potencial en caso de evolución a muerte encefálica, ¿qué temperatura y presión arterial media (PAM) objetivo se deben mantener?",
+              o: ["Normotermia (>36ºC) y PAM > 65 mmHg para perfusión de órganos.", "Hipotermia (32ºC) y PAM de 50 mmHg.", "Fiebre inducida y PAM > 100 mmHg.", "No importa la hemodinámica, solo la oxigenación."],
+              e: "El mantenimiento del donante exige normotermia, normovolemia y una PAM > 65 mmHg para asegurar la viabilidad de los órganos para el trasplante." },
+            { c: 2, q: "La familia llega a urgencias. Como especialista en MUYE, la comunicación de malas noticias debe seguir modelos estructurados. ¿Cuál es el protocolo más conocido para esto?",
+              o: ["Protocolo SPIKES (EPICEE).", "Escala de Glasgow.", "Protocolo START.", "Sistema de Triaje Manchester."],
+              e: "El protocolo SPIKES (Entorno, Percepción, Invitación, Conocimiento, Empatía, Estrategia) es el estándar formativo para la comunicación de malas noticias." },
+            { c: 2, q: "Para analgesia profunda en este contexto de politrauma con inestabilidad hemodinámica y neurotrauma, ¿qué fármaco evitarías por su efecto hipotensor?",
+              o: ["Morfina a dosis altas en bolo rápido.", "Ketamina (dosis subdisociativas).", "Fentanilo (titulado cuidadosamente).", "Paracetamol IV."],
+              e: "La morfina libera histamina y produce vasodilatación marcada, precipitando hipotensión en pacientes hipovolémicos; se prefiere fentanilo o ketamina." },
+
+            // ================= CASO 3: INFECCIOSO, METABÓLICO Y DIGESTIVO =================
+            { c: "CASO CLÍNICO 3: Varón de 75 años con ERC y HBP. Fiebre de 39ºC, escalofríos, dolor lumbar, disuria y alteración del nivel de conciencia. TA 85/45, FC 120, FR 28.",
+              q: "El paciente cumple criterios de shock séptico si, tras la fluidoterapia adecuada, presenta hipotensión que requiere vasopresores y además:",
+              o: ["Niveles de Lactato sérico > 2 mmol/L (> 18 mg/dL).", "Leucocitosis > 20.000 /mm3.", "Fiebre persistente > 40ºC.", "Oliguria < 0.5 ml/kg/h durante 2 horas."],
+              e: "Sepsis-3 define shock séptico por la necesidad de vasopresores para PAM ≥65 mmHg Y un lactato sérico >2 mmol/L a pesar de una resucitación adecuada con volumen." },
+            { c: 3, q: "Se activa el Código Sepsis. ¿Cuál es la prioridad farmacológica absoluta en la primera hora tras el diagnóstico de sospecha?",
+              o: ["Extracción de hemocultivos seguida de antibioterapia empírica intravenosa de amplio espectro.", "Administración de paracetamol para normotermia estricta.", "Transfusión de plaquetas profiláctica.", "Corticoides a altas dosis (metilprednisolona 1g)."],
+              e: "El pilar de la 'Campaña Sobrevivir a la Sepsis' es administrar antibióticos IV de amplio espectro en la 1ª hora, preferiblemente tras tomar hemocultivos." },
+            { c: 3, q: "Para la reanimación inicial por hipoperfusión inducida por sepsis, se recomiendan:",
+              o: ["Cristaloides isotónicos a 30 ml/kg en las primeras 3 horas.", "Coloides (almidones) a 20 ml/kg.", "Albúmina al 20% como primera y única línea.", "Suero Glucosado al 5% a flujo libre."],
+              e: "La resucitación inicial exige 30 ml/kg de cristaloides IV en las primeras 3 horas. Los almidones están contraindicados por riesgo de fracaso renal y mortalidad." },
+            { c: 3, q: "Tras 2000 ml de cristaloides, la TA es 80/40 mmHg. Inicias vasopresores por vía central. ¿Cuál es la opción de 1ª línea?",
+              o: ["Noradrenalina.", "Vasopresina (como monoterapia inicial).", "Adrenalina.", "Dopamina."],
+              e: "La noradrenalina es el vasopresor de primera línea universal en el shock séptico. La vasopresina se añade en 2ª línea si no se alcanzan objetivos." },
+            { c: 3, q: "Realizas ecografía de la VCI y del corazón (POCUS). Observas un ventrículo izquierdo hiperdinámico y una VCI colapsada. Esto indica:",
+              o: ["Hipovolemia relativa (vasodilatación) y estado hiperdinámico propio del shock distributivo inicial.", "Cor pulmonale agudo y fallo derecho.", "Shock cardiogénico por miocardiopatía séptica severa.", "Taponamiento cardíaco subclínico."],
+              e: "Un corazón hiperdinámico con VCI colapsada indica que el paciente aún tiene reserva miocárdica pero está profundamente hipovolémico/vasopléjico (distributivo)." },
+            { c: 3, q: "Dado el foco presuntamente urológico, se realiza ecografía renal urgente. ¿Qué hallazgo justificaría la derivación inmediata a Urología para desobstrucción?",
+              o: ["Hidronefrosis severa ipsilateral (Sepsis urológica obstructiva).", "Quiste cortical simple de 3 cm.", "Litiasis no obstructiva en cáliz inferior.", "Pérdida de diferenciación córtico-medular crónica."],
+              e: "Una infección urinaria grave con obstrucción (hidronefrosis) es una emergencia urológica (foco cerrado) que requiere derivación urinaria urgente (doble J o nefrostomía)." },
+            { c: 3, q: "En la analítica destaca Cr 3.5 mg/dL (basal 1.2) y Potasio de 6.8 mEq/L. En el ECG observas ondas T picudas y QRS ancho. Primera medida farmacológica:",
+              o: ["Gluconato o Cloruro Cálcico intravenoso.", "Resinas de intercambio iónico orales.", "Salbutamol nebulizado.", "Insulina rápida con glucosa."],
+              e: "El calcio IV antagoniza los efectos tóxicos de la hiperpotasemia en la membrana miocárdica de forma inmediata (estabilizador de membrana), ganando tiempo para otras terapias." },
+            { c: 3, q: "Junto al tratamiento de la hiperpotasemia, identificas una acidosis metabólica severa secundaria al Fracaso Renal Agudo y el shock. pH 7.10, HCO3 10. Decides infundir:",
+              o: ["Bicarbonato sódico 1/6 Miliar (o 1M en urgencia extrema).", "Cloruro potásico.", "Acido Láctico al 5%.", "Trometamol (THAM) exclusivamente."],
+              e: "En acidosis metabólica severa (pH < 7.15-7.20) por FRA, se repone bicarbonato IV para evitar arritmias y mejorar la respuesta a vasopresores." },
+            { c: 3, q: "El paciente presenta de forma súbita desorientación, inversión del ciclo sueño-vigilia y fluctuación del nivel de alerta. El diagnóstico diferencial principal es:",
+              o: ["Síndrome Confusional Agudo (Delirium).", "Demencia tipo Alzheimer de inicio rápido.", "Esquizofrenia de inicio tardío.", "Status epiléptico de ausencia típico."],
+              e: "El inicio agudo, fluctuante, ligado a una patología médica (sepsis/hipoxia), define el Delirium, muy frecuente en el paciente anciano hospitalizado en urgencias." },
+            { c: 3, q: "Manejo inicial no farmacológico del Delirium en Urgencias:",
+              o: ["Garantizar iluminación adecuada, reorientación frecuente, uso de gafas/audífonos y evitar sujeciones innecesarias.", "Aislar al paciente en una sala oscura y silenciosa sin estímulos.", "Contención mecánica de 4 puntos profiláctica.", "Retirar las visitas de familiares inmediatamente."],
+              e: "Las medidas ambientales, la presencia familiar, el soporte sensorial y evitar ataduras son el pilar fundamental para prevenir y tratar el delirium en el anciano." },
+            { c: 3, q: "Como el paciente es anciano con pluripatología, utilizas escalas geriátricas para valorar su situación basal. ¿Cuál evalúa la dependencia en Actividades Básicas de la Vida Diaria (ABVD)?",
+              o: ["Índice de Barthel.", "Escala de Norton.", "Cuestionario de Pfeiffer.", "Escala de Zarit."],
+              e: "El Índice de Barthel evalúa la capacidad funcional para las ABVD (comer, lavarse, vestirse, movilidad). Pfeiffer es cognitiva, Norton riesgo de úlceras, Zarit sobrecarga del cuidador." },
+            { c: 3, q: "A pesar de todo el soporte, el paciente empeora a disfunción multiorgánica. Era paciente paliativo por un tumor prostático diseminado. Decides, junto a la familia, Limitar el Esfuerzo Terapéutico (LET). Esto significa:",
+              o: ["Adecuar las medidas de soporte a los objetivos reales, retirando terapias fútiles (ej. vasopresores) priorizando el confort.", "Aplicar la eutanasia activa.", "Retirar los cuidados básicos de higiene, sedación e hidratación paliativa.", "Trasladar de inmediato a domicilio sin tratamiento."],
+              e: "La LET (o Adecuación del Esfuerzo Terapéutico) consiste en no iniciar o retirar medidas que no aportan beneficio pronóstico, centrando el esfuerzo en evitar el sufrimiento." },
+            { c: 3, q: "El paciente inicia con disnea severa y estertores respiratorios agónicos. Tratamiento de elección en fase terminal:",
+              o: ["Morfina subcutánea o IV (para la disnea) y Hioscina (para estertores).", "Salbutamol y Bromuro de Ipratropio inhalado a dosis altas.", "Intubación orotraqueal paliativa.", "Aminofilina intravenosa rápida."],
+              e: "La morfina es el gold standard para la disnea refractaria terminal, y los anticolinérgicos (butilescopolamina/hioscina) secan las secreciones que causan los estertores." },
+            { c: 3, q: "Si hubiera requerido manejo invasivo antes del LET, la colocación de CVC eco-guiado implica la técnica:",
+              o: ["In-plane (eje largo) o Out-of-plane (eje corto) para visualizar la aguja progresando hacia la vena.", "Avance ciego basado únicamente en referencias anatómicas externas.", "Punción arterial previa para localización de la vena por vecindad.", "Técnica de Seldinger directa sin aguja introductora."],
+              e: "La punción venosa ecoguiada utiliza la técnica en eje corto (Out-of-plane) o largo (In-plane) visualizando dinámicamente la punta de la aguja entrando en el vaso." },
+            { c: 3, q: "Fallecimiento. En circunstancias patológicas conocidas (Sepsis, Cáncer Terminal), el documento a rellenar es:",
+              o: ["Certificado Médico de Defunción (ordinario).", "Parte Judicial al Juzgado de Guardia (muerte sospechosa).", "Informe de Alta por Éxitus exclusivo sin documento oficial.", "Protocolo de donante a corazón parado tipo II de Maastricht."],
+              e: "Al ser una muerte natural y esperable en contexto de patología conocida, se expide el Certificado Médico de Defunción, sin necesidad de judicializar el caso." },
+
+            // ================= CASO 4 (RESERVA): PEDIATRÍA, GINECOLOGÍA Y TOXICOLOGÍA =================
+            { c: "CASO CLÍNICO 4 (RESERVA): Diferentes viñetas clínicas breves de las áreas de Pediatría, Obstetricia, Toxicología y Psiquiatría según el BOE de MUYE.",
+              q: "Niño de 4 años, acude por dificultad respiratoria y sibilancias. Diagnóstico: Crisis asmática grave. ¿Qué combinación terapéutica de rescate inicial recomiendan las GPC?",
+              o: ["Salbutamol y Bromuro de Ipratropio inhalados + Corticoides sistémicos.", "Adrenalina subcutánea exclusiva.", "Teofilina intravenosa + Montelukast oral.", "Antibioterapia (Amoxicilina) de rutina preventivamente."],
+              e: "En la crisis asmática grave pediátrica, el inicio es con b2-agonistas de acción corta + Ipratropio + esteroides sistémicos tempranos." },
+            { c: 4, q: "Lactante de 20 días de vida, acude por fiebre de 38.5ºC sin foco aparente. Excelente estado general. Actitud correcta:",
+              o: ["Ingreso, analítica, hemocultivo, urinocultivo, punción lumbar y antibioterapia IV empírica.", "Alta domiciliaria con Paracetamol y control por su Pediatra en 48h.", "Administrar Ibuprofeno oral y observación 2 horas en sala de espera.", "Realizar test rápido de antígenos virales; si es positivo, dar el alta."],
+              e: "Cualquier lactante menor de 28 días con fiebre sin foco tiene alto riesgo de infección bacteriana grave y requiere 'septic work-up' completo (incluida PL) e ingreso." },
+            { c: 4, q: "Gestante de 32 semanas acude por cefalea, escotomas y TA 170/110 mmHg. Tira reactiva orina: proteínas +++. Diagnóstico de Preeclampsia con criterios de gravedad. Tratamiento anticonvulsivante profiláctico de elección:",
+              o: ["Sulfato de Magnesio IV.", "Diazepam IV.", "Fenitoína IV.", "Valproato sódico."],
+              e: "El sulfato de magnesio es el fármaco de primera línea para prevenir la eclampsia (convulsiones) en la preeclampsia grave y para tratarla si ocurre." },
+            { c: 4, q: "Mujer en edad fértil, amenorrea de 7 semanas, sangrado vaginal y dolor abdominal intenso en fosa ilíaca derecha. Hipotensa. Ecografía a pie de cama muestra útero vacío y líquido libre abdominal. Diagnóstico de sospecha:",
+              o: ["Embarazo ectópico roto.", "Enfermedad Pélvica Inflamatoria aguda.", "Rotura de quiste lúteo hemorrágico aislado.", "Amenaza de aborto de gestación intrauterina."],
+              e: "La tríada de amenorrea, dolor abdominal, y sangrado (sumado a hipotensión, útero vacío y líquido libre en POCUS) hace del embarazo ectópico roto la emergencia a descartar/operar." },
+            { c: 4, q: "Paciente varón de 45 años hallado agitado, sudoroso, con midriasis, FC 140 lpm, TA 180/100, temperatura 39ºC. Amigos indican ingesta de polvo blanco. Sospechas síndrome:",
+              o: ["Simpaticomimético (ej. Cocaína/Anfetaminas).", "Anticolinérgico (ej. Atropina).", "Colinérgico (ej. Organofosforados).", "Opioide (ej. Heroína)."],
+              e: "Midriasis, taquicardia, hipertensión, hipertermia y diaforesis (sudoración) definen el toxíndrome simpaticomimético. El anticolinérgico tendría piel seca ('seco como un hueso')." },
+            { c: 4, q: "En la intoxicación aguda por cocaína con isquemia miocárdica (vasoespasmo coronario), ¿qué fármaco está clásicamente CONTRAINDICADO inicialmente?",
+              o: ["Betabloqueantes puros (ej. Propranolol).", "Benzodiacepinas.", "Nitroglicerina.", "Aspirina."],
+              e: "Los betabloqueantes puros se evitan por el riesgo de 'estimulación alfa sin oposición', que puede empeorar dramáticamente la vasoconstricción y la hipertensión." },
+            { c: 4, q: "Joven que ingirió 15 gramos de Paracetamol hace 6 horas. Se solicita nivel plasmático y se consulta el Nomograma de Rumack-Matthew. Antídoto de elección:",
+              o: ["N-acetilcisteína (IV u oral).", "Flumazenilo.", "Naloxona.", "Fisostigmina."],
+              e: "La N-acetilcisteína restaura las reservas de glutatión hepático y previene la hepatotoxicidad fulminante del paracetamol si se da precozmente." },
+            { c: 4, q: "Varón de 20 años con intoxicación por antidepresivos tricíclicos. En el ECG destaca QRS muy ancho (160 ms). Riesgo de arritmias ventriculares. Tratamiento:",
+              o: ["Bicarbonato sódico intravenoso.", "Amiodarona intravenosa.", "Sulfato de Magnesio intravenoso.", "Fisostigmina intravenosa."],
+              e: "El bicarbonato sódico supera el bloqueo de los canales de sodio cardíacos mediado por los tricíclicos, estrechando el QRS y previniendo la PCR." },
+            { c: 4, q: "Paciente gran quemado (térmico) con 40% de SCQ. Para la reposición hídrica en las primeras 24h, la fórmula de Parkland (o Brook modificada) utiliza:",
+              o: ["Ringer Lactato según fórmula (ej. 2-4 ml x kg x %SCQ).", "Suero Glucosado al 5% exclusivamente.", "Coloides puros (Albúmina) desde el minuto cero.", "Hemoderivados desde el inicio."],
+              e: "La reanimación del quemado se basa clásicamente en cristaloides isotónicos (Ringer Lactato) pautados según el peso y el % de superficie corporal quemada." },
+            { c: 4, q: "Mujer gestante de 38 semanas sufre una PCR presenciada en Urgencias. Para facilitar el retorno venoso durante la RCP, se debe:",
+              o: ["Desplazar manualmente el útero hacia el lado izquierdo.", "Elevar las piernas a 45 grados de altura.", "Poner a la paciente en decúbito prono.", "Añadir PEEP alta al balón resucitador."],
+              e: "En gestantes del 3er trimestre, el útero comprime la cava inferior; el desplazamiento manual uterino izquierdo alivia la compresión y permite un gasto cardíaco efectivo durante la RCP." },
+            { c: 4, q: "Si la RCP en la gestante anterior no es exitosa tras 4-5 minutos, la actuación salvadora (para madre y feto) indicada es:",
+              o: ["Cesárea perimortem (histerotomía de resucitación) en el propio box.", "Continuar masaje cerrado 30 minutos más antes de tomar decisiones.", "Administrar doble dosis de Adrenalina y Amiodarona.", "Traslado inmediato a quirófano sin realizar RCP en el pasillo."],
+              e: "La histerotomía de resucitación a los 4-5 minutos evacua el útero, mejorando drásticamente el retorno venoso materno (aumentando la probabilidad de RCE materno) y dando oportunidad de sobrevida al feto." },
+            { c: 4, q: "Atiendes un Síndrome Coronario en paciente portador de marcapasos. El ECG muestra espigas seguidas de complejos QRS anchos pero el pulso del paciente es muy inferior a la frecuencia de las espigas. ¿Fallo de...?",
+              o: ["Fallo de captura mecánica/eléctrica.", "Fallo de sensado (infrasensado).", "Oversensing (sobre-sensado).", "Agotamiento de la batería normal."],
+              e: "Cuando se ven espigas de marcapasos pero no van seguidas de despolarización ventricular (QRS) o no hay pulso asociado (captura mecánica), se habla de pérdida o fallo de captura." },
+            { c: 4, q: "Triaje START en incidente de múltiples víctimas (IMV). Paciente no respira. Abres la vía aérea y sigue sin respirar. Clasificación:",
+              o: ["NEGRO (Fallecido / No salvable).", "ROJO (Emergencia extrema).", "AMARILLO (Urgencia diferible).", "VERDE (Leve)."],
+              e: "En el sistema de triaje básico START, si un paciente adulto no respira de forma espontánea tras apertura manual de la vía aérea, recibe la tarjeta NEGRA." },
+            { c: 4, q: "Paciente con agitación psicomotriz extrema, heteroagresividad e ideación delirante por esquizofrenia. Riesgo inminente para el personal. Primera medida:",
+              o: ["Aviso a seguridad para contención mecánica inmediata y posterior contención farmacológica (Haloperidol/Lorazepam).", "Intentar desescalada verbal durante 45 minutos a solas en un cuarto.", "Darle el alta forzosa y avisar a la policía.", "Aislarlo sin ataduras en un cuarto hasta que se canse."],
+              e: "Ante un riesgo inminente y grave de agresión donde la desescalada verbal no es posible o ha fallado, la seguridad del personal y paciente priman, requiriendo contención mecánica coordinada y tratamiento farmacológico intramuscular." },
+            { c: 4, q: "Paciente postrado con úlcera sacra extensa, acude con crepitación extensa subcutánea y dolor desproporcionado. Fiebre y shock. Sospecha grave a descartar:",
+              o: ["Fascitis necrotizante (infección profunda de partes blandas).", "Celulitis superficial estafilocócica.", "Úlcera por presión grado II colonizada.", "Trombosis venosa profunda."],
+              e: "Dolor desproporcionado, shock severo y crepitación (gas en los tejidos) son signos de alarma de fascitis necrotizante, emergencia quirúrgica absoluta (desbridamiento inmediato)." }
+        ];
+
+        // Algoritmo de Fisher-Yates para barajar el array de opciones de cada pregunta
+        function shuffleOptions(question) {
+            let optionsMeta = question.o.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === 0 // Siempre la posición 0 del array original es la correcta
+            }));
+            
+            for (let i = optionsMeta.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsMeta[i], optionsMeta[j]] = [optionsMeta[j], optionsMeta[i]];
+            }
+            return optionsMeta;
+        }
+
+        const form = document.getElementById('exam-form');
+        const letras = ['A', 'B', 'C', 'D'];
+
+        // Renderizado dinámico e inserción de encabezados de casos
+        let caseHeaderRendered = "";
+
+        db.forEach((p, index) => {
+            // Renderizar el encabezado de bloque de caso clínico si procede
+            if (p.c && p.c !== caseHeaderRendered && typeof p.c === "string") {
+                const caseDiv = document.createElement('div');
+                caseDiv.className = 'case-header';
+                caseDiv.innerHTML = `<h2>${p.c}</h2>`;
+                form.appendChild(caseDiv);
+                caseHeaderRendered = p.c;
+            }
+
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            
+            let html = `<h3>Pregunta ${index + 1}. ${p.q}</h3><ul class="options">`;
+            
+            const shuffledOptions = shuffleOptions(p);
+            let indexCorrecta;
+
+            shuffledOptions.forEach((optMeta, idx) => {
+                const letra = letras[idx];
+                if (optMeta.isCorrect) indexCorrecta = letra;
+                
+                html += `
+                    <li>
+                        <label id="label-${index}-${letra}">
+                            <input type="radio" name="q${index}" value="${letra}" data-correct="${optMeta.isCorrect}">
+                            <strong>${letra})</strong> ${optMeta.text}
+                        </label>
+                    </li>
+                `;
+            });
+            
+            html += `</ul>
+                     <div id="exp-${index}" class="explanation">
+                         <strong>Respuesta correcta: ${indexCorrecta}.</strong> ${p.e}
+                     </div>`;
+            
+            qDiv.innerHTML = html;
+            form.appendChild(qDiv);
+        });
+
+        // Lógica de corrección
+        function corregir() {
+            let puntuacion = 0;
+            let fallos = 0;
+            let sinContestar = 0;
+
+            db.forEach((p, index) => {
+                const opciones = document.getElementsByName(`q${index}`);
+                let seleccion = null;
+                let seleccionCorrecta = false;
+                
+                opciones.forEach(opt => {
+                    const letra = opt.value;
+                    const label = document.getElementById(`label-${index}-${letra}`);
+                    const esCorrecta = opt.getAttribute('data-correct') === "true";
+
+                    label.classList.remove('correct-anim', 'incorrect-anim'); 
+                    opt.disabled = true; 
+                    
+                    if (opt.checked) {
+                        seleccion = letra;
+                        if (esCorrecta) seleccionCorrecta = true;
+                    }
+                    if (esCorrecta) label.classList.add('correct-anim');
+                });
+
+                if (!seleccion) {
+                    sinContestar++;
+                } else if (!seleccionCorrecta) {
+                    fallos++;
+                    document.getElementById(`label-${index}-${seleccion}`).classList.add('incorrect-anim');
+                } else {
+                    puntuacion++;
+                }
+                document.getElementById(`exp-${index}`).style.display = 'block';
+            });
+
+            // Cálculo tipo BOE: Acierto +1, Fallo -0.25
+            const notaFinal = (puntuacion * 1) - (fallos * 0.25);
+            const notaNormalizada = notaFinal < 0 ? 0 : notaFinal;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alert(`--- SIMULACRO FINALIZADO ---\n\nAciertos: ${puntuacion}\nErrores: ${fallos}\nSin contestar: ${sinContestar}\n\nPUNTUACIÓN TOTAL (Criterio BOE): ${notaNormalizada.toFixed(2)} sobre 60 posibles.\n\nRevisa las explicaciones debajo de cada pregunta.`);
+            }, 300);
+        }
+    </script>
+</body>
+</html>

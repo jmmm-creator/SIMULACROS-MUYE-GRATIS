@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulacro 9: Neurología, Nefrología y Urgencias Endocrinas</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #1e272e; line-height: 1.5; padding: 20px; max-width: 950px; margin: auto; }
+        .header { text-align: center; border-bottom: 4px solid #c0392b; margin-bottom: 25px; padding-bottom: 10px; }
+        .header h1 { color: #2d3436; margin: 0; }
+        .case-header { background-color: #c0392b; color: white; padding: 15px; border-radius: 6px; margin-top: 40px; margin-bottom: 20px; }
+        .case-header h2 { margin: 0; font-size: 1.3em; }
+        .question { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .question h3 { margin-top: 0; font-size: 1.05em; color: #2d3436; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 8px; }
+        .options label { display: block; padding: 10px 15px; border: 1px solid #dfe6e9; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+        .options label:hover { background-color: #f1f2f6; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.1); }
+        .btn-container { text-align: center; margin-top: 40px; margin-bottom: 40px; }
+        .btn { background-color: #c0392b; color: white; border: none; padding: 15px 35px; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #922b21; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background-color: #fadbd8; border-left: 4px solid #c0392b; border-radius: 4px; font-size: 0.9em; }
+        .correct-anim { border-color: #00b894 !important; background-color: #e8f8f5 !important; font-weight: bold; color: #00b894; }
+        .incorrect-anim { border-color: #d63031 !important; background-color: #fceaea !important; color: #d63031; text-decoration: line-through; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Simulacro 9: Neurología Crítica y Urgencias Médicas</h1>
+        <p>Prueba Práctica: 4 Casos Clínicos (60 preguntas). Las opciones se barajan aleatoriamente.</p>
+    </div>
+
+    <form id="exam-form"></form>
+
+    <div class="btn-container">
+        <button type="button" class="btn" onclick="corregir()">Finalizar Simulacro y Ver Resultados</button>
+    </div>
+
+    <script>
+        const db = [
+            // ================= CASO 1: NEUROLOGÍA CRÍTICA Y CEREBROVASCULAR =================
+            { c: "CASO CLÍNICO 1: Neurología de Urgencias. Código Ictus, hemorragia subaracnoidea y estado epiléptico.",
+              q: "Varón de 65 años que presenta de forma súbita hace 45 minutos desviación de la comisura bucal, afasia y hemiparesia derecha. TA 150/85 mmHg, glucemia capilar normal. Activación de Código Ictus. Tras descartar hemorragia intracraneal en el TC craneal urgente, ¿cuál es el tratamiento trombolítico intravenoso de primera línea indicado y su ventana temporal estándar?",
+              o: ["Alteplasa (tPA) intravenosa dentro de las primeras 4.5 horas desde el inicio de los síntomas.", "Estreptoquinasa intravenosa hasta las 24 horas.", "Anticoagulación oral directa inmediata a altas dosis.", "Administración exclusiva de ácido acetilsalicílico oral."],
+              e: "La fibrinólisis intravenosa con alteplasa se indica en el ictus isquémico agudo dentro de la ventana de 4.5 horas desde el inicio de los síntomas, tras descartar hemorragia." },
+            { c: 1, q: "Si el paciente anterior presenta además una oclusión de gran vaso en la circulación anterior demostrada por angio-TC cerebral a los 60 minutos de evolución, ¿qué procedimiento endovascular urgente complementario está indicado?",
+              o: ["Trombectomía mecánica urgente.", "Embolización selectiva con coils de platino.", "Laminectomía descompresiva cervical.", "Derivación ventrículo-peritoneal."],
+              e: "La trombectomía mecánica es el tratamiento de elección asociado en la oclusión de gran vaso dentro de las primeras 6-24 horas según selección por imagen." },
+            { c: 1, q: "¿Cuál es el límite máximo de presión arterial sistólica permitido antes de administrar fibrinólisis intravenosa en un ictus isquémico agudo para evitar complicaciones hemorrágicas?",
+              o: ["Debe descenderse la presión arterial por debajo de 185/110 mmHg con antihipertensivos intravenosos (como labetalol o urapidil) antes de administrar el tPA.", "No importa la tensión arterial; puede administrarse con cualquier cifra.", "Solo se actúa si supera los 250/140 mmHg.", "Se debe suspender el tratamiento de por vida."],
+              e: "La presión arterial debe controlarse estrictamente por debajo de 185/110 mmHg antes de iniciar la trombolisis intravenosa." },
+            { c: 1, q: "Mujer de 50 años que acude por cefalea súbita de intensidad máxima descrita como 'la peor de su vida' ('en trueno') de 3 horas de evolución, acompañada de rigidez de nuca y vómitos. El TC craneal sin contraste inicial resulta sin alteraciones claras. Siguiente paso diagnóstico obligatorio:",
+              o: ["Realizar una punción lumbar para buscar xantocromía o presencia de hematíes en los tubos, o angiografía/angio-TC.", "Dar de alta por descartarse hemorragia en el TC inicial.", "Administrar triptanes para la migraña.", "Realizar un electroencefalograma urgente."],
+              e: "Un TC sin contraste negativo no descarta una hemorragia subaracnoidea (HSA) menor; se debe realizar punción lumbar para descartar xantocromía o angio-TC." },
+            { c: 1, q: "¿Cuál es la causa vascular más frecuente de hemorragia subaracnoidea espontánea (HSA)?",
+              o: ["Rotura de un aneurisma sacular intracraneal.", "Malformación arteriovenosa dural de alto flujo.", "Trombosis venosa cerebral profunda.", "Disección carotídea espontánea."],
+              e: "Los aneurismas intracraneales saculares son responsables de aproximadamente el 85% de las hemorragias subaracnoideas espontáneas." },
+            { c: 1, q: "Paciente con crisis epiléptica tónico-clónica generalizada que dura más de 5 minutos o crisis repetidas sin recuperación de conciencia entre ellas. Se define como:",
+              o: ["Estado epiléptico convulsivo (Status epilepticus).", "Epilepsia focal benigna autolimitada.", "Síncope convulsivo vasovagal.", "Ataque isquémico transitorio."],
+              e: "La persistencia de una crisis epiléptica durante más de 5 minutos o crisis recurrentes sin recuperación define el estado epiléptico, una emergencia neurológica." },
+            { c: 1, q: "En el manejo farmacológico escalonado del estado epiléptico convulsivo en urgencias, ¿cuál es el tratamiento anticonvulsivante intravenoso de primera línea?",
+              o: ["Una benzodiacepina intravenosa (Lorazepam o Diazepam).", "Levetiracetam oral en comprimidos triturados.", "Fenobarbital intramuscular profundo.", "Valproato en enema rectal."],
+              e: "Las benzodiacepinas intravenosas (Lorazepam o Diazepam) son los fármacos de primera línea para interrumpir el estado epiléptico." },
+            { c: 1, q: "Si el estado epiléptico persiste tras la administración correcta de la primera dosis de benzodiacepinas a los 10 minutos, ¿cuál es el siguiente fármaco antiepiléptico intravenoso de segunda línea recomendado?",
+              o: ["Antiepiléptico intravenoso de acción prolongada (Levetiracetam, Fenitoína o Ácido Valproico).", "Atropina en bolo lento.", "Adrenalina subcutánea.", "Morfina hidrocloruro."],
+              e: "Ante el fallo de las benzodiacepinas, se administran fármacos antiepilépticos intravenosos de segunda línea como levetiracetam, valproato o fenitoína." },
+            { c: 1, q: "Varón de 30 años que acude con debilidad progresiva ascendente simétrica en extremidades, arreflexia profunda y parestesias distales, iniciada tras una infección respiratoria hace 10 días. Se sospecha Síndrome de Guillain-Barré. ¿Qué complicación crítica debe vigilarse estrechamente?",
+              o: ["Insuficiencia respiratoria aguda por afectación de la musculatura respiratoria y bulbar.", "Infarto agudo de miocardio transmural.", "Hemorragia digestiva alta masiva por úlcera.", "Hipertensión intracraneal maligna con papiledema."],
+              e: "El síndrome de Guillain-Barré puede progresar rápidamente comprometiendo la musculatura respiratoria y la deglución, requiriendo monitorización de la capacidad vital." },
+            { c: 1, q: "¿Cuál es el tratamiento inmunomodulador específico de elección en la fase aguda del Síndrome de Guillain-Barré?",
+              o: ["Inmunoglobulina intravenosa (IGIV) o sesiones de plasmaféresis.", "Corticoides a altas dosis en monoterapia prolongada.", "Antibióticos betalactámicos de amplio espectro.", "Anticoagulación oral con acenocumarol."],
+              e: "El tratamiento de soporte inmunomodulador con inmunoglobulinas intravenosas o plasmaféresis acelera la recuperación en el Guillain-Barré." },
+            { c: 1, q: "Mujer de 40 años que acude por debilidad muscular fluctuante que empeora con el esfuerzo y mejora con el reposo, acompañada de ptosis palpebral bilateral y diplopía vespertina. Se sospecha Miastenia Gravis. ¿Qué prueba farmacológica o diagnóstica se emplea habitualmente?",
+              o: ["Determinación de anticuerpos anti-receptor de acetilcolina (anti-AChR) y estudio neurofisiológico (estimulación repetitiva / fibra única).", "Punción lumbar diagnóstica urgente obligatoria.", "Tomografía con contraste de columna lumbar.", "Biopsia muscular de cuádriceps."],
+              e: "Los anticuerpos anti-receptor de acetilcolina y el electromiograma con estimulación repetitiva confirman el diagnóstico de miastenia gravis." },
+            { c: 1, q: "Durante el seguimiento de una paciente con miastenia gravis, presenta un cuadro de disnea extrema, incapacidad para toser y debilidad respiratoria severa (crisis miasténica). Actitud prioritaria:",
+              o: ["Soporte respiratorio avanzado con intubación y ventilación mecánica, ingreso en UCI y suspensión temporal de anticolinesterásicos.", "Administración inmediata de sedantes mayores sin asegurar vía aérea.", "Alta domiciliaria con ejercicios respiratorios.", "Punción lumbar evacuadora."],
+              e: "La crisis miasténica cursa con insuficiencia respiratoria aguda que exige intubación y soporte en UCI, descartando crisis colinérgica." },
+            { c: 1, q: "Paciente que acude por cefalea intensa de características opresivas globales matutinas, acompañada de vómitos en escopetazo y papiledema bilateral en el fondo de ojo. Sugiere:",
+              o: ["Síndrome de hipertensión intracraneal aguda.", "Jaqueca oftálmica benigna.", "Neuralgia del trigémino típica.", "Sinusitis maxilar crónica simple."],
+              e: "La triada de cefalea matutina, vómitos en proyectil y papiledema es clásica de la hipertensión intracraneal." },
+            { c: 1, q: "¿Cómo se define el mareo de tipo 'vértigo' en la anamnesis neurológica de urgencias?",
+              o: ["Sensación subjetiva de giro o movimiento rotatorio del entorno o de uno mismo (ilusión de movimiento).", "Sensación difusa de inestabilidad al caminar sin giro.", "Pérdida de conciencia transitoria con amnesia.", "Visión borrosa bilateral transitoria."],
+              e: "El vértigo se define específicamente como la ilusión de movimiento rotatorio (giro de objetos o del propio cuerpo)." },
+            { c: 1, q: "Ante un paciente con vértigo agudo intenso, para diferenciar un origen periférico (VPPB, neuritis vestibular) de un origen central (ictus cerebeloso o tronco), ¿qué maniobras o signos exploratorios clínicos se emplean?",
+              o: ["Exploración oculomotora mediante el protocolo HINTS (Head Impulse, Nystagmus, Test of Skew) y nistagmo unidireccional agotable.", "Realizar una placa simple de cráneo.", "Medición de la presión arterial en ambos muslos.", "Prueba de la marcha en línea recta sin mirar."],
+              e: "El protocolo HINTS permite diferenciar con gran precisión los vértigos de origen central frente a los periféricos en urgencias." },
+
+            // ================= CASO 2: URGENCIAS NEFROUROLÓGICAS Y EQUILIBRIO ÁCIDO-BASE =================
+            { c: "CASO CLINICO 2: Nefrología de Urgencias, Insuficiencia Renal Aguda, Cólico Nefrítico y Alteraciones Electrolíticas.",
+              q: "Varón de 50 años que acude por dolor lumbar cólico intenso derecho de inicio súbito, irradiado a genitales, acompañado de náuseas y hematuria macroscópica. Diagnóstico de sospecha:",
+              o: ["Cólico nefrítico agudo (litiasis renal ureteral).", "Aneurisma de aorta abdominal roto.", "Apendicitis aguda retrocecal.", "Colecistitis aguda litiásica."],
+              e: "El dolor lumbar cólico con irradiación descendente a genitales y hematuria es el cuadro clásico de la litiasis renal (cólico nefrítico)." },
+            { c: 2, q: "¿Cuál es el tratamiento analgésico farmacológico de primera línea indicado en el cólico nefrítico agudo en urgencias?",
+              o: ["Antiinflamatorios no esteroideos (AINEs como dexketoprofeno o ibuprofeno) o metamizol intravenoso.", "Morfina en bolos intravenosos rápidos sistemáticos.", "Suero glucosado al 5% en infusión continua.", "Antibióticos betalactámicos de amplio espectro."],
+              e: "Los AINEs (dexketoprofeno, ketorolaco) y el metamizol son los analgésicos de primera línea en el cólico nefrítico al reducir el edema ureteral y la inflamación." },
+            { c: 2, q: "Ante un cólico nefrítico complicado con fiebre alta (> 38.5ºC), escalofríos y obstrucción de la vía urinaria por litiasis (infección urinaria obstructiva alta), ¿cuál es la actitud urgente obligatoria?",
+              o: ["Descompresión urgente de la vía urinaria mediante nefrostomía percutánea o catéter doble J, junto con antibioterapia intravenosa.", "Tratamiento analgésico domiciliario oral exclusivo.", "Observación en pasillo sin pruebas de imagen.", "Litotricia extracorpórea urgente en la primera hora."],
+              e: "Una vía urinaria obstruida e infectada constituye una emergencia urológica absoluta que requiere descompresión urgente (catéter doble J o nefrostomía) y antibióticos." },
+            { c: 2, q: "Paciente con insuficiencia renal aguda (IRA) que presenta una relación BUN/Creatinina en sangre superior a 20:1, con fracciones de excreción de sodio bajas (FENa < 1%), sugiriendo depleción de volumen o hipoperfusión renal. Se clasifica como IRA:",
+              o: ["Prerrenal.", "Intrínseca (necrosis tubular aguda).", "Postrenal obstructiva bilateral.", "Glomerulonefritis rápidamente progresiva."],
+              e: "Una relación BUN/Cr alta (> 20) y FENa < 1% indican que el riñón retiene sodio y agua ante un estímulo de hipoperfusión, característico de la IRA prerrenal." },
+            { c: 2, q: "¿Cuál es la alteración electrocardiográfica más grave y potencialmente mortal asociada a la Hiperpotasemia severa (K+ sérico > 6.5 mEq/L)?",
+              o: ["Ondas T picudas y simétricas, ensanchamiento del QRS, aplanamiento de la onda P y riesgo de fibrilación ventricular.", "Acortamiento extremo del intervalo QT con ondas U prominentes.", "Bloqueo auriculoventricular de primer grado con bradicardia sinusal leve.", "Inversión difusa de ondas T en cara inferior."],
+              e: "La hiperpotasemia grave altera la repolarización y conducción, generando ondas T picudas, ensanchamiento del QRS y arritmias ventriculares malignas." },
+            { c: 2, q: "Ante un paciente con hiperpotasemia grave sintomática con alteraciones electrocardiográficas en el monitor, ¿cuál debe ser el fármaco protector miocárdico de administración inmediata en el primer minuto?",
+              o: ["Gluconato cálcico intravenoso (10 ml al 10%).", "Insulina rápida con glucosa intravenosa.", "Salbutamol nebulizado a dosis altas.", "Furosemida intravenosa en bolo."],
+              e: "El gluconato cálcico intravenoso estabiliza el potencial de membrana miocárdico protegiendo frente a arritmias fatales, aunque no desciende el potasio." },
+            { c: 2, q: "Para desplazar el potasio del espacio extracelular al interior celular de forma rápida en la hiperpotasemia, ¿qué combinación farmacológica se administra habitualmente?",
+              o: ["Infusión intravenosa de Insulina regular asociada a glucosa hipertónica (y/o betagonistas inhalados).", "Bicarbonato sódico en enemas diarios.", "Cloruro cálcico por vía intramuscular profunda.", "Suero salino fisiológico sin fármacos."],
+              e: "La administración de insulina junto con glucosa promueve la entrada de potasio a las células, reduciendo la kalemia plasmática." },
+            { c: 2, q: "Mujer de 70 años que acude por letargia, confusión y náuseas. Analítica urgente: Sodio plasmático (Na+) de 118 mEq/L (Hiponatremia grave). ¿Cuál es la norma fundamental para evitar la desmielinización osmótica (ponte-mielinólisis central) al corregir el sodio?",
+              o: ["Evitar una corrección excesivamente rápida del sodio (no superar un incremento de 8-10 mEq/L en las primeras 24 horas).", "Elevar el sodio plasmático 25 mEq/L en las primeras 2 horas mediante salino hipertónico.", "Administrar agua libre por vía oral a chorro.", "No corregir nunca el sodio en pacientes ancianos."],
+              e: "La corrección rápida de la hiponatremia crónica severa daña los oligodendrocitos provocando una mielinólisis pontina; el incremento debe limitarse a 8-10 mEq/L por día." },
+            { c: 2, q: "Paciente con acidosis metabólica severa con anión gap elevado secundaria a cetoacidosis diabética. ¿Cómo se calcula el Anión Gap (brecha aniónica sérica)?",
+              o: ["Anión Gap = [Na+] - ([Cl-] + [HCO3-]) (con valores normales de 8-12 mEq/L).", "Anión Gap = [K+] + [Ca++] - [Mg++]", "Anión Gap = Osmolaridad medida - Osmolaridad calculada", "Anión Gap = [Urea] / [Creatinina]"],
+              e: "La fórmula clásica de la brecha aniónica plasmática es AG = Sodio menos la suma de Cloruro y Bicarbonato." },
+            { c: 2, q: "Trastorno ácido-base caracterizado por pH arterial elevado, bicarbonato sérico elevado y pCO2 elevada como mecanismo de compensación respiratoria:",
+              o: ["Alcalosis metabólica.", "Acidosis respiratoria aguda.", "Alcalosis respiratoria crónica.", "Acidosis láctica grave."],
+              e: "La alcalosis metabólica cursa con elevación del pH y del bicarbonato, con hipoventilación compensadora que eleva la pCO2." },
+            { c: 2, q: "Varón que acude por retención aguda de orina (RAO) dolorosa, incapacidad para orinar y globo vesical palpable a la exploración abdominal. Actitud urgente inmediata:",
+              o: ["Sondaje vesical uretral estéril (o colocación de cistostomía suprapúbica si está contraindicado).", "Administración de diuréticos de asa intravenosos a altas dosis.", "Realización de una biopsia prostática urgente.", "Punción lumbar diagnóstica."],
+              e: "El tratamiento de la retención aguda de orina es la descompresión inmediata mediante sondaje vesical o cistostomía si hay obstrucción infranqueable." },
+            { c: 2, q: "En un paciente con retención urinaria crónica de gran volumen (más de 1.500 ml evacuados), ¿qué complicación urológica y sistémica debe prevenirse tras el sondaje vesical?",
+              o: ["Hematuria ex-vacuo y poliura post-obstructiva con pérdida masiva de electrolitos.", "Insuficiencia cardíaca por sobrecarga izquierda severa.", "Parálisis diafragmática bilateral.", "Hipertensión intracraneal benigna."],
+              e: "El vaciado vesical brusco de grandes volúmenes puede causar hematuria ex-vacuo y una diuresis osmótica post-obstructiva con depleción hidroelectrolítica." },
+            { c: 2, q: "Paciente que acude por escroto agudo doloroso de inicio brusco, con testículo ascendido, horizontalizado y reflejo cremastérico abolido. Sospecha diagnóstica urgente:",
+              o: ["Torsión testicular aguda (urgencia quirúrgica inaplazable).", "Orquiepididimitis aguda bacteriana.", "Hernia inguinal incarcerada no complicada.", "Hidrocele simple congénito."],
+              e: "El dolor testicular agudo brusco con reflejo cremastérico abolido y testículo elevado define la torsión testicular, exigiendo cirugía urgente antes de las 6 horas para salvar el órgano." },
+            { c: 2, q: "¿Cómo se diferencia clínicamente de forma orientativa la torsión testicular de una orquiepididimitis aguda ante el signo de Prehn?",
+              o: ["El signo de Prehn negativo (el dolor no se alivia al elevar el testículo) sugiere torsión testicular, mientras que el positivo sugiere epididimitis.", "El signo de Prehn positivo indica torsión inminente.", "La epididimitis cursa siempre con ausencia de reflejo cremastérico.", "No existe ninguna diferencia clínica."],
+              e: "El signo de Prehn consiste en la elevación del testículo: si alivia el dolor suele ser epididimitis (positivo); si no alivia o empeora sugiere torsión (negativo)." },
+            { c: 2, q: "Paciente con insuficiencia renal crónica avanzada que acude por edema agudo de pulmón y sobrecarga de volumen refractaria a diuréticos con hiperpotasemia grave refractaria. Tratamiento de sustitución renal urgente indicado:",
+              o: ["Hemodiálisis urgente.", "Diuresis forzada con manitol oral.", "Administración de enemas de suero salino.", "Plasmaféresis selectiva."],
+              e: "La sobrecarga hídrica refractaria y la hiperpotasemia inmanejables médicamente son indicaciones absolutas de hemodiálisis urgente." },
+
+            // ================= CASO 3: URGENCIAS ENDOCRINOMETABÓLICAS =================
+            { c: "CASO CLINICO 3: Urgencias endocrinas, Cetoacidosis Diabética, Estado Hiperosmolar y Crisis Tireotóxica.",
+              q: "Mujer de 25 años con diabetes tipo 1 que acude por náuseas, vómitos, dolor abdominal y respiración profunda y rápida (respiración de Kussmaul), con aliento cetósico ('olor a manzana'). Glucemia capilar de 450 mg/dl, pH venoso/arterial 7.15, Bicarbonato 10 mEq/L y cetonuria positiva masiva. Diagnóstico:",
+              o: ["Cetoacidosis Diabética (CAD).", "Estado Hiperosmolar Hiperglucémico (EHH).", "Hipoglucemia severa refractaria.", "Lactcidosis alcohólica pura."],
+              e: "La tríada de hiperglucemia, acidosis metabólica con anión gap elevado (bicarbonato bajo) y cetosis positiva define la cetoacidosis diabética." },
+            { c: 3, q: "¿Cuáles son los pilares fundamentales del tratamiento médico urgente de la Cetoacidosis Diabética en el box de urgencias?",
+              o: ["Fluidoterapia intravenosa enérgica con cristaloides, insulinoterapia intravenosa en perfusión continua y corrección prudente de electrolitos (potasio).", "Administración de insulina por vía subcutánea cada 12 horas.", "Restricción absoluta de líquidos para evitar el edema cerebral.", "Bicarbonato sódico intravenoso universal sistemático."],
+              e: "El manejo de la CAD se basa en la rehidratación generosa con suero salino, la perfusión continua de insulina regular y el control estrecho del potasio sérico." },
+            { c: 3, q: "Varón de 75 años con diabetes tipo 2 que acude por letargia profunda y desorientación de varios días. Glucemia capilar de 950 mg/dl, osmolaridad sérica efectiva > 320 mOsm/kg, pH arterial > 7.30, bicarbonato normal y cetonuria negativa o escasa. Diagnóstico:",
+              o: ["Estado Hiperosmolar Hiperglucémico (EHH).", "Cetoacidosis diabética clásica.", "Coma urémico terminal.", "Accidente cerebrovascular isquémico agudo."],
+              e: "El estado hiperosmolar hiperglucémico cursa con hiperglucemia extrema, deshidratación severa, hiperosmolaridad plasmática y ausencia de acidosis o cetosis significativa." },
+            { c: 3, q: "¿Cuál es el trastorno metabólico analítico fundamental que predomina en el Estado Hiperosmolar Hiperglucémico frente a la cetoacidosis diabética?",
+              o: ["La deshidratación intracelular masiva y la hiperosmolaridad plasmática extrema debida a la diuresis osmótica prolongada.", "La acidosis metabólica profunda con pH < 7.0.", "La cetonuria masiva en orina de 24 horas.", "La hiponatremia severa por intoxicación acuosa."],
+              e: "El EHH se caracteriza por una deshidratación extrema y una hiperosmolaridad muy elevada por las cifras altísimas de glucosa." },
+            { c: 3, q: "Paciente diabético en tratamiento con insulina que acude con sudoración fría, temblor, palpitaciones, mareo y alteración del nivel de conciencia (GCS 10). Glucemia capilar de 38 mg/dl. Tratamiento urgente inmediato:",
+              o: ["Administración intravenosa de Glucosa al 50% (en bolo de 30-50 ml) seguida de suero glucosado al 10%.", "Administración de insulina rápida subcutánea.", "Administración exclusiva de agua con azúcar por vía oral sin verificar conciencia.", "Espera activa a que despierte solo."],
+              e: "La hipoglucemia sintomática grave requiere la administración intravenosa urgente de glucosa hipertónica (Glucosado al 50%)." },
+            { c: 3, q: "Si el paciente con hipoglucemia severa no dispone de acceso venoso canalizable en el medio prehospitalario o de urgencias, ¿qué alternativa farmacológica intramuscular o subcutánea puede administrarse?",
+              o: ["Glucagón 1 mg por vía intramuscular o subcutánea.", "Insulina lispro intramuscular.", "Adrenalina subcutánea a altas dosis.", "Naloxona en spray nasal."],
+              e: "El glucagón IM/SC estimula la glucogenolisis hepática y es el tratamiento de rescate ante la falta de vía venosa en la hipoglucemia." },
+            { c: 3, q: "Paciente que acude con cuadro de crisis tirotóxica (tormenta tiroidea): fiebre alta de 40ºC, taquicardia extrema (160 lpm), insuficiencia cardíaca y agitación psicomotriz. ¿Cuál es el tratamiento médico inicial combinado adecuado?",
+              o: ["Betabloqueantes (Propranolol IV), antitiroideos de síntesis (Tiamazol / Metimazol o Propiltiouracilo), soluciones yodadas y corticoides.", "Suministro exclusivo de hormonas tiroideas orales (T4).", "Yodo radioactivo en cápsula en la primera hora.", "Diuréticos en monoterapia sin antitiroideos."],
+              e: "La tormenta tiroidea requiere un enfoque multimodal: frenar la síntesis con antitiroideos, bloquear la liberación con yodo, bloquear la acción adrenérgica con propranolol y corticoides." },
+            { c: 3, q: "Cuadro clínico opuesto a la tormenta tiroidea, caracterizado por hipotermia grave, bradicardia extrema, hipoventilación, hipoglucemia y estupor profundo en un paciente con hipotiroidismo de larga evolución. Se denomina:",
+              o: ["Coma mixedematoso.", "Crisis addisoniana aguda.", "Hipoglucemia reactiva idiopática.", "Shock séptico refractario."],
+              e: "El coma mixedematoso es la complicación extrema y potencialmente mortal del hipotiroidismo grave, cursando con hipotermia, bradicardia y coma." },
+            { c: 3, q: "Paciente con insuficiencia suprarrenal crónica que sufre un cuadro de estrés agudo (infección intercurrente) y presenta colapso circulatorio, hipotensión refractaria, dolor abdominal difuso, náuseas y fiebre. Se sospecha Crisis Suprarrenal Aguda (Addisoniana). Tratamiento urgente:",
+              o: ["Administración intravenosa inmediata de Hidrocortisona a altas dosis (bolo de 100 mg) y fluidoterapia enérgica con suero salino fisiológico.", "Administración de espironolactona oral.", "Furosemida intravenosa en bolo rápido.", "Insulina rápida subcutánea."],
+              e: "La crisis addisoniana exige tratamiento hormonal urgente con bolos intravenosos de hidrocortisona y abundante suero salino para corregir la hipotensión y el déficit de glucocorticoides." },
+            { c: 3, q: "Mujer de 55 años que acude por astenia severa, confusión, náuseas, estreñimiento y dolor óseo. Analítica con hipercalcemia severa (Calcio sérico > 14 mg/dl). Medida médica inicial prioritaria de urgencia:",
+              o: ["Hidratación intravenosa agresiva con suero salino fisiológico asociada a diuréticos de asa (furosemida) tras reponer volumen.", "Administración de sales de calcio intravenosas a chorro.", "Restricción absoluta de líquidos y alimentos.", "Vitamina D oral a altas dosis."],
+              e: "El manejo urgente de la hipercalcemia grave se basa en la rehidratación generosa con suero salino para forzar la calciuresis, seguida de diuréticos de asa." },
+            { c: 3, q: "Fármaco inhibidor de la resorción ósea osteoclástica que se emplea habitualmente en el tratamiento hospitalario de la hipercalcemia maligna severa en urgencias:",
+              o: ["Bifosfonatos intravenosos (Zoledrónico o Pamidronato) o Denosumab / Calcitonina.", "Insulina regular subcutánea.", "Paracetamol en comprimidos.", "Warfarina oral ajustada."],
+              e: "Los bifosfonatos intravenosos son muy eficaces para reducir la calcemia elevada en el contexto de hipercalcemia tumoral o severa." },
+            { c: 3, q: "Paciente que acude por tetania, parestesias periorales, signo de Chvostek y Trousseau positivos, con episodios de espasmo carpopedal. Analítica con hipocalcemia severa. ¿Cuál es el tratamiento urgente si hay síntomas graves?",
+              o: ["Gluconato cálcico intravenoso diluido en suero glucosado o salino administrado lentamente bajo monitorización electrocardiográfica.", "Cloruro cálcico por vía intramuscular profunda.", "Bicarbonato sódico hipertoico.", "Suero salino en restricción."],
+              e: "La hipocalcemia sintomática grave (tetania, estridor) requiere administración intravenosa lenta de gluconato cálcico." },
+            { c: 3, q: "¿Cómo se define analíticamente la hipoglucemia en un paciente adulto no gestante según los criterios clínicos estándar?",
+              o: ["Glucemia plasmática inferior a 70 mg/dl (habitualmente < 55-60 mg/dl con síntomas de la triada de Whipple).", "Glucemia plasmática entre 100 y 140 mg/dl.", "Glucemia capilar de 200 mg/dl.", "Ausencia total de glucosa en sangre de cordón."],
+              e: "Se define hipoglucemia cuando los valores de glucosa en sangre descienden por debajo de 70 mg/dl acompañados de clínica adrenérgica o neuroglucopénica." },
+            { c: 3, q: "Ante un paciente con cetoacidosis diabética que recibe tratamiento con insulina y suero, ¿por qué es obligatorio monitorizar y aportar potasio intravenoso a pesar de tener un K+ sérico normal en la analítica de entrada?",
+              o: ["Porque la administración de insulina y la corrección de la acidosis desplazan masivamente el potasio al interior de las células, provocando una hipopotasemia severa secundaria.", "Porque el potasio se destruye por la glucosa.", "Porque el potasio elevado es inocuo para el corazón.", "Para evitar la trombosis venosa profunda."],
+              e: "La insulina y el bicarbonato/corrección de la acidosis meten el potasio dentro de la célula, haciendo que caiga bruscamente la kalemia sérica durante el tratamiento." },
+            { c: 3, q: "¿Cuál es el objetivo principal de la fluidoterapia inicial con suero salino isotónico en las primeras horas del estado hiperosmolar hiperglucémico?",
+              o: ["Restaurar el volumen intravascular intravascular perdido, mejorar la perfusión tisular y reducir la osmolaridad plasmática de forma gradual.", "Elevar la presión arterial sistólica por encima de 200 mmHg.", "Provocar hemodilución para eliminar las proteínas.", "Aumentar la viscosidad sanguínea."],
+              e: "El EHH cursa con gran deshidratación; la prioridad inicial es reponer el déficit de agua y volumen con cristaloides isotónicos." },
+
+            // ================= CASO 4 (RESERVA): MISCELÁNEA CRÍTICA Y URGENCIAS MÉDICAS =================
+            { c: "CASO CLÍNICO 4 (RESERVA): Miscelánea de urgencias hematológicas, oncológicas y dermatológicas graves.",
+              q: "Paciente oncológico que acude a urgencias por fiebre de 39ºC y un recuento absoluto de neutrófilos (RAN) de 450 /mm3 (Neutropenia febril). Actitud urgente ineludible:",
+              o: ["Extracción de hemocultivos e inicio inmediato de antibioterapia empírica intravenosa de amplio espectro antipseudomónica (ej. Cefepima o Piperacilina-Tazobactam) en la primera hora.", "Dar de alta domiciliaria con ibuprofeno oral y control en 1 semana.", "Esperar el resultado de la biopsia de médula ósea sin antibióticos.", "Administrar exclusivamente corticoides orales."],
+              e: "La neutropenia febril es una emergencia oncológica vital; requiere extracción de cultivos y antibioterapia parenteral de amplio espectro en la primera hora." },
+            { c: 4, q: "Paciente varón de 60 años con mieloma múltiple que acude por dolor dorsal intenso incapacitante, debilidad progresiva en extremidades inferiores, pérdida de sensibilidad distal y retención urinaria aguda de 12 horas. Sospecha diagnóstica urgente:",
+              o: ["Compresión medular aguda (urgencia neuroquirúrgica / oncológica).", "Hernia discal lumbar L5-S1 benigna.", "Lumbalgia mecánica inespecífica por sobreesfuerzo.", "Neuropatía periférica diabética crónica."],
+              e: "El dolor dorsal con alteración esfinteriana y déficit motor en un paciente oncológico define la compresión medular aguda, requiriendo RM urgente y corticoides." },
+            { c: 4, q: "En un paciente con compresión medular aguda por metástasis u oncología, ¿qué tratamiento farmacológico coadyuvante inmediato debe iniciarse en urgencias antes de la prueba de imagen o descompresión?",
+              o: ["Corticoides intravenosos a altas dosis (ej. Dexametasona en bolo) para reducir el edema perilesional.", "Antiinflamatorios no esteroideos a dosis bajas.", "Anticoagulantes orales directos.", "Insulina rápida subcutánea."],
+              e: "La administración precoz de dexametasona a altas dosis reduce el edema vasógeno medular y protege la función neurológica en la compresión medular." },
+            { c: 4, q: "Mujer de 30 años que acude por fiebre alta, exantema cutáneo generalizado en forma de diana o ampollas extensas, con afectación dolorosa de mucosas (oral, ocular y genital) tras la toma de un fármaco nuevo (sulfamida). Se sospecha:",
+              o: ["Síndrome de Stevens-Johnson / Necrólisis Epidérmica Tóxica (NET).", "Urticaria alérgica leve autolimitada.", "Dermatitis atópica crónica estacional.", "Psoriasis vulgar guttata."],
+              e: "La afectación cutáneo-mucosa ampollosa con signo de Nikolsky positivo desencadenada por fármacos define el espectro Stevens-Johnson / NET, requiriendo ingreso en unidad de quemados." },
+            { c: 4, q: "¿Cómo se denomina el signo clínico característico que consiste en el desprendimiento de la epidermis ante una suave presión tangencial sobre la piel eritematosa en la necrólisis epidérmica tóxica?",
+              o: ["Signo de Nikolsky.", "Signo de Blumberg.", "Signo de Murphy.", "Signo de Trousseau."],
+              e: "El signo de Nikolsky positivo indica la separación de la capa epidérmica ante la fricción, característico de los síndromes de exfoliación cutánea grave." },
+            { c: 4, q: "Paciente varón que acude por rectorragia masiva y dolor abdominal difuso tras recibir radioterapia pélvica por carcinoma de próstata. Se sospecha Proctitis / Enteritis rádica aguda. Tratamiento inicial de soporte:",
+              o: ["Soporte hidroelectrolítico, enemas antiinflamatorios o tratamientos tópicos, y valoración por oncología radioterápica / digestivo.", "Resección total urgente del colon en la primera hora sin pruebas.", "Administración masiva de laxantes osmóticos potentes.", "Quimioterapia sistémica de rescate."],
+              e: "La enteritis o proctitis rádica aguda se maneja con medidas de soporte, protectores de la mucosa y antiinflamatorios tópicos." },
+            { c: 4, q: "Paciente que acude por picadura de insecto (avispón) con reacción local extensa, prurito, mareo y broncoespasmo leve. Se clasifica como reacción anafiláctica grado II (moderada). Tratamiento de elección inmediato:",
+              o: ["Adrenalina intramuscular (0.5 mg en muslo), corticoides sistémicos y antihistamínicos intravenosos.", "Aplicación de barro frío local y alta.", "Antibióticos orales profilácticos.", "Diuréticos de asa."],
+              e: "Cualquier reacción sistémica por picadura (que afecte a otros órganos como el broncoespasmo o hipotensión leve) requiere adrenalina intramuscular." },
+            { c: 4, q: "En la evaluación post-reanimación de un paciente con hipotermia inducida tras parada cardíaca, ¿cuál es la temperatura objetivo central recomendada durante el periodo de mantenimiento (24 horas)?",
+              o: ["Entre 32 ºC y 36 ºC (control dirigido de la temperatura).", "Exactamente 40 ºC febriles.", "Temperatura ambiente sin regular (38-39ºC).", "Congelación a -5 ºC."],
+              e: "El manejo dirigido de la temperatura post-parada busca mantener la normotermia o hipotermia terapéutica moderada (32-36 ºC) durante al menos 24 horas." },
+            { c: 4, q: "¿Cómo se define analíticamente la hipomagnesemia grave y qué complicación arritmogénica cardíaca típica puede desencadenar?",
+              o: ["Magnesio sérico < 1.2 mg/dl; puede desencadenar Torsades de Pointes (taquicardia ventricular polimorfa).", "Magnesio sérico > 4.0 mg/dl; bloqueo sinusal completo.", "Cifras normales de magnesio sin alteración ECG.", "Hipomagnesemia asintomática sin arritmias."],
+              e: "La hipomagnesemia severa se asocia al desarrollo de taquicardia ventricular polimorfa en entorchado (Torsades de Pointes)." },
+            { c: 4, q: "Paciente que acude por cuadro confusional agudo, temblores, hiperreflexia y clonus tras asociar varios fármacos serotoninérgicos (inhibidores de la recaptación de serotonina y tramadol). Se sospecha Síndrome Serotoninérgico. Tratamiento inicial:",
+              o: ["Suspender inmediatamente los fármacos implicados, soporte vital y administración de benzodiacepinas / ciproheptadina si procede.", "Administrar antipsicóticos típicos a dosis altas de entrada.", "Iniciar perfusión de adrenalina a chorro.", "Realizar diuresis forzada alcalina."],
+              e: "El síndrome serotoninérgico requiere la retirada inmediata del fármaco causante y medidas de soporte con benzodiacepinas para el control neuromuscular." },
+            { c: 4, q: "Diferencia clínica fundamental en la exploración física entre el Síndrome Neuroléptico Maligno (por neurolépticos) y el Síndrome Serotoninérgico:",
+              o: ["El síndrome neuroléptico maligno cursa típicamente con rigidez muscular en 'tubo de plomo' e hiporreflexia, mientras que el serotoninérgico presenta hiperreflexia y mioclonus.", "El síndrome serotoninérgico cursa con flacidez absoluta.", "No hay ninguna diferencia clínica en la exploración.", "El neuroléptico maligno no presenta fiebre."],
+              e: "Una clave diferencial clásica es que el síndrome serotoninérgico presenta hiperreflexia y clonus, mientras que el neuroléptico maligno muestra rigidez en tubo de plomo e hiporreflexia." },
+            { c: 4, q: "Paciente con sospecha de crisis tirotóxica que presenta contraindicación absoluta para el uso de betabloqueantes (ej. Asma bronquial grave broncospástica). ¿Qué alternativa fármaco-terapéutica puede emplearse para el control de la frecuencia?",
+              o: ["Antagonistas del calcio no dihidropiridínicos (Diltiazem o Verapamilo intravenoso) o bloqueantes cálcicos adecuados.", "Atropina a dosis máximas.", "Epinefrina subcutánea.", "Insulina rápida."],
+              e: "Si los betabloqueantes están contraindicados por broncoespasmo severo, se pueden emplear antagonistas del calcio no dihidropiridínicos para controlar la frecuencia." },
+            { c: 4, q: "¿Cuál es el objetivo principal del lavado gástrico en una intoxicación aguda grave por fármacos en el box de urgencias?",
+              o: ["Eliminar el contenido gástrico no absorbido si el paciente acude en la ventana temporal muy precoz (< 1 hora) y la ingesta supuso riesgo vital.", "Lavar por completo todo el intestino delgado y grueso.", "Rehidratar al paciente por vía enteral directa.", "Sustituto absoluto del carbón activado."],
+              e: "El lavado gástrico tiene una utilidad muy limitada y se reserva para ingestas masivas recientes (< 1h) con riesgo vital." },
+            { c: 4, q: "En la atención prehospitalaria o de urgencias a un paciente con hipotermia profunda (temperatura central < 28 ºC), ¿qué precaución extrema debe tenerse al movilizarlo para evitar colapsos fatales?",
+              o: ["Evitar movimientos bruscos o sacudidas que puedan desencadenar una fibrilación ventricular por irritabilidad miocárdica.", "Agitar al paciente enérgicamente para calentar la piel.", "Administrar baños de agua caliente a chorro libre.", "Obligar al paciente a caminar por su propio pie."],
+              e: "La hipotermia grave produce gran inestabilidad miocárdica; los movimientos bruscos pueden precipitar una fibrilación ventricular letal." },
+            { c: 4, q: "En relación con los umbrales mínimos de procedimientos exigidos en el programa formativo oficial de la especialidad para competencias neurológicas y de urgencias, ¿cuántos procedimientos de lectura e interpretación de gasometrías arteriales se exigen registrar habitualmente?",
+              o: ["Al menos 10 procedimientos documentados.", "Ninguno.", "Más de 500 procedimientos complejos de neurocirugía.", "Exactamente 2."],
+              e: "El programa oficial de la especialidad establece umbrales numéricos específicos para el registro de actividades, exigiendo al menos 10 procedimientos de lectura de gasometría." }
+        ];
+
+        // Algoritmo de Fisher-Yates para barajar el array de opciones de cada pregunta
+        function shuffleOptions(question) {
+            let optionsMeta = question.o.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === 0 // Siempre la posición 0 del array original es la correcta
+            }));
+            
+            for (let i = optionsMeta.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsMeta[i], optionsMeta[j]] = [optionsMeta[j], optionsMeta[i]];
+            }
+            return optionsMeta;
+        }
+
+        const form = document.getElementById('exam-form');
+        const letras = ['A', 'B', 'C', 'D'];
+
+        // Renderizado dinámico e inserción de encabezados de casos
+        let caseHeaderRendered = "";
+
+        db.forEach((p, index) => {
+            if (p.c && p.c !== caseHeaderRendered && typeof p.c === "string") {
+                const caseDiv = document.createElement('div');
+                caseDiv.className = 'case-header';
+                caseDiv.innerHTML = `<h2>${p.c}</h2>`;
+                form.appendChild(caseDiv);
+                caseHeaderRendered = p.c;
+            }
+
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            
+            let html = `<h3>Pregunta ${index + 1}. ${p.q}</h3><ul class="options">`;
+            
+            const shuffledOptions = shuffleOptions(p);
+            let indexCorrecta;
+
+            shuffledOptions.forEach((optMeta, idx) => {
+                const letra = letras[idx];
+                if (optMeta.isCorrect) indexCorrecta = letra;
+                
+                html += `
+                    <li>
+                        <label id="label-${index}-${letra}">
+                            <input type="radio" name="q${index}" value="${letra}" data-correct="${optMeta.isCorrect}">
+                            <strong>${letra})</strong> ${optMeta.text}
+                        </label>
+                    </li>
+                `;
+            });
+            
+            html += `</ul>
+                     <div id="exp-${index}" class="explanation">
+                         <strong>Respuesta correcta: ${indexCorrecta}.</strong> ${p.e}
+                     </div>`;
+            
+            qDiv.innerHTML = html;
+            form.appendChild(qDiv);
+        });
+
+        // Lógica de corrección
+        function corregir() {
+            let puntuacion = 0;
+            let fallos = 0;
+            let sinContestar = 0;
+
+            db.forEach((p, index) => {
+                const opciones = document.getElementsByName(`q${index}`);
+                let seleccion = null;
+                let seleccionCorrecta = false;
+                
+                opciones.forEach(opt => {
+                    const letra = opt.value;
+                    const label = document.getElementById(`label-${index}-${letra}`);
+                    const esCorrecta = opt.getAttribute('data-correct') === "true";
+
+                    label.classList.remove('correct-anim', 'incorrect-anim'); 
+                    opt.disabled = true; 
+                    
+                    if (opt.checked) {
+                        seleccion = letra;
+                        if (esCorrecta) seleccionCorrecta = true;
+                    }
+                    if (esCorrecta) label.classList.add('correct-anim');
+                });
+
+                if (!seleccion) {
+                    sinContestar++;
+                } else if (!seleccionCorrecta) {
+                    fallos++;
+                    document.getElementById(`label-${index}-${seleccion}`).classList.add('incorrect-anim');
+                } else {
+                    puntuacion++;
+                }
+                document.getElementById(`exp-${index}`).style.display = 'block';
+            });
+
+            // Cálculo tipo BOE: Acierto +1, Fallo -0.25
+            const notaFinal = (puntuacion * 1) - (fallos * 0.25);
+            const notaNormalizada = notaFinal < 0 ? 0 : notaFinal;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alert(`--- SIMULACRO 9 FINALIZADO ---\n\nAciertos: ${puntuacion}\nErrores: ${fallos}\nSin contestar: ${sinContestar}\n\nPUNTUACIÓN TOTAL (Criterio BOE): ${notaNormalizada.toFixed(2)} sobre 60 posibles.\n\nRevisa las explicaciones debajo de cada pregunta.`);
+            }, 300);
+        }
+    </script>
+
+    <!-- Botón opcional MSF -->
+    <div style="text-align: center; margin-top: 50px; padding: 25px; background-color: #fdfbf7; border: 2px solid #e84118; border-radius: 8px;">
+        <h3 style="margin-top: 0; color: #c23616;">¿Te ha sido útil este simulacro?</h3>
+        <p style="font-size: 0.95em; color: #2f3640;">Este proyecto es 100% gratuito. Si te ha servido de ayuda en tu preparación, te invito a transformar ese valor en una donación directa y opcional a Médicos Sin Fronteras.</p>
+        <a href="https://www.msf.es/que-puedo-hacer-yo/donativo" target="_blank" style="display: inline-block; background-color: #e84118; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; transition: 0.3s;">Hacer un donativo a MSF</a>
+    </div>
+
+</body>
+</html>

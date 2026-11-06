@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulacro 7: Pediatría, Obstetricia, Toxicología y Miscelánea</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #1e272e; line-height: 1.5; padding: 20px; max-width: 950px; margin: auto; }
+        .header { text-align: center; border-bottom: 4px solid #16a085; margin-bottom: 25px; padding-bottom: 10px; }
+        .header h1 { color: #2d3436; margin: 0; }
+        .case-header { background-color: #16a085; color: white; padding: 15px; border-radius: 6px; margin-top: 40px; margin-bottom: 20px; }
+        .case-header h2 { margin: 0; font-size: 1.3em; }
+        .question { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .question h3 { margin-top: 0; font-size: 1.05em; color: #2d3436; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 8px; }
+        .options label { display: block; padding: 10px 15px; border: 1px solid #dfe6e9; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+        .options label:hover { background-color: #f1f2f6; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.1); }
+        .btn-container { text-align: center; margin-top: 40px; margin-bottom: 40px; }
+        .btn { background-color: #16a085; color: white; border: none; padding: 15px 35px; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #117a65; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background-color: #e8f8f5; border-left: 4px solid #16a085; border-radius: 4px; font-size: 0.9em; }
+        .correct-anim { border-color: #00b894 !important; background-color: #e8f8f5 !important; font-weight: bold; color: #00b894; }
+        .incorrect-anim { border-color: #d63031 !important; background-color: #fceaea !important; color: #d63031; text-decoration: line-through; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Simulacro 7: Pediatría, Obstetricia y Toxicología</h1>
+        <p>Prueba Práctica: 4 Casos Clínicos (60 preguntas). Las opciones se barajan aleatoriamente.</p>
+    </div>
+
+    <form id="exam-form"></form>
+
+    <div class="btn-container">
+        <button type="button" class="btn" onclick="corregir()">Finalizar Simulacro y Ver Resultados</button>
+    </div>
+
+    <script>
+        const db = [
+            // ================= CASO 1: PEDIATRÍA DE URGENCIAS Y FIEBRE SIN FOCO =================
+            { c: "CASO CLÍNICO 1: Pediatría de Urgencias. Manejo de la fiebre sin foco en neonatos, crisis asmática y laringitis.",
+              q: "Lactante varón de 22 días de vida que acude a urgencias por fiebre termometrada en domicilio de 38.8ºC de tres horas de evolución. Buen estado general aparente, activo y con succión adecuada. Según los protocolos de manejo de fiebre sin foco en neonatos, la actitud correcta es:",
+              o: ["Ingreso hospitalario urgente, realización de estudio séptico completo (hemocultivo, urocultivo, analítica de sangre, punción lumbar) y administración de antibioterapia empírica parenteral (ampicilina + cefotaxima).", "Administración oral de paracetamol en dosis única y alta domiciliaria con control por su pediatra en 7 días.", "Realización exclusiva de un test rápido de antígeno de COVID-19 y alta si resulta negativo.", "Observación domiciliaria estricta sin analítica durante 48 horas."],
+              e: "Los neonatos menores de 28 días con fiebre sin foco presentan un riesgo altísimo de infección bacteriana grave (sepsis, meningitis), por lo que requieren estudio séptico completo e ingreso con antibioterapia empírica." },
+            { c: 1, q: "Niño de 3 años que acude a urgencias con tos perruna metálica, estridor inspiratorio en reposo y ligera retracción supraesternal, sin fiebre alta. Diagnóstico y tratamiento inicial de elección:",
+              o: ["Laringitis aguda (crup leve-moderado); administrar una dosis única de corticoide oral (Dexametasona 0.6 mg/kg) y nebulización con adrenalina si hay estridor en reposo severo.", "Epiglotitis aguda por Haemophilus; realizar laringoscopia directa inmediata con el paciente tumbado y anestesia general.", "Cuerpo extraño bronquial agudo; broncoscopia rígida urgente obligatoria.", "Asma bronquial aguda; salbutamol en aerocámara cada 5 minutos."],
+              e: "La laringitis aguda (crup) cursa con tos perruna y estridor; el tratamiento de elección es la dexametasona oral en dosis única, añadiendo adrenalina nebulizada si hay estridor en reposo." },
+            { c: 1, q: "Ante un niño de 5 años con sospecha de crisis asmática aguda moderada-grave, ¿cuál es el tratamiento broncodilatador inhalado de primera línea en el box de urgencias?",
+              o: ["Salbutamol inhalado administrado mediante cartucho presurizado con cámara espaciadora (o nebulizado) asociado a Bromuro de Ipratropio.", "Teofilina intravenosa en perfusión continua rápida.", "Adrenalina subcutánea en dosis repetidas cada 5 minutos.", "Corticoesteroides inhalados en monoterapia sin broncodilatadores."],
+              e: "El manejo de la crisis asmática aguda infantil se basa en beta-2 agonistas de acción corta (salbutamol) combinados con bromuro de ipratropio y corticoides sistémicos." },
+            { c: 1, q: "¿Cómo se calculan las necesidades basales diarias de líquidos (fluidoterapia de mantenimiento) en un niño de 18 kg mediante la regla de Holliday-Segar?",
+              o: ["1.000 ml para los primeros 10 kg + 50 ml por cada kg entre 10 y 20 kg (total 1.400 ml/24h).", "100 ml por cada kilo de peso de forma lineal (total 1.800 ml/24h).", "500 ml fijos diarios independientemente de la edad y peso.", "3.000 ml para compensar pérdidas insensibles."],
+              e: "Regla de Holliday-Segar: 100 ml/kg para los primeros 10 kg + 50 ml/kg para los siguientes 10 kg (de 10 a 20 kg). Para 18 kg: 1000 + (8 x 50) = 1400 ml." },
+            { c: 1, q: "Lactante de 9 meses con gastroenteritis aguda que presenta llanto sin lágrimas, ojos hundidos, pliegue cutáneo persistente y letargia. Estimas una pérdida de peso estimada del 12%. El grado de deshidratación es:",
+              o: ["Deshidratación grave (> 10% de pérdida de peso en lactantes).", "Deshidratación leve (< 5%).", "Deshidratación moderada (5-10%).", "Normohidratación sin repercusión clínica."],
+              e: "Una pérdida de peso superior al 10% en lactantes asociada a signos de shock e hipoperfusión define la deshidratación grave que requiere rehidratación intravenosa urgente." },
+            { c: 1, q: "Si el lactante anterior con deshidratación grave presenta además un nivel de sodio plasmático de 162 mEq/L, se clasifica como deshidratación hipernatrémica. ¿Cuál debe ser la norma fundamental en la velocidad de corrección de este sodio elevado?",
+              o: ["Corrección lenta y gradual a lo largo de 48 horas para evitar el edema cerebral secundario por descenso brusco de la osmolaridad.", "Corrección ultra-rápida en las primeras 2 horas mediante suero hipodestilado.", "Administración de un bolo único de cloruro sódico al 20%.", "No corregir el sodio nunca, solo administrar potasio."],
+              e: "La corrección rápida de la hipernatremia provoca entrada masiva de agua al cerebro por gradiente osmótico, causando un devastador edema cerebral; debe corregirse lentamente en 48h." },
+            { c: 1, q: "Ante una convulsión febril simple en un niño de 2 años (crisis tónico-clónica generalizada de menos de 15 minutos, única en 24 horas y con recuperación posterior íntegra), la actitud inmediata en urgencias tras ceder es:",
+              o: ["Descartar foco infeccioso origen de la fiebre, tranquilizar a los padres, administrar antitérmicos y valorar el alta sin requerir punción lumbar rutinaria ni EEG urgente.", "Ingreso obligatorio en la unidad de cuidados intensivos pediátricos para coma inducido.", "Realizar TC craneal urgente y punción lumbar a todos los pacientes.", "Iniciar tratamiento antiepiléptico crónico diario con ácido valproico."],
+              e: "La convulsión febril simple es un cuadro benigno y autolimitado; tras descartar patología grave subyacente y focalidad, no precisa pruebas invasivas urgentes ni ingreso." },
+            { c: 1, q: "¿Qué cuadro obstructivo de vías altas en la infancia, causado clásicamente por infección bacteriana (*Haemophilus influenzae* tipo b), cursa con fiebre alta, babeo, disfagia, postura en trípode y estridor inspiratorio grave, estando contraindicado deprimir la vía aérea mediante depresores linguales?",
+              o: ["Epiglotitis aguda.", "Laringitis subglótica vírica.", "Bronquiolitis aguda por VRS.", "Cuerpo extraño esofágico."],
+              e: "La epiglotitis aguda es una emergencia pediátrica grave con riesgo de asfixia súbita; la manipulación o uso de depresores linguales puede desencadenar el cierre laríngeo total." },
+            { c: 1, q: "Lactante de 3 meses que acude en época invernal con dificultad respiratoria, tos, sibilancias y crepitantes difusos. Radiografía con hiperinsuflación pulmonar e infiltrados perihiliares. Diagnóstico más probable:",
+              o: ["Bronquiolitis aguda (habitualmente por Virus Respiratorio Sincitial - VRS).", "Asma bronquial alérgica extrínseca crónica.", "Fibrosis quística neonatal de debut.", "Neumonía necrosante estafilocócica."],
+              e: "La bronquiolitis aguda en lactantes menores de 1 año es típicamente vírica (VRS) y cursa con obstrucción de vía aérea pequeña, sibilancias e hiperinsuflación." },
+            { c: 1, q: "En el manejo de la parada cardiorrespiratoria pediátrica, ¿cuál es la relación de compresión/ventilación recomendada cuando hay un solo reanimador y cuando hay dos reanimadores profesionales?",
+              o: ["15 compresiones por 2 ventilaciones (15:2) si hay dos reanimadores profesionales (o 30:2 para un reanimador lego).", "30 compresiones por 2 ventilaciones fijas en todos los casos pediátricos.", "5 compresiones por 1 ventilación estricta.", "Compresiones continuas sin ventilación a cualquier edad."],
+              e: "En soporte vital pediátrico, el personal sanitario aplica una relación 15:2 (15 compresiones y 2 ventilaciones), mientras que los legos aplican 30:2." },
+            { c: 1, q: "Para calcular de forma rápida y orientativa el peso aproximado de un niño de entre 1 y 10 años en situaciones de emergencia, se emplea la fórmula de Leitman o fórmula estándar basada en la edad:",
+              o: ["Peso (kg) = [Edad (años) + 4] x 2", "Peso (kg) = Edad x 10", "Peso (kg) = [Edad x 2] + 8", "Peso (kg) = Edad al cuadrado"],
+              e: "La fórmula de estimación de peso pediátrico de urgencia es: Peso = (Edad en años + 4) x 2." },
+            { c: 1, q: "¿Cuál es el tamaño de tubo endotraqueal con balón recomendado para calcular el diámetro interno (DI) en un niño mayor de 2 años según la fórmula de Cole modificada?",
+              o: ["DI (mm) = [Edad (años) / 4] + 3.5 (o usar tubos con balón adecuados según las guías actuales).", "DI (mm) = Edad en años x 2", "DI (mm) = 7.0 fijo para cualquier edad pediátrica", "DI (mm) = Peso en kg / 2"],
+              e: "La fórmula clásica modificada para el tamaño del tubo es (Edad/4) + 3.5 para tubos con balón, asegurando comprobar fuga." },
+            { c: 1, q: "Ante la sospecha de maltrato infantil en urgencias ante lesiones cutáneas dudosas o fracturas en diferentes estadios evolutivos, ¿cuál es la obligación legal y médica prioritaria?",
+              o: ["Activar el protocolo hospitalario de protección infantil, emitir parte judicial inmediato y notificar al servicio de protección de menores / fiscalía.", "Dar de alta al menor con los padres tras una amonestación verbal.", "Esperar a una segunda visita domiciliaria sin registrar el parte.", "Ocultar el parte para evitar conflictos familiares."],
+              e: "El médico tiene la obligación legal y ética ineludible de notificar cualquier sospecha fundamentada de maltrato infantil al juzgado de guardia y a los servicios sociales." },
+            { c: 1, q: "Lactante de 6 semanas que presenta vómitos proyectivos, no biliosos, inmediatamente después de las tomas, con avidez por comer y presencia de oliva pilórica palpable en epigastrio. Diagnóstico:",
+              o: ["Estenosis hipertrófica de píloro.", "Invaginación intestinal ileocólica.", "Apendicitis neonatal aguda.", "Atresia duodenal congénita."],
+              e: "Los vómitos en proyectil no biliosos tras las tomas en un lactante varón joven con palpación de 'oliva pilórica' definen la estenosis hipertrófica de píloro." },
+            { c: 1, q: "La alteración gasométrica y electrolítica clásica esperada en la estenosis hipertrófica de píloro debido a la pérdida repetida de jugos gástricos ácidos y cloro es:",
+              o: ["Alcalosis metabólica hipoclorémica e hipopotasémica.", "Acidosis metabólica grave con anión gap elevado.", "Acidosis respiratoria pura por hipoventilación.", "Alcalosis respiratoria por hiperventilación."],
+              e: "Los vómitos ácidos repetidos provocan pérdida de HCl, originando una alcalosis metabólica hipoclorémica e hipopotasémica compensada." },
+
+            // ================= CASO 2: URGENCIAS GINECO-OBSTÉTRICAS =================
+            { c: "CASO CLÍNICO 2: Obstetricia y Ginecología de Urgencias. Hemorragias del primer y tercer trimestre, eclampsia.",
+              q: "Gestante de 32 semanas que acude por metrorragia indolora de sangre roja brillante, sin contracciones uterinas y con feto vivo. ¿Cuál es el diagnóstico de sospecha que debe descartarse en primer lugar mediante ecografía?",
+              o: ["Placenta previa.", "Desprendimiento prematuro de placenta normoinserta (Abruptio placentae).", "Rotura uterina espontánea.", "Amenaza de parto pretérmino con tapón mucoso sanguinolento."],
+              e: "La metrorragia indolora en el tercer trimestre es el signo cardinal de la placenta previa, que debe confirmarse ecográficamente evitando el tacto vaginal." },
+            { c: 2, q: "Gestante de 36 semanas que acude por dolor abdominal continuo de gran intensidad, hipertonía uterina importante ('útero de madera') y metrorragia oscura asociada. Diagnóstico de sospecha:",
+              o: ["Desprendimiento prematuro de placenta normoinserta (Abruptio placentae).", "Placenta previa central oclusiva.", "Rotura de vasa previa fetal.", "Infección urinaria aguda pielonefrítica."],
+              e: "El Abruptio placentae cursa con dolor abdominal intenso, hipertonía uterina (útero leñoso), sangrado oscuro y posible sufrimiento fetal agudo." },
+            { c: 2, q: "Ante una gestante que presenta cifras tensionales de 160/110 mmHg asociadas a proteinuria significativa (proteinuria en 24h > 300 mg o tira +++) y aparición de una crisis convulsiva tónico-clónica generalizada (Eclampsia), el tratamiento anticonvulsivante de elección urgente es:",
+              o: ["Sulfato de magnesio intravenoso (bolo y perfusión continua).", "Diazepam intravenoso a dosis altas.", "Fenitoína sódica en bolo rápido.", "Haloperidol intramuscular."],
+              e: "El sulfato de magnesio es el tratamiento farmacológico de elección indiscutible para el control y prevención de las convulsiones en la preeclampsia grave y la eclampsia." },
+            { c: 2, q: "¿Cuál es el antídoto específico o fármaco neutralizante que debe estar disponible de inmediato junto a la cama de la paciente durante la perfusión intravenosa de Sulfato de Magnesio por riesgo de intoxicación (depresión respiratoria, pérdida de reflejos)?",
+              o: ["Gluconato cálcico intravenoso (1 gramo / 10 ml al 10%).", "Naloxona en ampollas.", "Flumazenilo intravenoso.", "Bicarbonato sódico 1 Molar."],
+              e: "El gluconato cálcico intravenoso es el antagonista específico del magnesio y debe administrarse ante signos de toxicidad por hipermagnesemia (pérdida de reflejos, bradipnea)." },
+            { c: 2, q: "Mujer de 28 años con amenorrea de 7 semanas que acude por dolor en fosa ilíaca derecha y manchado vaginal escaso. Test de embarazo positivo. Ecografía transvaginal muestra útero vacío y líquido libre en el fondo de saco de Douglas. Diagnóstico:",
+              o: ["Embarazo ectópico (roto o complicado).", "Aborto completo precoz ya expulsado.", "Quiste ovárico folicular simple.", "Enfermedad pélvica inflamatoria aguda."],
+              e: "La tríada de amenorrea, dolor abdominal y sangrado con útero vacío y líquido libre sugiere fuertemente un embarazo ectópico complicado." },
+            { c: 2, q: "En una gestante Rh negativa con test de Coombs indirecto negativo que sufre un aborto espontáneo en el primer trimestre o un episodio de metrorragia con riesgo de paso fetomaterno, ¿qué profilaxis está indicada?",
+              o: ["Administración de Gammaglobulina anti-D (Inmunoglobulina anti-D) intramuscular en las primeras 72 horas.", "Vacunación sistemática frente al virus del papiloma humano.", "Administración de ácido acetilsalicílico a dosis bajas.", "Profilaxis antibiótica con penicilina benzatina."],
+              e: "Para prevenir la isoinmunización Rh en gestantes Rh negativas tras abortos o sangrados, se administra inmunoglobulina anti-D antes de 72 horas." },
+            { c: 2, q: "¿Cómo se define el aborto diferido (missed abortion)?",
+              o: ["Retención en la cavidad uterina de un embrión o feto muerto sin actividad cardíaca, sin que se haya producido la expulsión del tejido.", "Expulsión completa de todos los productos de la concepción antes de la semana 20.", "Sangrado vaginal leve en el primer trimestre con embrión vivo y latido positivo.", "Infección uterina grave tras un aborto séptico."],
+              e: "El aborto diferido se caracteriza por la retención intrauterina de un producto gestacional muerto (sin latido) sin expulsión espontánea." },
+            { c: 2, q: "Gestante que acude en el segundo trimestre con dilatación cervical indolora y expulsión espontánea de las membranas fetales sin contracciones previas. Diagnóstico:",
+              o: ["Incompetencia cervical (insuficiencia istmico-cervical).", "Amenaza de parto pretérmino por infección.", "Desprendimiento prematuro de placenta.", "Rotura prematura de membranas por gérmenes."],
+              e: "La dilatación cervical indolora con protrusión o expulsión en el segundo trimestre sin dinámica uterina sugiere incompetencia cervical." },
+            { c: 2, q: "Ante la sospecha de Rotura Prematura de Membranas (RPM) en una gestante de 34 semanas sin signos de infección ni dinámica uterina, la actitud obstétrica general suele incluir:",
+              o: ["Ingreso hospitalario, administración profiláctica de antibióticos de latencia, maduración pulmonar con corticoides y actitud expectante bajo vigilancia estrecha.", "Inducción inmediata del parto mediante oxitocina en los primeros 15 minutos.", "Alta domiciliaria con reposo relativo y control en 2 semanas.", "Realización de cesárea urgente inmediata."],
+              e: "A las 34 semanas con RPM sin infección se pautan corticoides para maduración, antibióticos para prolongar la latencia (prevención de corioamnionitis) y vigilancia." },
+            { c: 2, q: "¿Cuál es el principal signo clínico de sospecha de una Corioamnionitis aguda en una gestante con rotura prematura de membranas?",
+              o: ["Fiebre materna materna (> 38ºC) asociada a taquicardia materna o fetal, sensibilidad uterina y líquido amniótico maloliente o purulento.", "Disminución leve de la tensión arterial sistólica.", "Edemas bimaleolares matutinos bilaterales.", "Aparición de cefalea occipital matutina aislada."],
+              e: "La fiebre materna junto con leucocitosis, taquicardia y mal olor del líquido amniótico define la infección intraamniótica (corioamnionitis), indicando finalización de la gestación." },
+            { c: 2, q: "En una paciente con Enfermedad Pélvica Inflamatoria (EPI) aguda grave que acude con dolor abdominal inferior, fiebre y flujo purulento cervical, ¿qué complicación abscesificada anexa debe descartarse mediante ecografía?",
+              o: ["Absceso tubo-ovárico (ATO).", "Quiste dermoide calcificado ovárico.", "Torsión anexial quística pura sin infección.", "Embarazo ectópico cornual."],
+              e: "La EPI grave puede evolucionar hacia la formación de un absceso tubo-ovárico, visible por ecografía y requiriendo a menudo ingreso y antibioterapia IV o drenaje." },
+            { c: 2, q: "Mujer de 25 años que acude por dolor agudo en fosa ilíaca derecha de inicio brusco, acompañado de náuseas y vómitos, con antecedente de quiste ovárico conocido. Ecografía Doppler con ausencia de flujo en el ovario derecho. Diagnóstico:",
+              o: ["Torsión ovárica (torsión anexa).", "Apendicitis aguda retrocecal clásica.", "Rotura de folículo hemorrágico simple.", "Embarazo ectópico roto."],
+              e: "El dolor agudo de inicio brusco con ausencia de flujo arterial y venoso al Doppler ovárico define la torsión ovárica, una emergencia quirúrgica ginecológica." },
+            { c: 2, q: "¿Cuál es la causa más frecuente de hemorragia uterina disfuncional u órgano-anómala en mujeres en edad fértil que acuden a urgencias con sangrado abundante agudo?",
+              o: ["Alteraciones de la ovulación (hemorragia uterina disfuncional anovulatoria) o patología orgánica (miomas, pólipos).", "Carcinoma de cérvix avanzado.", "Insuficiencia hepática fulminante.", "Déficit congénito de factor VIII."],
+              e: "El sangrado uterino anormal agudo en urgencias suele deberse a ciclos anovulatorios o lesiones orgánicas benignas (miomas, pólipos)." },
+            { c: 2, q: "Para el cese agudo de una hemorragia uterina anormal grave en una paciente hemodinámicamente estable en urgencias, se pueden emplear altas dosis de estrógenos conjugados intravenosos o anticonceptivos orales combinados, asociando además un fármaco antifibrinolítico como:",
+              o: ["Ácido Tranexámico.", "Ácido Acetilsalicílico.", "Vitamina K intravenosa.", "Sulfato de protamina."],
+              e: "El Ácido Tranexámico es un antifibrinolítico muy eficaz para reducir el sangrado menstrual abundante y las hemorragias uterinas agudas." },
+            { c: 2, q: "Tras la atención a un parto inminente precipitado no previsto que ocurre en el área de urgencias extrahospitalarias o en el box, ¿cuál es la actitud prioritaria con el recién nacido tras el secado y estimulación?",
+              o: ["Valorar el test de Apgar al minuto y a los 5 minutos, garantizar el contacto piel con piel y realizar el pinzamiento oportuno del cordón umbilical.", "Lavar al recién nacido con agua fría inmediatamente para estimular el llanto.", "Administrar morfina intravenosa profiláctica al neonato.", "Cortar el cordón de forma instantánea antes de secarlo."],
+              e: "La atención inicial al neonato sano incluye secado, estimulación, valoración de Apgar (al 1' y 5'), contacto piel con piel y pinzamiento diferido del cordón." },
+
+            // ================= CASO 3: TOXICOLOGÍA CLÍNICA Y SOBREDOSIS =================
+            { c: "CASO CLINICO 3: Toxicología de Urgencias. Sobredosis de fármacos, toxíndromes y antídotos específicos.",
+              q: "Paciente varón de 40 años hallado inconsciente en su domicilio. Presenta coma profundo, depresión respiratoria con 6 respiraciones por minuto y miosis puntiforme bilateral. En el estudio toxicológico se sospecha sobredosis aguda de heroína. Antídoto específico de elección:",
+              o: ["Naloxona intravenosa (titulada desde 0.4 mg).", "Flumazenilo en bolo rápido de 2 mg.", "N-acetilcisteína en perfusión continua.", "Atropina a dosis máximas."],
+              e: "La triada de depresión respiratoria, coma y miosis puntiforme define el toxíndrome opioide; el antídoto específico es la naloxona." },
+            { c: 3, q: "Joven de 20 años que ingirió 30 comprimidos de Paracetamol hace 3 horas en un intento autolítico. Se encuentra asintomático. ¿Cuál es la actitud terapéutica inicial prioritaria en urgencias?",
+              o: ["Administración de Carbón Activado si han pasado menos de 1-2 horas y extracción de niveles plasmáticos de paracetamol para valorar el nomograma de Rumack-Matthew y uso de N-acetilcisteína.", "Dar de alta inmediata con laxantes.", "Administrar Flumazenilo en bolo intravenoso.", "Realizar hemodiálisis urgente sin esperar niveles."],
+              e: "Ante una ingesta reciente de paracetamol (< 2h), se administra carbón activado y se solicitan niveles para cruzar con el nomograma y decidir si precisa N-acetilcisteína." },
+            { c: 3, q: "Paciente con intoxicación aguda por benzodiacepinas (sobredosis de diazepam) que presenta somnolencia moderada pero conserva una ventilación espontánea y saturación adecuadas. Respecto al uso del antídoto (Flumazenilo):",
+              o: ["Debe evitarse su uso rutinario si el paciente está estable y respira bien, debido al riesgo de precipitar crisis convulsivas severas (especialmente en pacientes con consumo crónico o coingesta de tricíclicos).", "Debe administrarse obligatoriamente un bolo de 5 mg a todos los pacientes somnolientos.", "Es obligatorio administrarlo junto a morfina para potenciar el efecto.", "Está indicado únicamente por vía intramuscular."],
+              e: "El flumazenilo revierte las benzodiacepinas, pero su uso indiscriminado puede desencadenar crisis convulsivas letales en pacientes con tolerancia o coingesta de proconvulsivantes." },
+            { c: 3, q: "Intoxicación por antidepresivos tricíclicos (TCA). En el ECG destaca una prolongación marcada del intervalo QRS (> 100-160 ms) y desviación del eje. ¿Cuál es el tratamiento intravenoso específico para corregir el bloqueo de los canales de sodio cardíacos?",
+              o: ["Bicarbonato sódico intravenoso (para alcalinizar el plasma y aumentar el sodio extracelular).", "Amiodarona en bolo rápido de 300 mg.", "Cloruro potásico en perfusión rápida.", "Verapamilo intravenoso."],
+              e: "El bicarbonato sódico es el antídoto electrofisiológico de los TCA; la alcalinización y el aporte de sodio reducen el bloqueo de los canales de sodio y estrechan el QRS." },
+            { c: 3, q: "Paciente varón que presenta un cuadro de intoxicación aguda por monóxido de carbono (CO) tras estar en un garaje cerrado con un brasero. Presenta cefalea, mareo y coloración cutánea 'en rojo carmesí'. La pulsioximetría digital convencional muestra una saturación de SpO2 del 98%. Este valor:",
+              o: ["Es falsamente normal debido a que el pulsioxímetro no distingue la oxihemoglobina de la carboxihemoglobina.", "Refleja con absoluta precisión la oxigenación tisular real.", "Indica que el paciente está curado y puede marchar a su domicilio.", "Demuestra la presencia de metahemoglobina pura."],
+              e: "El pulsioxímetro estándar lee la carboxihemoglobina como oxihemoglobina, ofreciendo lecturas de saturación falsamente normales en la intoxicación por CO." },
+            { c: 3, q: "Tratamiento de soporte vital prioritario en la intoxicación aguda por monóxido de carbono:",
+              o: ["Oxígeno normobárico al 100% a alto flujo con mascarilla con reservorio (o valoración de cámara hiperbárica según criterios).", "Administración de Heliox al 50%.", "Ventilación mecánica con PEEP de 20 cmH2O.", "Sangría terapéutica de 500 ml."],
+              e: "El oxígeno al 100% desplaza al CO de la hemoglobina acelerando su eliminación; la terapia hiperbárica se valora ante pérdida de conocimiento o afectación neurológica." },
+            { c: 3, q: "Intoxicación aguda por alcohol metílico (metanol). Además de la clínica neurológica y la acidosis metabólica con anión gap elevado, ¿qué afectación sensorial es característica de este tóxico?",
+              o: ["Alteraciones visuales severas (visión borrosa, escotomas, ceguera en 'ventisca de nieve').", "Pérdida brusca completa del sentido del olfato (anosmia).", "Tinnitus bilateral persistente e hipoacusia neurosensorial.", "Aparición de ageusia total."],
+              e: "El metanol se metaboliza a formaldehído y ácido fórmico, mostrando una neurotoxicidad muy selectiva sobre el nervio óptico que causa alteraciones visuales graves." },
+            { c: 3, q: "Antídoto específico indicado en la intoxicación por metanol o etilenglicol para inhibir la enzima alcohol deshidrogenasa y evitar la formación de metabolitos tóxicos:",
+              o: ["Fomepizol (o etanol absoluto).", "N-acetilcisteína.", "Flumazenilo.", "Azul de metileno."],
+              e: "El fomepizol (o el etanol) compiten por la alcohol deshidrogenasa bloqueando la metabolización del metanol y el etilenglicol en sus metabolitos ácidos tóxicos." },
+            { c: 3, q: "Paciente que acude por intoxicación aguda por salicilatos (sobredosis de aspirina). ¿Qué trastorno ácido-base mixto es clásico encontrar en fase precoz?",
+              o: ["Alcalosis respiratoria primaria (por estimulación del centro respiratorio) combinada con acidosis metabólica de anión gap elevado.", "Acidosis respiratoria pura por hipoventilación.", "Alcalosis metabólica severa por vómitos.", "Acidosis metabólica hiperclorémica normal."],
+              e: "Los salicilatos estimulan el centro respiratorio (alcalosis respiratoria) y desacoplan la fosforilación oxidativa (acidosis metabólica con anión gap alto)." },
+            { c: 3, q: "En la intoxicación aguda grave por litio con afectación neurológica central severa y fracaso renal, ¿cuál es el procedimiento de depuración extrarrenal de elección para eliminar el tóxico?",
+              o: ["Hemodialisis urgente.", "Lavado gástrico repetido cada 12 horas.", "Diuresis forzada con furosemida.", "Administración masiva de carbón activado oral."],
+              e: "El litio se elimina eficazmente mediante hemodiálisis urgente ante intoxicaciones graves con neurotoxicidad o fallo renal." },
+            { c: 3, q: "Toxíndrome producido por la ingesta de anticolinérgicos (atropina, antihistamínicos clásicos): 'ciego como un murciélago, loco como un sombrero, rojo como una remolacha, seco como un hueso, caliente como una liebre'. ¿Qué signos clínicos cutáneos y pupilares lo definen?",
+              o: ["Midriasis bilateral arrefléxica, piel seca y caliente, y rubefacción facial sin sudoración.", "Miosis puntiforme, piel fría y sudorosa, broncorrea profusa.", "Piel pálida, cianosis distal y miosis bilateral.", "Sudoración profusa con fasciculaciones musculares."],
+              e: "El toxíndrome anticolinérgico cursa con midriasis, piel seca, caliente y roja, taquicardia y delirio por bloqueo muscarínico." },
+            { c: 3, q: "Ante una intoxicación aguda por sustancias cáusticas (ácidos o álcalis fuertes), ¿qué procedimiento está ABSOLUTAMENTE CONTRAINDICADO por el riesgo elevado de perforación esofágica o gástrica?",
+              o: ["Inducción del vómito y paso de sonda nasogástrica u lavado gástrico ciego.", "Administración intravenosa de analgesia mayor.", "Realización de una endoscopia digestiva diferida a las 24-48 horas.", "Radiografía simple de tórax y abdomen."],
+              e: "La inducción del vómito o el paso de sondas en ingestión de cáusticos está contraindicada por el altísimo riesgo de perforar el esófago ya lesionado." },
+            { c: 3, q: "Paciente con intoxicación aguda por cianuro procedente de la combustión de plásticos en un incendio. Antídoto específico de elección:",
+              o: ["Hidroxicobalamina intravenosa.", "N-acetilcisteína.", "Flumazenilo.", "Naloxona."],
+              e: "La hidroxicobalamina se une al cianuro formando cianocobalamina no tóxica, siendo el antídoto de primera línea en la intoxicación por cianuro." },
+            { c: 3, q: "¿Qué fármaco está CONTRAINDICADO en el manejo inicial de la isquemia miocárdica o dolor torácico secundario a una intoxicación aguda por cocaína?",
+              o: ["Betabloqueantes puros (ej. Propranolol) por riesgo de vasoespasmo coronario severo por estimulación alfa sin oposición.", "Benzodiacepinas intravenosas (Diazepam).", "Nitroglicerina sublingual o intravenosa.", "Aspirina oral."],
+              e: "Los betabloqueantes puros bloquean la vasodilatación beta, dejando la vasoconstricción alfa de la cocaína sin oposición y empeorando la HTA y el espasmo coronario." },
+            { c: 3, q: "Paciente varón hallado con un toxíndrome colinérgico completo (SLUDGE: salivación, lagrimeo, micción, diarrea, broncorrea, bradicardia) tras exposición a insecticidas organofosforados. El antídoto anticolinérgico indicado es:",
+              o: ["Atropina intravenosa a dosis repetidas hasta lograr la atropinización (desaparición de secreciones bronquiales).", "Fisostigmina subcutánea.", "Glucagón en perfusión.", "Carbón activado en monodosis."],
+              e: "La atropina bloquea los receptores muscarínicos hiperestimulados por los organofosforados; debe administrarse agresivamente hasta secar las secreciones." },
+
+            // ================= CASO 4 (RESERVA): MISCELÁNEA, TRAUMA Y URGENCIAS QUIRÚRGICAS =================
+            { c: "CASO CLÍNICO 4 (RESERVA): Miscelánea de patología infecciosa grave, shock, soporte vital y quemados.",
+              q: "Paciente varón de 65 años que acude con celulitis extensa en extremidad inferior que evoluciona en pocas horas a necrosis cutánea, ampollas hemorrágicas, dolor desproporcionado y crepitación subcutánea con afectación hemodinámica severa (shock). Sospecha diagnóstica urgente:",
+              o: ["Fascitis necrotizante (urgencia quirúrgica absoluta con desbridamiento precoz).", "Erisipela superficial estreptocócica simple ambulatoria.", "Trombosis venosa profunda crónica sin infección.", "Úlcera por presión estadio II colonizada."],
+              e: "El dolor desproporcionado, la crepitación (gas tisular), la necrosis y el shock definen la fascitis necrotizante, una emergencia quirúrgica vital." },
+            { c: 4, q: "En relación con los criterios de la escala SOFA (Sequential Organ Failure Assessment) para el diagnóstico y valoración de la disfunción orgánica en la sepsis, ¿cuál de los siguientes parámetros clínicos o analíticos se evalúa?",
+              o: ["PaO2/FiO2, plaquetas, bilirrubina, presión arterial / vasopresores, escala de Glasgow y creatinina / diuresis.", "Frecuencia cardíaca aislada y temperatura axilar.", "Presencia o ausencia de sibilancias espiratorias.", "Nivel de colesterol total sérico."],
+              e: "La escala SOFA evalúa 6 sistemas orgánicos (respiratorio, coagulación, hepático, cardiovascular, neurológico y renal) para puntuar la disfunción orgánica en la sepsis." },
+            { c: 4, q: "Durante el soporte vital avanzado en el adulto, tras confirmar la colocación de un tubo endotraqueal, ¿a qué frecuencia deben administrarse las ventilaciones con bolsa autohinchable si el paciente no respira espontáneamente?",
+              o: ["10 respiraciones por minuto (1 ventilación cada 6 segundos), con compresiones torácicas continuas.", "20 respiraciones por minuto.", "5 respiraciones por minuto.", "Ventilación sincrónica 2 respiraciones cada 15 compresiones."],
+              e: "Con vía aérea avanzada, las compresiones son continuas y se ventila a 10 rpm (1 respiración cada 6 segundos)." },
+            { c: 4, q: "Paciente politraumatizado que presenta en la exploración física murmullo vesicular abolido en hemitórax izquierdo, timpanismo a la percusión, desviación traqueal hacia la derecha e hipotensión severa. Diagnóstico y tratamiento urgente:",
+              o: ["Neumotórax a tensión; requiere descompresión urgente inmediata con aguja/catéter en 4º-5º EIC o toracocentesis / tubo de tórax.", "Hemotórax masivo; requiere toracotomía derecha.", "Contusión pulmonar simple; reposo domiciliario.", "Taponamiento cardíaco; pericardiocentesis."],
+              e: "La clínica de shock, timpanismo, abolición de murmullo y desviación traqueal define el neumotórax a tensión, que exige descompresión inmediata antes de confirmar por placa." },
+            { c: 4, q: "En el manejo inicial del shock hemorrágico por traumatismo grave, ¿qué concepto de fluidoterapia y transfusión se aplica actualmente para evitar la coagulopatía dilucional y la triada letal?",
+              o: ["Protocolo de Transfusión Masiva (PTM) con hemoderivados equilibrados (1 Hematíe : 1 Plasma : 1 Plaquetas) restringiendo los cristaloides.", "Infusión masiva exclusiva de suero salino isotónico hasta 5 litros.", "Administración de suero glucosado al 5% a chorro libre.", "Evitar transfundir plasma bajo ningún concepto."],
+              e: "El protocolo de transfusión masiva equilibrado (1:1:1) evita la hemodilución y la coagulopatía traumática precoz." },
+            { c: 4, q: "Paciente varón que acude tras quemadura química ocular por salpicadura de sosa cáustica (álcali fuerte). ¿Cuál es la diferencia lesiva fundamental respecto a los ácidos y la actuación prioritaria?",
+              o: ["Los álcalis penetran más profundamente por necrosis por licuefacción; el tratamiento inmediato exige un lavado ocular abundante y prolongado con suero/agua.", "Los álcalis se autolimitan y no precisan lavado.", "Los ácidos son mucho más peligrosos que los álcalis.", "No se debe lavar el ojo con líquidos."],
+              e: "Los álcalis producen necrosis por licuefacción con penetración ocular profunda y destructiva; el lavado inmediato y prolongado es la única medida eficaz." },
+            { c: 4, q: "¿Cómo se define el 'síndrome de abstinencia al alcohol' grave o Delirium Tremens en un paciente alcohólico hospitalizado en urgencias?",
+              o: ["Cuadro confusional agudo, alucinaciones vívidas, temblor temible, agitación, hiperactividad autonómica (taquicardia, hipertensión, sudoración) que aparece a las 48-72h del cese.", "Cuadro de depresión profunda con bradicardia extrema y miosis.", "Epilepsia mioclónica benigna autolimitada matutina.", "Neuropatía periférica sensitiva aislada."],
+              e: "El delirium tremens es la complicación más grave del síndrome de abstinencia alcohólica, cursando con hiperactividad simpática, delirio y temblores a las 48-72h." },
+            { c: 4, q: "Tratamiento farmacológico de primera línea indicado para el control de la agitación y la hiperactividad simpática en el Delirium Tremens:",
+              o: ["Benzodiacepinas intravenosas a dosis altas tituladas (ej. Diazepam o Lorazepam).", "Haloperidol en monoterapia sin sedantes.", "Beta-bloqueantes puros en monoterapia.", "Opiáceos mayores en perfusión."],
+              e: "Las benzodiacepinas a dosis altas y tituladas son el tratamiento de primera línea del delirium tremens para controlar la agitación y prevenir las convulsiones." },
+            { c: 4, q: "Ante un paciente con hipotermia accidental moderada (temperatura central entre 30ºC y 32ºC), ¿cuál es el método de calentamiento activo externo recomendado?",
+              o: ["Uso de mantas térmicas de aire forzado, aire caliente y líquidos intravenosos templados.", "Sumergir al paciente en un baño de agua helada para estimular el metabolismo.", "Aplicación directa de calor seco intenso sobre la piel con quemadores.", "Ninguna medida activa, dejar que se caliente solo."],
+              e: "La hipotermia moderada se maneja con calentamiento activo externo (mantas de aire caliente) y fluidos IV templados para evitar el colapso por 'after-drop'." },
+            { c: 4, q: "En la atención a una mordedura de serpiente (víbora) en España, ¿cuál de las siguientes medidas está ABSOLUTAMENTE CONTRAINDICADA por inútil y perjudicial?",
+              o: ["Realizar incisiones en la herida, succionar el veneno con la boca o aplicar torniquetes estrictos.", "Limpiar la herida con agua y jabón y administrar profilaxis antitetánica.", "Inmovilizar la extremidad afectada en posición funcional.", "Vigilancia hospitalaria durante 24 horas."],
+              e: "Los cortes, incisiones, la succión oral y los torniquetes están contraindicados en mordeduras de serpiente por aumentar el daño local y el riesgo necrótico/infeccioso." },
+            { c: 4, q: "Paciente que acude por una reacción anafiláctica grave tras picadura de avispa, presentando urticaria generalizada, estridor laríngeo e hipotensión (shock anafiláctico). ¿Cuál es el fármaco salvavidas de primera elección que debe administrarse de inmediato por vía intramuscular?",
+              o: ["Adrenalina intramuscular (0.5 mg en adultos en la cara anterolateral del muslo).", "Antihistamínico oral en comprimidos.", "Corticoides inhalados en aerosol.", "Atropina subcutánea."],
+              e: "La adrenalina intramuscular es el tratamiento de primera línea insustituible en la anafilaxia, debiendo administrarse sin demora en el muslo." },
+            { c: 4, q: "En la reanimación de un paciente con shock anafiláctico refractario que no responde a una primera dosis de adrenalina intramuscular y fluidos, se puede pautar:",
+              o: ["Perfusión continua intravenosa de Adrenalina titulada bajo monitorización.", "Aumento de la dosis de antihistamínicos orales.", "Administración de digoxina oral.", "Diuréticos de asa intravenosos."],
+              e: "La anafilaxia refractaria requiere iniciar perfusión intravenosa continua de adrenalina y soporte avanzado en el box de reanimación." },
+            { c: 4, q: "¿Cómo se define legalmente el 'Certificado Médico de Defunción' ordinario expedido por el médico en España?",
+              o: ["El documento oficial gratuito que acredita el fallecimiento natural y cierto de una persona, rellenado tras comprobar el éxitus y descartar indicios de criminalidad.", "Un documento judicial emitido exclusivamente por el juez de guardia.", "Un informe clínico privado sin validez en el registro civil.", "El parte de lesiones de obligado cumplimiento penal."],
+              e: "El certificado de defunción ordinario acredita la muerte natural y es extendido por el médico tras certificar el fallecimiento." },
+            { c: 4, q: "Si tras la asistencia a un paciente fallecido en circunstancias dudosas, violentas o con indicios de muerte criminal, el médico de urgencias debe emitir obligatoriamente:",
+              o: ["El parte judicial al Juzgado de Guardia y abstenerse de firmar el certificado de defunción ordinario.", "Un certificado de defunción ordinario inmediato sin avisar a la policía.", "Un alta hospitalaria por éxitus sin notificar.", "Una hoja de reclamaciones administrativa."],
+              e: "Ante muertes violentas, sospechosas o con indicios de criminalidad, no se expide el certificado de defunción ordinario; se emite el parte judicial y se avisa al juez." },
+            { c: 4, q: "En relación con los umbrales mínimos de procedimientos exigidos en el programa formativo oficial de la especialidad para el manejo avanzado de la vía aérea, ¿cuántos procedimientos de intubación endotraqueal se exigen documentar?",
+              o: ["Al menos 2 procedimientos documentados.", "Ninguno.", "Al menos 100 procedimientos complejos.", "Exactamente 50 en menores."],
+              e: "El programa oficial de la especialidad detalla los umbrales numéricos mínimos para el registro de actividades formativas, exigiendo al menos 2 procedimientos de intubación." }
+        ];
+
+        // Algoritmo de Fisher-Yates para barajar el array de opciones de cada pregunta
+        function shuffleOptions(question) {
+            let optionsMeta = question.o.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === 0 // Siempre la posición 0 del array original es la correcta
+            }));
+            
+            for (let i = optionsMeta.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsMeta[i], optionsMeta[j]] = [optionsMeta[j], optionsMeta[i]];
+            }
+            return optionsMeta;
+        }
+
+        const form = document.getElementById('exam-form');
+        const letras = ['A', 'B', 'C', 'D'];
+
+        // Renderizado dinámico e inserción de encabezados de casos
+        let caseHeaderRendered = "";
+
+        db.forEach((p, index) => {
+            if (p.c && p.c !== caseHeaderRendered && typeof p.c === "string") {
+                const caseDiv = document.createElement('div');
+                caseDiv.className = 'case-header';
+                caseDiv.innerHTML = `<h2>${p.c}</h2>`;
+                form.appendChild(caseDiv);
+                caseHeaderRendered = p.c;
+            }
+
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            
+            let html = `<h3>Pregunta ${index + 1}. ${p.q}</h3><ul class="options">`;
+            
+            const shuffledOptions = shuffleOptions(p);
+            let indexCorrecta;
+
+            shuffledOptions.forEach((optMeta, idx) => {
+                const letra = letras[idx];
+                if (optMeta.isCorrect) indexCorrecta = letra;
+                
+                html += `
+                    <li>
+                        <label id="label-${index}-${letra}">
+                            <input type="radio" name="q${index}" value="${letra}" data-correct="${optMeta.isCorrect}">
+                            <strong>${letra})</strong> ${optMeta.text}
+                        </label>
+                    </li>
+                `;
+            });
+            
+            html += `</ul>
+                     <div id="exp-${index}" class="explanation">
+                         <strong>Respuesta correcta: ${indexCorrecta}.</strong> ${p.e}
+                     </div>`;
+            
+            qDiv.innerHTML = html;
+            form.appendChild(qDiv);
+        });
+
+        // Lógica de corrección
+        function corregir() {
+            let puntuacion = 0;
+            let fallos = 0;
+            let sinContestar = 0;
+
+            db.forEach((p, index) => {
+                const opciones = document.getElementsByName(`q${index}`);
+                let seleccion = null;
+                let seleccionCorrecta = false;
+                
+                opciones.forEach(opt => {
+                    const letra = opt.value;
+                    const label = document.getElementById(`label-${index}-${letra}`);
+                    const esCorrecta = opt.getAttribute('data-correct') === "true";
+
+                    label.classList.remove('correct-anim', 'incorrect-anim'); 
+                    opt.disabled = true; 
+                    
+                    if (opt.checked) {
+                        seleccion = letra;
+                        if (esCorrecta) seleccionCorrecta = true;
+                    }
+                    if (esCorrecta) label.classList.add('correct-anim');
+                });
+
+                if (!seleccion) {
+                    sinContestar++;
+                } else if (!seleccionCorrecta) {
+                    fallos++;
+                    document.getElementById(`label-${index}-${seleccion}`).classList.add('incorrect-anim');
+                } else {
+                    puntuacion++;
+                }
+                document.getElementById(`exp-${index}`).style.display = 'block';
+            });
+
+            // Cálculo tipo BOE: Acierto +1, Fallo -0.25
+            const notaFinal = (puntuacion * 1) - (fallos * 0.25);
+            const notaNormalizada = notaFinal < 0 ? 0 : notaFinal;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alert(`--- SIMULACRO 7 FINALIZADO ---\n\nAciertos: ${puntuacion}\nErrores: ${fallos}\nSin contestar: ${sinContestar}\n\nPUNTUACIÓN TOTAL (Criterio BOE): ${notaNormalizada.toFixed(2)} sobre 60 posibles.\n\nRevisa las explicaciones debajo de cada pregunta.`);
+            }, 300);
+        }
+    </script>
+
+    <!-- Botón opcional MSF -->
+    <div style="text-align: center; margin-top: 50px; padding: 25px; background-color: #fdfbf7; border: 2px solid #e84118; border-radius: 8px;">
+        <h3 style="margin-top: 0; color: #c23616;">¿Te ha sido útil este simulacro?</h3>
+        <p style="font-size: 0.95em; color: #2f3640;">Este proyecto es 100% gratuito. Si te ha servido de ayuda en tu preparación, te invito a transformar ese valor en una donación directa y opcional a Médicos Sin Fronteras.</p>
+        <a href="https://www.msf.es/que-puedo-hacer-yo/donativo" target="_blank" style="display: inline-block; background-color: #e84118; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; transition: 0.3s;">Hacer un donativo a MSF</a>
+    </div>
+
+</body>
+</html>
